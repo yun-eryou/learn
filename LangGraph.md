@@ -5952,7 +5952,7 @@ langgraph>=1.2
 
 本课程当前环境为：
 
-```plain
+```python
 langgraph==1.1.2
 ```
 
@@ -6559,36 +6559,36 @@ with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
 
 **<font style="color:rgb(60, 60, 67);"></font>**
 
-**<font style="color:rgb(60, 60, 67);"></font>**
+**<font style="color:#DF2A3F;"></font>**
 
 ## 持久化模式
 ### 概述
 启用 `Checkpointer` 后，`LangGraph` 会在执行过程中保存检查点。
 
-检查点写入越及时，系统在异常中断后可恢复的状态越完整，容灾能力越强；但更及时的持久化通常也意味着更多中间写入，或额外的阻塞式等待，带来额外的性能开销和响应延迟（从调用者的角度考虑）。
+检查点写入越及时，**<font style="color:#DF2A3F;">系统在异常中断后可恢复的状态越完整，容灾能力越强</font>****；**但更及时的持久化通常也意味着更多中间写入，或额外的阻塞式等待，带来额外的性能开销和响应延迟（从调用者的角度考虑）。
 
-`LangGraph` 支持三种持久化模式，采用不同的检查点保存时机，在容灾能力和性能开销、响应时效性之间作取舍。
+`**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 支持三种持久化模式，采用不同的检查点保存时机</font>**，在容灾能力和性能开销、响应时效性之间作取舍。
 
-+ `exit`：退出模式。只在计算图正常结束、异常退出、被中断（如 `Human-In-The-Loop` 中断）时保存检查点。不能处理中途进程崩溃的场景。这种模式响应性能开销最小，但容灾能力最弱。
-+ `async`：异步模式。默认模式，顾名思义，检查点在后台异步写入。
 
-它会在每个超步结束后写入完整检查点（主检查点），并在图中任务执行完毕后记录中间结果。
 
-和 `exit` 模式相比，增加了性能开销，但写入操作发生在后台，不会引入明显的响应延迟，同时提升了容灾能力。
-
++ `**<font style="color:#DF2A3F;">exit</font>**`**<font style="color:#DF2A3F;">：退出模式。只在计算图正常结束、异常退出、被中断（如 </font>**`**<font style="color:#DF2A3F;">Human-In-The-Loop</font>**`**<font style="color:#DF2A3F;"> 中断）时保存检查点</font>**。不能处理中途进程崩溃的场景。这种模式响应性能开销最小，但容灾能力最弱。
++ `**<font style="color:#DF2A3F;">async</font>**`**<font style="color:#DF2A3F;">：异步模式。默认模式，顾名思义，检查点在后台异步写入</font>**。
+    - 它会在每个超步结束后写入完整检查点（主检查点），并在图中任务执行完毕后记录中间结果。
+    - 和 `exit` 模式相比，增加了性能开销，但写入操作发生在后台，不会引入明显的响应延迟，同时提升了容灾能力。
 + `sync`：同步模式。
-
-和异步模式唯一的区别在于，`LangGraph` 会在进入下一个超步之前等待当前主检查点的写入任务完成。
-
-它的容灾能力最强，但在 `async` 模式的基础上增加了响应延迟。
+    - 和异步模式唯一的区别在于，`**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 会在进入下一个超步之前等待当前主检查点的写入任务完成</font>**。它的容灾能力最强，但在 `async` 模式的基础上增加了响应延迟。
 
 **<font style="color:rgb(60, 60, 67);">总结</font>**
 
 | 模式 | 写入时机 | 性能开销 | 响应延迟 | 容灾能力 |
 | --- | --- | --- | --- | --- |
-| `exit` | 运行退出时写入 | 低 | 最低 | 最弱 |
-| `async` | 每个超步末尾写入主检查点，任务完成后写入中间结果，后台异步写入 | 高 | 较高 | 较强 |
-| `sync` | 和 `async`<br/> 区别在于，进入下一个超步之前等待当前主检查点的写入任务完成 | 高 | 最高 | 最强 |
+| `exit` | **<font style="color:#DF2A3F;">运行退出时写入</font>** | 低 | 最低 | 最弱 |
+| `async` | **<font style="color:#DF2A3F;">每个超步末尾写入主检查点，任务完成后写入中间结果，后台异步写入</font>** | 高 | 较高 | 较强 |
+| `sync` | **<font style="color:#DF2A3F;">和 </font>**`**<font style="color:#DF2A3F;">async</font>**`<br/>**<font style="color:#DF2A3F;"> 区别在于，进入下一个超步之前等待当前主检查点的写入任务完成 ,这里是同步阻塞写入</font>** | 高 | 最高 | 最强 |
+
+
+
+
 
 
 ### 示例
@@ -6697,7 +6697,7 @@ durability="sync"
 
 
 ## 查看历史检查点
-`LangGraph` 在配置检查点存储器后，会把同一个 `thread_id` 下的执行过程保存为一组检查点。通过这些检查点，我们可以查看图运行的中间状态，也可以为后续的检查点回溯（重放、分叉）和失败恢复做准备。
+`LangGraph` 在配置检查点存储器后，**<font style="color:#DF2A3F;">会把同一个 </font>**`**<font style="color:#DF2A3F;">thread_id</font>**`**<font style="color:#DF2A3F;"> 下的执行过程保存为一组检查点。</font>**通过这些检查点，我们可以查看图运行的中间状态，**<font style="color:#DF2A3F;">也可以为后续的检查点回溯（重放、分叉）和失败恢复做准备。</font>**
 
 本节主要介绍两个常用方法：
 
@@ -7073,4 +7073,12200 @@ res: {} {'final_output': '关于 猫咪 的七言绝句：\n《戏猫》\n狸奴
 + `interrupts`：当前图的中断信息，中断机制详见下文
 
 **<font style="color:rgb(60, 60, 67);"></font>**
+
+**<font style="color:rgb(60, 60, 67);"></font>**
+
+**<font style="color:rgb(60, 60, 67);"></font>**
+
+**<font style="color:rgb(60, 60, 67);"></font>**
+
+##### 检查点主要信息说明
+本例中检查点按照如下顺序返回
+
+```python
+Step 2 → Step 1 → Step 0 → Step -1
+```
+
+即
+
+```python
+最新检查点 → 最旧检查点
+```
+
+其中：
+
+1. `step=-1`
+
+这是输入检查点，`metadata["source"] == "input"`，这表示该检查点是在运行时初始化时被记录的，尚未进入图计算循环。
+
+此时用户输入还没有真正变成普通业务节点可消费的状态，因此
+
+```python
+values={}
+```
+
+从这个检查点继续执行，下一步是内部启动节点 `__start__`，因此：
+
+```python
+next=("__start__",)
+```
+
+2. `step=0`
+
+这是图计算循环的第一个检查点，`metadata["source"] == "loop"`，这表示检查点是在图计算循环中被写入的。
+
+此时，`__start__` 已经把用户输入写入状态，所以 `values` 中已经可以看到状态信息，如下：
+
+```python
+values={
+    "topic": "猫咪"
+}
+```
+
+从这个检查点继续执行，`node_poem` 和 `node_joke` 将在下一个超步执行，因此：
+
+```python
+next=("node_poem", "node_joke")
+```
+
+3. `step=1`
+
+这是图计算循环的第二个检查点，同样 `metadata["source"] == "loop"`。
+
+同时，它对应第一个执行图节点计算逻辑的超步。
+
+此时，`node_poem` 和 `node_joke` 的输出已经到状态中，因此：
+
+```python
+values={
+    "topic": "猫咪",
+    "poem": "...",
+    "joke": "..."
+}
+```
+
+从这个检查点开始，下游的汇总节点 `node_output` 满足执行条件，因此：
+
+```python
+next=("node_output",)
+```
+
+4. `step=2`
+
+这是图计算循环的第三个检查点，同样 `metadata["source"] == "loop"`
+
+此时，`node_output` 已经执行完成，最终输出也已经写入状态，因此：
+
+```python
+values={
+    "topic": "猫咪",
+    "poem": "...",
+    "joke": "...",
+    "final_output": "..."
+}
+```
+
+此时，图已经执行结束，所以：
+
+```python
+next=()
+```
+
+
+
+
+
+
+
+##### `tasks`字段说明
+`tasks` 是一个元组，其中的每个元素都是一个 `PregelTask` 实例
+
+`tasks` 表示：如果从当前检查点继续执行，下一步要运行哪些任务。比如在 `step=0` 的检查点中：
+
+```python
+next=("node_poem", "node_joke")
+tasks=(
+    PregelTask(name="node_poem", ...),
+    PregelTask(name="node_joke", ...),
+)
+```
+
+这表示从该检查点继续执行时，下一步会运行 `node_poem` 和 `node_joke` 节点，底层执行的是它们的同名任务。
+
+不过，查看历史检查点时，`PregelTask` 实例的 `result` 字段可能非空，如：
+
+```python
+PregelTask(
+    name="node_poem",
+    result={
+        "poem": "..."
+    }
+)
+```
+
+这看起来像是“上一个检查点中提前保存了下一个超步的执行结果”。实际上：
+
++ **<font style="color:#DF2A3F;">完整的检查点（主检查点）是在超步末尾保存的</font>**
++ 但在一个超步内部，`LangGraph` 还会记录节点级别的计算结果
++ `checkpoint["id"]` 会在保存主检查点前由 `create_checkpoint()` 推进为新的 `ID`，然后用这个 `ID` 写入主检查点（假设当前超步为 `S1`）。下一轮（超步为 `S2`）计算循环中，任务执行完毕后的中间结果会用相同的 `ID` 写入。
+
+因此，下一轮（超步为 `S2`）任务的计算结果绑定到了“当前超步（超步为 `S1`）的主检查点”。
+
++ 从检查点后端检索时，会按照 `checkpoint_id` 将主检查点和中间结果组织起来
++ 因此，检索到的历史检查点列表中，主检查点（超步为 `S1`）和下一个超步（超步为 `S2`）的中间结果会被放在同一个 `StateSnapshot` 中
++ 如果同一个超步里有多个并行任务，其中部分任务已经成功，另一个任务失败，那么成功任务的结果可以被保存下来；
++ 后续恢复时，`LangGraph` 可以复用这些已成功任务的结果，避免重复执行已经成功的节点。
+
+
+
+
+
+
+
+
+
+### 查看最新检查点
+如果只想查看当前线程的最新检查点，可以使用：
+
+```python
+latest_history_checkpoint = graph.get_state(config=config)
+print(latest_history_checkpoint)
+```
+
+完整示例如下
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+class OverAllState(TypedDict):
+    topic: str
+    poem: str
+    joke: str
+    final_output: str
+
+class InputState(TypedDict):
+    topic: str
+
+class OutputState(TypedDict):
+    final_output: str
+
+def node_poem(state: InputState) -> OverAllState:
+    logger.info(f"node_poem 已执行")
+    topic = state["topic"]
+    poem = model.invoke([HumanMessage(f"写一首关于 {topic} 的七言绝句，不要赏析，只给诗句即可")]).content
+
+    return {
+        "poem": poem
+    }
+
+def node_joke(state: InputState) -> OverAllState:
+    logger.info(f"node_joke 已执行")
+    topic = state["topic"]
+    joke = model.invoke([HumanMessage(f"写一个关于 {topic} 的笑话，尽可能简单，不超过一百字")]).content
+
+    return {
+        "joke": joke
+    }
+
+def node_output(state: OverAllState) -> OutputState:
+    logger.info("node_output 已执行")
+    topic = state["topic"]
+    poem = state["poem"]
+    joke = state["joke"]
+    final_output = f"关于 {topic} 的七言绝句：\n{poem}\n笑话：\n{joke}"
+
+    return {
+        "final_output": final_output
+    }
+
+builder = StateGraph(state_schema=OverAllState, input_schema=InputState, output_schema=OutputState)
+builder.add_node("node_poem", node_poem)
+builder.add_node("node_joke", node_joke)
+builder.add_node("node_output", node_output)
+builder.add_edge(START, "node_poem")
+builder.add_edge(START, "node_joke")
+builder.add_edge("node_poem", "node_output")
+builder.add_edge("node_joke", "node_output")
+builder.add_edge("node_output", END)
+
+checkpointer = InMemorySaver()
+config = {"configurable": {"thread_id": "123"}}
+graph = builder.compile(checkpointer=checkpointer)
+res = graph.invoke({"topic": "猫咪"}, config=config)
+
+from IPython.display import display
+display(graph)
+
+print('=' * 30, '-> 运行结果 <-', '=' * 30)
+print("res: {}", res)
+
+print('=' * 30, '-> 最新历史检查点 <-', '=' * 30)
+latest_history_checkpoint = graph.get_state(config=config)
+print(latest_history_checkpoint)
+```
+
+运行结果如下
+
+1. 运行日志
+
+```python
+2026-06-10 11:23:59.610 | INFO     | __main__:node_poem:33 - node_poem 已执行
+2026-06-10 11:23:59.611 | INFO     | __main__:node_joke:42 - node_joke 已执行
+2026-06-10 11:24:01.424 | INFO     | __main__:node_output:51 - node_output 已执行
+```
+
+2. 拓扑结构
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792143313676-2f0c40a9-6b83-4385-8e72-d86fab8697e8.png)
+
+
+
+
+
+
+
+运行结果及检查点信息
+
+```python
+============================== -> 运行结果 <- ==============================
+res: {} {'final_output': '关于 猫咪 的七言绝句：\n《戏题狸奴》\n昼眠锦褥夜巡檐，碧眼圆瞳映月纤。\n捕鼠本非真本领，得鱼时复近妆奁。\n笑话：\n小猫咪第一次照镜子，看到里面的自己，吓得炸毛：“你是谁？！” 它绕到镜子后面找了一圈，没找到，又回来对着镜子哈气。 最后它恍然大悟，对主人说：“我明白了，那是个隐藏的摄像头！”'}
+============================== -> 最新历史检查点 <- ==============================
+StateSnapshot(
+    values={
+        "topic": "猫咪",
+        "poem": (
+            "《戏题狸奴》\n"
+            "昼眠锦褥夜巡檐，碧眼圆瞳映月纤。\n"
+            "捕鼠本非真本领，得鱼时复近妆奁。"
+        ),
+        "joke": (
+            "小猫咪第一次照镜子，看到里面的自己，吓得炸毛：“你是谁？！” "
+            "它绕到镜子后面找了一圈，没找到，又回来对着镜子哈气。 "
+            "最后它恍然大悟，对主人说：“我明白了，那是个隐藏的摄像头！”"
+        ),
+        "final_output": (
+            "关于 猫咪 的七言绝句：\n"
+            "《戏题狸奴》\n"
+            "昼眠锦褥夜巡檐，碧眼圆瞳映月纤。\n"
+            "捕鼠本非真本领，得鱼时复近妆奁。\n"
+            "笑话：\n"
+            "小猫咪第一次照镜子，看到里面的自己，吓得炸毛：“你是谁？！” "
+            "它绕到镜子后面找了一圈，没找到，又回来对着镜子哈气。 "
+            "最后它恍然大悟，对主人说：“我明白了，那是个隐藏的摄像头！”"
+        ),
+    },
+    next=(),
+    config={
+        "configurable": {
+            "thread_id": "123",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f1647bd-3512-631a-8002-4e48b5ecda6d",
+        }
+    },
+    metadata={
+        "source": "loop",
+        "step": 2,
+        "parents": {},
+    },
+    created_at="2026-06-10T03:24:01.426084+00:00",
+    parent_config={
+        "configurable": {
+            "thread_id": "123",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f1647bd-350d-62c7-8001-34cd7fa012ed",
+        }
+    },
+    tasks=(),
+    interrupts=(),
+)
+```
+
+`**<font style="color:#DF2A3F;">graph.get_state(config=config)</font>**`**<font style="color:#DF2A3F;"> 只返回当前会话的最新检查点。</font>**
+
+在本例中，图已经执行完成，所以最新检查点具有以下特征：
+
+```python
+next=()
+tasks=()
+```
+
+这表示没有后续节点需要继续执行。
+
+
+
+
+
+
+
+### 根据ID查看指定检查点
+
+
+如果希望查看某个历史检查点，可以在 **`configurable`** 中额外传入 **`checkpoint_id`**：
+
+```python
+target_config = {
+    "configurable": {
+        "thread_id": "123",
+        "checkpoint_id": "某个历史 checkpoint_id"
+    }
+}
+
+snapshot = graph.get_state(config=target_config)
+print(snapshot)
+```
+
+这样返回的就不是最新检查点，而是指定 **`checkpoint_id`** 对应的历史检查点。
+
+
+
+
+
+#### <font style="color:rgb(51, 51, 51);">获取历史检查点列表</font>
+**<font style="color:rgb(51, 51, 51);">示例如下</font>**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+class OverAllState(TypedDict):
+    topic: str
+    poem: str
+    joke: str
+    final_output: str
+
+class InputState(TypedDict):
+    topic: str
+
+class OutputState(TypedDict):
+    final_output: str
+
+def node_poem(state: InputState) -> OverAllState:
+    logger.info(f"node_poem 已执行")
+    topic = state["topic"]
+    poem = model.invoke([HumanMessage(f"写一首关于 {topic} 的七言绝句，不要赏析，只给诗句即可")]).content
+
+    return {
+        "poem": poem
+    }
+
+def node_joke(state: InputState) -> OverAllState:
+    logger.info(f"node_joke 已执行")
+    topic = state["topic"]
+    joke = model.invoke([HumanMessage(f"写一个关于 {topic} 的笑话，尽可能简单，不超过一百字")]).content
+
+    return {
+        "joke": joke
+    }
+
+def node_output(state: OverAllState) -> OutputState:
+    logger.info("node_output 已执行")
+    topic = state["topic"]
+    poem = state["poem"]
+    joke = state["joke"]
+    final_output = f"关于 {topic} 的七言绝句：\n{poem}\n笑话：\n{joke}"
+
+    return {
+        "final_output": final_output
+    }
+
+builder = StateGraph(state_schema=OverAllState, input_schema=InputState, output_schema=OutputState)
+builder.add_node("node_poem", node_poem)
+builder.add_node("node_joke", node_joke)
+builder.add_node("node_output", node_output)
+builder.add_edge(START, "node_poem")
+builder.add_edge(START, "node_joke")
+builder.add_edge("node_poem", "node_output")
+builder.add_edge("node_joke", "node_output")
+builder.add_edge("node_output", END)
+
+checkpointer = InMemorySaver()
+config = {"configurable": {"thread_id": "123"}}
+graph = builder.compile(checkpointer=checkpointer)
+res = graph.invoke({"topic": "猫咪"}, config=config)
+
+from IPython.display import display
+display(graph)
+
+print('=' * 30, '-> 运行结果 <-', '=' * 30)
+print("res: {}", res)
+
+print('=' * 30, '-> 历史检查点列表 <-', '=' * 30)
+history_checkpoints = list(graph.get_state_history(config=config))
+print(history_checkpoints)
+```
+
+
+
+
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+```python
+2026-06-11 18:28:29.126 | INFO     | __main__:node_poem:33 - node_poem 已执行
+2026-06-11 18:28:29.128 | INFO     | __main__:node_joke:42 - node_joke 已执行
+2026-06-11 18:28:31.021 | INFO     | __main__:node_output:51 - node_output 已执行
+```
+
+
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792143446538-4f3b1f13-19c0-491b-a229-fd829a770717.png)
+
+```python
+============================== -> 运行结果 <- ==============================
+res: {} {'final_output': '关于 猫咪 的七言绝句：\n《戏猫》\n狸奴日午卧青毡，蝶影翩然忽跃前。\n捕得飞花轻似梦，独摇银尾弄春烟。\n笑话：\n猫咪走进咖啡店，点了一杯牛奶。  \n店员问：“要不要加糖？”  \n猫咪摇头：“不用，我最近在减肥。”  \n店员看了看它圆滚滚的肚子：“真的吗？”  \n猫咪叹了口气：“唉，都是猫粮的错。”'}
+============================== -> 历史检查点列表 <- ==============================
+[
+    StateSnapshot(
+        values={
+            "topic": "猫咪",
+            "poem": (
+                "《戏猫》\n"
+                "狸奴日午卧青毡，蝶影翩然忽跃前。\n"
+                "捕得飞花轻似梦，独摇银尾弄春烟。"
+            ),
+            "joke": (
+                "猫咪走进咖啡店，点了一杯牛奶。  \n"
+                "店员问：“要不要加糖？”  \n"
+                "猫咪摇头：“不用，我最近在减肥。”  \n"
+                "店员看了看它圆滚滚的肚子：“真的吗？”  \n"
+                "猫咪叹了口气：“唉，都是猫粮的错。”"
+            ),
+            "final_output": (
+                "关于 猫咪 的七言绝句：\n"
+                "《戏猫》\n"
+                "狸奴日午卧青毡，蝶影翩然忽跃前。\n"
+                "捕得飞花轻似梦，独摇银尾弄春烟。\n"
+                "笑话：\n"
+                "猫咪走进咖啡店，点了一杯牛奶。  \n"
+                "店员问：“要不要加糖？”  \n"
+                "猫咪摇头：“不用，我最近在减肥。”  \n"
+                "店员看了看它圆滚滚的肚子：“真的吗？”  \n"
+                "猫咪叹了口气：“唉，都是猫粮的错。”"
+            ),
+        },
+        next=(),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f165804-acae-618c-8002-5a8b9e940205",
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 2,
+            "parents": {},
+        },
+        created_at="2026-06-11T10:28:31.022523+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f165804-acab-66b3-8001-d74912e4cb07",
+            }
+        },
+        tasks=(),
+        interrupts=(),
+    ),
+
+    StateSnapshot(
+        values={
+            "topic": "猫咪",
+            "poem": (
+                "《戏猫》\n"
+                "狸奴日午卧青毡，蝶影翩然忽跃前。\n"
+                "捕得飞花轻似梦，独摇银尾弄春烟。"
+            ),
+            "joke": (
+                "猫咪走进咖啡店，点了一杯牛奶。  \n"
+                "店员问：“要不要加糖？”  \n"
+                "猫咪摇头：“不用，我最近在减肥。”  \n"
+                "店员看了看它圆滚滚的肚子：“真的吗？”  \n"
+                "猫咪叹了口气：“唉，都是猫粮的错。”"
+            ),
+        },
+        next=("node_output",),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f165804-acab-66b3-8001-d74912e4cb07",
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 1,
+            "parents": {},
+        },
+        created_at="2026-06-11T10:28:31.021422+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f165804-9a92-67bc-8000-dd5ab888e9d5",
+            }
+        },
+        tasks=(
+            PregelTask(
+                id="66dedbf9-3fbb-c539-5f4e-0e3f604a9c56",
+                name="node_output",
+                path=("__pregel_pull", "node_output"),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "final_output": (
+                        "关于 猫咪 的七言绝句：\n"
+                        "《戏猫》\n"
+                        "狸奴日午卧青毡，蝶影翩然忽跃前。\n"
+                        "捕得飞花轻似梦，独摇银尾弄春烟。\n"
+                        "笑话：\n"
+                        "猫咪走进咖啡店，点了一杯牛奶。  \n"
+                        "店员问：“要不要加糖？”  \n"
+                        "猫咪摇头：“不用，我最近在减肥。”  \n"
+                        "店员看了看它圆滚滚的肚子：“真的吗？”  \n"
+                        "猫咪叹了口气：“唉，都是猫粮的错。”"
+                    )
+                },
+            ),
+        ),
+        interrupts=(),
+    ),
+
+    StateSnapshot(
+        values={
+            "topic": "猫咪",
+        },
+        next=("node_poem", "node_joke"),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f165804-9a92-67bc-8000-dd5ab888e9d5",
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 0,
+            "parents": {},
+        },
+        created_at="2026-06-11T10:28:29.123773+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f165804-9a90-6db5-bfff-d0eb857db9d8",
+            }
+        },
+        tasks=(
+            PregelTask(
+                id="8b59cf5a-16b4-c734-41c8-56ac9b7614c9",
+                name="node_poem",
+                path=("__pregel_pull", "node_poem"),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "poem": (
+                        "《戏猫》\n"
+                        "狸奴日午卧青毡，蝶影翩然忽跃前。\n"
+                        "捕得飞花轻似梦，独摇银尾弄春烟。"
+                    )
+                },
+            ),
+            PregelTask(
+                id="388c08f3-e341-3c76-cfc4-a9825ec97353",
+                name="node_joke",
+                path=("__pregel_pull", "node_joke"),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "joke": (
+                        "猫咪走进咖啡店，点了一杯牛奶。  \n"
+                        "店员问：“要不要加糖？”  \n"
+                        "猫咪摇头：“不用，我最近在减肥。”  \n"
+                        "店员看了看它圆滚滚的肚子：“真的吗？”  \n"
+                        "猫咪叹了口气：“唉，都是猫粮的错。”"
+                    )
+                },
+            ),
+        ),
+        interrupts=(),
+    ),
+
+    StateSnapshot(
+        values={},
+        next=("__start__",),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f165804-9a90-6db5-bfff-d0eb857db9d8",
+            }
+        },
+        metadata={
+            "source": "input",
+            "step": -1,
+            "parents": {},
+        },
+        created_at="2026-06-11T10:28:29.123104+00:00",
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id="63a24d9c-ea6d-0420-4b5a-b978c6eaeb90",
+                name="__start__",
+                path=("__pregel_pull", "__start__"),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "topic": "猫咪",
+                },
+            ),
+        ),
+        interrupts=(),
+    ),
+]
+```
+
+
+
+
+
+
+
+
+
+#### 根据ID查看特定检查点
+获取历史检查点列表后，可以从某个历史快照中取出它的 `checkpoint_id`，然后调用 `graph.get_state()` 查看该检查点。
+
+```python
+print('=' * 30, '-> 根据ID查看特定检查点 <-', '=' * 30)
+checkpointe_id = history_checkpoints[3].config["configurable"]["checkpoint_id"]
+print(f"checkpointe_id: {checkpointe_id}")
+
+target_config = {
+    "configurable": {
+        "thread_id": config["configurable"]["thread_id"],
+        "checkpoint_id": checkpointe_id
+    }
+}
+
+specific_history_checkpoint = graph.get_state(config=target_config)
+print(specific_history_checkpoint)
+```
+
+运行结果如下
+
+```python
+============================== -> 根据ID查看特定检查点 <- ==============================
+checkpointe_id: 1f165804-9a90-6db5-bfff-d0eb857db9d8
+StateSnapshot(
+    values={},
+    next=("__start__",),
+    config={
+        "configurable": {
+            "thread_id": "123",
+            "checkpoint_id": "1f165804-9a90-6db5-bfff-d0eb857db9d8",
+        }
+    },
+    metadata={
+        "source": "input",
+        "step": -1,
+        "parents": {},
+    },
+    created_at="2026-06-11T10:28:29.123104+00:00",
+    parent_config=None,
+    tasks=(
+        PregelTask(
+            id="63a24d9c-ea6d-0420-4b5a-b978c6eaeb90",
+            name="__start__",
+            path=("__pregel_pull", "__start__"),
+            error=None,
+            interrupts=(),
+            state=None,
+            result={
+                "topic": "猫咪",
+            },
+        ),
+    ),
+    interrupts=(),
+)
+```
+
+当前场景下，我们已经获取了完整检查点列表，然后从中取了某个检查点的 `checkpoint_id`，然后调用 `get_state()` 查到了它对应的快照。
+
+这看起来有些“绕”，因为我们本来就已经拿到了完整的历史快照。但在实际场景中，这个方法仍然很有意义。
+
+例如，在后续的 检查点回溯-分叉 场景中，我们经常会基于历史检查点创建新的检查点，拿到该检查点的、带有 `checkpoint_id` 的配置信息 `config`。此时就可以将 `config` 传递给 `graph.get_state()`，从而便捷而精确地查看该检查点的快照。
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 使用场景
+### 多轮对话
+最基础的使用场景是多轮对话。前文示例已经实现了一个简单的多轮对话流程，这里不再展开。
+
+
+
+
+
+
+
+### 中断恢复
+中断恢复需要结合 `LangGraph` 的中断机制理解，见下文。
+
+### 失败后恢复运行
+
+
+#### 用法说明
+任务失败的原因可能是偶发的外部因素，如网络波动、秘钥过期、第三方服务异常；也可能是程序自身的BUG。
+
+如果是前者，故障发生后，修复外部问题，直接重试即可；如果是后者，需要更改代码修复BUG后，再基于历史检查点恢复运行。
+
+要在失败后基于历史检查点恢复运行，需要满足以下条件：
+
+1. **<font style="color:#DF2A3F;">启用检查点存储器</font>**
+    - 如果是 `InMemorySaver`，不要重建检查点存储器对象，否则历史检查点丢失，无法恢复
+    - 如果希望跨进程、服务重启后仍可恢复，应使用基于 `SQLite、Postgres` 等持久化检查点后端的存储器
+2. **<font style="color:#DF2A3F;">再次运行时用 </font>**`**<font style="color:#DF2A3F;">None</font>**`**<font style="color:#DF2A3F;"> 作为计算图的状态输入</font>**
+3. **<font style="color:#DF2A3F;">传递的配置信息应包含 </font>**`**<font style="color:#DF2A3F;">thread_id</font>**`**<font style="color:#DF2A3F;"> 而不能包含 </font>**`**<font style="color:#DF2A3F;">checkpoint_id</font>**`
+
+此时，`**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 会根据 </font>**`**<font style="color:#DF2A3F;">thread_id</font>**`**<font style="color:#DF2A3F;"> 从 </font>**`**<font style="color:#DF2A3F;">checkpointer</font>**`**<font style="color:#DF2A3F;"> 读取该会话的最新检查点，并从该检查点继续推进。</font>**
+
+如果某个超步中有多个并行任务，其中一部分任务成功，另一部分任务失败，那么已经成功完成的任务结果会作为 `pending_writes` 被保存。恢复运行时，已经成功完成的任务不会重复执行。
+
+
+
+
+
+#### <font style="color:rgb(51, 51, 51);">示例</font>
+##### <font style="color:rgb(51, 51, 51);">模拟失败</font>
+<font style="color:rgb(51, 51, 51);">本例使用如下结构：</font>
+
+```python
+START
+  -> node_change_topic
+      -> node_poem
+      -> node_joke
+  -> node_output
+  -> END
+```
+
+<font style="color:rgb(51, 51, 51);">运行时，</font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_change_topic</font>**`<font style="color:rgb(51, 51, 51);"> 会把输入主题 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">"猫咪"</font>**`<font style="color:rgb(51, 51, 51);"> 改写为 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">"猫咪: 布偶猫"</font>**`<font style="color:rgb(51, 51, 51);">，然后并行执行 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_poem</font>**`<font style="color:rgb(51, 51, 51);"> 和 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_joke</font>**`<font style="color:rgb(51, 51, 51);">，最后由 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_output</font>**`<font style="color:rgb(51, 51, 51);"> 汇总输出。</font>
+
+**<font style="color:rgb(51, 51, 51);">示例如下</font>**
+
+```python
+from typing import TypedDict
+
+from dotenv import  load_dotenv
+from langchain_core.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph import StateGraph,START,END
+from loguru import logger
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model = "deepseek-v4-flash",
+    extra_body={
+        "thinking":{
+            "type":"disabled"
+        }
+    }
+)
+
+#1. 声明状态
+class OverAllState(TypedDict):
+    topic:str
+    poem:str
+    joke:str
+    final_output:str
+
+#1.1 输入状态
+class InputState(TypedDict):
+    topic:str
+
+#1.2 输出状态
+class OutputState(TypedDict):
+    final_output:str
+
+topics = ["布偶猫","狸花猫","金渐层"]
+topic_index = 0
+#2. 定义节点
+def node_change_topic(state:InputState)->OverAllState:
+    global topic_index
+    logger.info("topic_index:{}",topic_index)
+    sub_topic = topics[topic_index]
+    topic_index += 1
+    topic_index %= len(topics)
+
+    return {
+        "topic":f"{state["topic"]}:{sub_topic}"
+    }
+#2.1 同一个超步的位置 成功运行的节点
+def node_poem(state:OverAllState) -> OverAllState:
+    logger.info("node_poem正在执行")
+    topic = state["topic"]
+    poem = model.invoke([HumanMessage(f"写一首关于{topic}主题的七言绝句")]).content
+    return {
+        "poem":poem
+    }
+import  time
+#2.2 同一个超步的位置 运行失败的节点
+def node_joke(state:OverAllState) -> OverAllState:
+    logger.info("node_joke正在执行")
+    topic = state["topic"]
+    time.sleep(5)
+    raise Exception("人为抛异常")
+    joke = model.invoke([HumanMessage(f"写一首关于{topic}主题的笑话")]).content
+    return {
+        "joke":joke
+    }
+
+def node_output(state:OverAllState) -> OutputState:
+    logger.info("node_output正在执行")
+    topic = state["topic"]
+    poem = state["poem"]
+    joke = state["joke"]
+    final_output = f"关于{topic}的七言绝句:{poem}\n 笑话:{joke}\n"
+    return {
+        "final_output":final_output
+    }
+
+#3. 构建图
+builder = StateGraph(state_schema=OverAllState,input_schema=InputState,output_schema=OutputState)
+
+#3.1 添加节点
+builder.add_node("node_change_topic",node_change_topic)
+builder.add_node("node_poem",node_poem)
+builder.add_node("node_joke",node_joke)
+builder.add_node("node_output",node_output)
+
+#3.2 添加边
+builder.add_edge(START,"node_change_topic")
+builder.add_edge("node_change_topic","node_poem")
+builder.add_edge("node_change_topic","node_joke")
+builder.add_edge("node_poem","node_output")
+builder.add_edge("node_joke","node_output")
+builder.add_edge("node_output",END)
+
+#4. 添加检查点后端
+DB_URL = "postgresql://langgraph_user:123456@localhost:5432/langgraph_db?sslmode=disable"
+from langgraph.checkpoint.postgres import PostgresSaver
+with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
+    #5. 第一次使用PostgresSaver作为检查点 需要调用方法 setup()
+    #checkpointer.setup()
+    graph = builder.compile(checkpointer=checkpointer)
+
+    from IPython.display import display
+    display(graph)
+
+    config = {
+        "configurable":{
+            "thread_id":"chapter03-05"
+        }
+    }
+
+    res = graph.invoke({"topic":"猫"},config=config)
+    print(res)
+```
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792143688316-bf9ece51-6d67-407d-a60c-98de23023aff.png)
+
+```python
+2026-06-10 16:17:43.544 | INFO     | __main__:node_change_topic:45 - topic_idx: 0
+2026-06-10 16:17:43.545 | INFO     | __main__:node_joke:65 - node_joke 已执行
+2026-06-10 16:17:43.548 | INFO     | __main__:node_poem:54 - node_poem 已执行
+>Traceback...
+Exception: 人为中断
+During task with name 'node_joke' and id 'edb59019-4808-ed51-68eb-d5fba8696b13'
+```
+
+本例在 `node_joke` 中抛出异常，从而模拟计算图执行失败的场景。
+
+为了观察恢复执行时哪些节点会被重新执行，示例中额外定义了全局变量 `topics` 和 `topic_idx`。`node_change_topic` 每执行一次，都会从 `topics` 中取出一个新的子主题，作为状态字段 `topic` 的值。
+
+如果恢复运行时 `node_change_topic` 没有再次执行，则最终结果仍然会使用第一次生成的主题，即 `猫咪: 布偶猫`。如果该节点被重新执行，则主题可能会变成 `猫咪: 狸花猫` 或 `猫咪: 金渐层`。
+
+
+
+##### 查看历史检查点列表
+示例如下
+
+list(graph.get_state_history(config=config))
+
+运行结果如下
+
+```python
+[
+    StateSnapshot(
+        values={
+            "topic": "猫咪: 布偶猫"
+        },
+        next=(
+            "node_poem",
+            "node_joke"
+        ),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f164a86-e60d-6881-8001-c717582e8893"
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 1,
+            "parents": {}
+        },
+        created_at="2026-06-10T08:43:19.431987+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f164a86-e608-6596-8000-ed45af11cea7"
+            }
+        },
+        tasks=(
+            PregelTask(
+                id="66287e00-4228-a985-fc09-6791a14e26ce",
+                name="node_poem",
+                path=(
+                    "__pregel_pull",
+                    "node_poem"
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "poem": "《戏题布偶猫》\n雪翼云裘自绝尘，琉璃碧眼若含春。\n行来莲步生兰气，卧处梨花是此身。"
+                }
+            ),
+            PregelTask(
+                id="b2632b70-562b-7d5c-0dae-0f83bd6c2912",
+                name="node_joke",
+                path=(
+                    "__pregel_pull",
+                    "node_joke"
+                ),
+                error="Exception('人为中断')",
+                interrupts=(),
+                state=None,
+                result=None
+            )
+        ),
+        interrupts=()
+    ),
+
+    StateSnapshot(
+        values={
+            "topic": "猫咪"
+        },
+        next=(
+            "node_change_topic",
+        ),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f164a86-e608-6596-8000-ed45af11cea7"
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 0,
+            "parents": {}
+        },
+        created_at="2026-06-10T08:43:19.429860+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f164a86-e606-6a42-bfff-9f09d8a3aa96"
+            }
+        },
+        tasks=(
+            PregelTask(
+                id="273fe47f-b4cc-93d0-0ab7-57a0db4bad56",
+                name="node_change_topic",
+                path=(
+                    "__pregel_pull",
+                    "node_change_topic"
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "topic": "猫咪: 布偶猫"
+                }
+            ),
+        ),
+        interrupts=()
+    ),
+
+    StateSnapshot(
+        values={},
+        next=(
+            "__start__",
+        ),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f164a86-e606-6a42-bfff-9f09d8a3aa96"
+            }
+        },
+        metadata={
+            "source": "input",
+            "step": -1,
+            "parents": {}
+        },
+        created_at="2026-06-10T08:43:19.429167+00:00",
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id="ec8e6e32-6969-6798-9c5f-aade41e9211a",
+                name="__start__",
+                path=(
+                    "__pregel_pull",
+                    "__start__"
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "topic": "猫咪"
+                }
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+<font style="color:rgb(51, 51, 51);">可以看到，失败后的检查点中（</font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">step=1</font>**`<font style="color:rgb(51, 51, 51);">）记录了当前超步相关任务的执行情况：</font>
+
++ `**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">node_poem</font>**`**<font style="color:#DF2A3F;"> 执行成功，结果记录在 </font>**`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">result</font>**`**<font style="color:#DF2A3F;"> 字段中。</font>**
++ `**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">node_joke</font>**`**<font style="color:#DF2A3F;"> 执行失败，</font>**`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">result</font>**`**<font style="color:#DF2A3F;"> 为空，异常信息记录在 </font>**`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">error</font>**`**<font style="color:#DF2A3F;"> 字段中。</font>**
+
+<font style="color:rgb(51, 51, 51);">本例中，</font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_poem</font>**`<font style="color:rgb(51, 51, 51);"> 和 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_joke</font>**`<font style="color:rgb(51, 51, 51);"> 属于同一个超步。虽然 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_joke</font>**`<font style="color:rgb(51, 51, 51);"> 失败了，但 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_poem</font>**`<font style="color:rgb(51, 51, 51);"> 已成功，其计算结果会被持久化机制保存下来。因此，后续恢复运行时，</font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">node_poem</font>**`<font style="color:rgb(51, 51, 51);"> 不会重复执行。</font>
+
+
+
+
+
+##### 修复BUG之后恢复运行
+修复 `node_joke` 中的人为异常后，重新编译计算图，并基于最新检查点恢复运行。
+
+示例如下
+
+```python
+def node_joke(state: InputState) -> OverAllState:
+    logger.info(f"node_joke 已执行")
+    topic = state["topic"]
+
+    joke = model.invoke([HumanMessage(f"写一个关于 {topic} 的笑话")]).content
+
+    return {
+        "joke": joke
+    }
+
+
+builder = StateGraph(state_schema=OverAllState, input_schema=InputState, output_schema=OutputState)
+builder.add_node("node_change_topic", node_change_topic)
+builder.add_node("node_poem", node_poem)
+builder.add_node("node_joke", node_joke)
+builder.add_node("node_output", node_output)
+builder.add_edge(START, "node_change_topic")
+builder.add_edge("node_change_topic", "node_poem")
+builder.add_edge("node_change_topic", "node_joke")
+builder.add_edge("node_poem", "node_output")
+builder.add_edge("node_joke", "node_output")
+builder.add_edge("node_output", END)
+
+new_graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(new_graph)
+
+res = new_graph.invoke(None, config=config)
+print(res)
+```
+
+这里需要注意两点：
+
+1. 重新编译计算图时，仍然使用原来的 `checkpointer` 对象。
+2. 恢复运行时，输入参数传入 `None`，并且配置中只传入 `thread_id`。
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792143773780-3cb2ff3d-fe62-46bb-87a5-5aca663eb063.png)
+
+```python
+2026-06-10 16:37:12.985 | INFO     | __main__:node_joke:2 - node_joke 已执行
+2026-06-10 16:37:18.878 | INFO     | __main__:node_output:76 - node_output 已执行
+{
+    'final_output': '关于 猫咪: 布偶猫 的七言绝句：\n《戏题布偶猫》\n雪翼云裘自绝尘，琉璃碧眼若含春。\n行来莲步生兰气，卧处梨花是此身。\n笑话：\n一只布偶猫走进咖啡馆，优雅地跳上吧台，对老板说：“给我来一杯最贵的猫屎咖啡。”  \n老板愣住：“可……您本身就是猫啊？”  \n布偶猫舔了舔爪子，翻了个白眼：“所以呢？我自己产的屎，你们人类不是喝得挺香吗？今天我倒要尝尝，你们拿我的‘周边产品’能泡出什么花样来。”'
+}
+```
+
+运行结果中可以观察到：
+
++ `node_joke` 被重新执行。
++ `node_output` 被执行。
++ `node_poem` 没有被重新执行。
+
+最终输出中的七言绝句和历史检查点中 `node_poem.result` 记录的内容一致，说明 `node_poem` 的执行结果被成功复用了。
+
+
+
+
+
+### Time Travel
+`Time Travel` 直译为 时间旅行，在当前场景下太过生硬，从技术实现和使用场景来看，译为<font style="background-color:#FBDE28;"> </font>**<font style="color:#DF2A3F;background-color:#FBDE28;">检查点回溯</font>** 更为合理。
+
+所谓**<font style="color:#DF2A3F;">检查点回溯，是指基于某个历史检查点，重新执行后续流程，或者在该检查点基础上修改状态并创建新的执行分支。</font>**
+
+检查点回溯有两种形式，根据是否更改历史状态区分：
+
++ `**<font style="color:#DF2A3F;background-color:#FBDE28;">Replay</font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;">：检查点重放，回到某个历史检查点，沿着原先的执行路径重新执行后续节点。</font>**
++ `**<font style="color:#DF2A3F;background-color:#FBDE28;">Fork</font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;">：检查点分叉，回到某个历史检查点，修改状态，从该位置创建一条新的执行分支。</font>**
+
+二者的共同点是：
+
+检查点之前的节点不会重新执行，检查点之后的节点会重新执行。
+
+二者的区别是：
+
+`Replay` 不修改历史状态；`Fork` 会基于历史检查点应用新的状态更新，并创建新的检查点分支。
+
+
+
+
+
+#### Replay
+`Replay` 模式和失败恢复很接近，但二者的触发方式和语义不同。
+
++ 失败恢复通常基于最新检查点继续运行，配置中只包含 `thread_id`，不包含 `checkpoint_id`。
++ `Replay` 则是显式传入某个历史检查点的配置，配置中包含 `checkpoint_id`。`LangGraph` 会据此从该历史检查点开始重放后续步骤。
+
+需要注意：
+
+`Replay` 不是简单读取历史缓存，**<font style="color:#DF2A3F;">而是重新执行该检查点之后的节点。</font>**
+
+因此，检查点之后的 `LLM 调用、API 请求、工具调用、中断` 等都会重新触发，最终结果可能和原始结果不同。
+
+
+
+
+
+
+
+##### 正常运行的任务
+本例仍然使用如下结构：
+
+```python
+START
+-> node_change_topic
+-> node_poem
+-> node_joke
+-> node_output
+-> END
+```
+
+示例如下
+
+```python
+from typing import TypedDict
+
+from dotenv import  load_dotenv
+from langchain_core.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph import StateGraph,START,END
+from loguru import logger
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model = "deepseek-v4-flash",
+    extra_body={
+        "thinking":{
+            "type":"disabled"
+        }
+    }
+)
+
+#1. 声明状态
+class OverAllState(TypedDict):
+    topic:str
+    poem:str
+    joke:str
+    final_output:str
+
+#1.1 输入状态
+class InputState(TypedDict):
+    topic:str
+
+#1.2 输出状态
+class OutputState(TypedDict):
+    final_output:str
+
+topics = ["布偶猫","狸花猫","金渐层"]
+topic_index = 0
+#2. 定义节点
+def node_change_topic(state:InputState)->OverAllState:
+    global topic_index
+    logger.info("topic_index:{}",topic_index)
+    sub_topic = topics[topic_index]
+    topic_index += 1
+    topic_index %= len(topics)
+
+    return {
+        "topic":f"{state["topic"]}:{sub_topic}"
+    }
+#2.1 同一个超步的位置 成功运行的节点
+def node_poem(state:OverAllState) -> OverAllState:
+    logger.info("node_poem正在执行")
+    topic = state["topic"]
+    poem = model.invoke([HumanMessage(f"写一首关于{topic}主题的七言绝句")]).content
+    return {
+        "poem":poem
+    }
+import  time
+#2.2 同一个超步的位置 运行失败的节点
+def node_joke(state:OverAllState) -> OverAllState:
+    logger.info("node_joke正在执行")
+    topic = state["topic"]
+    # time.sleep(5)
+    # raise Exception("人为抛异常")
+    joke = model.invoke([HumanMessage(f"写一首关于{topic}主题的笑话")]).content
+    return {
+        "joke":joke
+    }
+
+def node_output(state:OverAllState) -> OutputState:
+    logger.info("node_output正在执行")
+    topic = state["topic"]
+    poem = state["poem"]
+    joke = state["joke"]
+    final_output = f"关于{topic}的七言绝句:{poem}\n 笑话:{joke}\n"
+    return {
+        "final_output":final_output
+    }
+
+#3. 构建图
+builder = StateGraph(state_schema=OverAllState,input_schema=InputState,output_schema=OutputState)
+
+#3.1 添加节点
+builder.add_node("node_change_topic",node_change_topic)
+builder.add_node("node_poem",node_poem)
+builder.add_node("node_joke",node_joke)
+builder.add_node("node_output",node_output)
+
+#3.2 添加边
+builder.add_edge(START,"node_change_topic")
+builder.add_edge("node_change_topic","node_poem")
+builder.add_edge("node_change_topic","node_joke")
+builder.add_edge("node_poem","node_output")
+builder.add_edge("node_joke","node_output")
+builder.add_edge("node_output",END)
+
+#4. 添加检查点后端
+DB_URL = "postgresql://langgraph_user:123456@localhost:5432/langgraph_db?sslmode=disable"
+from langgraph.checkpoint.postgres import PostgresSaver
+with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
+    #5. 第一次使用PostgresSaver作为检查点 需要调用方法 setup()
+    #checkpointer.setup()
+    graph = builder.compile(checkpointer=checkpointer)
+
+    from IPython.display import display
+    display(graph)
+
+    config = {
+        "configurable":{
+            "thread_id":"chapter03-08"
+        }
+    }
+
+    res = graph.invoke({"topic":"猫咪"},config=config)
+    print(res)
+```
+
+**运行结果如下**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792143907272-a14d0ad5-c1a7-406f-b786-97256348965d.png)
+
+```python
+2026-06-12 14:32:42.019 | INFO     | __main__:node_change_topic:45 - topic_idx: 0
+2026-06-12 14:32:42.022 | INFO     | __main__:node_joke:63 - node_joke 已执行
+2026-06-12 14:32:42.026 | INFO     | __main__:node_poem:54 - node_poem 已执行
+2026-06-12 14:32:43.585 | INFO     | __main__:node_output:72 - node_output 已执行
+2026-06-12 14:32:43.588 | INFO     | __main__:<module>:102 - res: 
+{
+    'final_output': '关于 猫咪: 布偶猫 的七言绝句：\n《布偶猫》\n雪团云絮落仙踪，碧眼盈盈醉九重。\n静若琼瑶闲卧月，清姿一步一玲珑。\n笑话：\n一只布偶猫照镜子，惊呼：“我这么美，怎么还没当上国王？” 主人笑道：“因为你没有‘喵’民拥护。” 布偶猫委屈：“我有啊，铲屎官你不是天天跪着拥护我吗？”'
+}
+```
+
+  
+ 
+
+
+
+
+
+##### 查看历史检查点列表
+示例如下
+
+```python
+history_checkpoints = list(graph.get_state_history(config=config))
+print(history_checkpoints)
+```
+
+运行结果如下
+
+```python
+[
+    StateSnapshot(
+        values={
+            'topic': '猫咪: 布偶猫',
+            'poem': '《布偶猫》\n雪团云絮落仙踪，碧眼盈盈醉九重。\n静若琼瑶闲卧月，清姿一步一玲珑。',
+            'joke': '一只布偶猫照镜子，惊呼：“我这么美，怎么还没当上国王？” 主人笑道：“因为你没有‘喵’民拥护。” 布偶猫委屈：“我有啊，铲屎官你不是天天跪着拥护我吗？”',
+            'final_output': '关于 猫咪: 布偶猫 的七言绝句：\n《布偶猫》\n雪团云絮落仙踪，碧眼盈盈醉九重。\n静若琼瑶闲卧月，清姿一步一玲珑。\n笑话：\n一只布偶猫照镜子，惊呼：“我这么美，怎么还没当上国王？” 主人笑道：“因为你没有‘喵’民拥护。” 布偶猫委屈：“我有啊，铲屎官你不是天天跪着拥护我吗？”'
+        },
+        next=(),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-4ad3-67ef-8003-01d021de9403'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 3,
+            'parents': {}
+        },
+        created_at='2026-06-12T06:32:43.586547+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-4acf-62cf-8002-aed204b5115d'
+            }
+        },
+        tasks=(),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={
+            'topic': '猫咪: 布偶猫',
+            'poem': '《布偶猫》\n雪团云絮落仙踪，碧眼盈盈醉九重。\n静若琼瑶闲卧月，清姿一步一玲珑。',
+            'joke': '一只布偶猫照镜子，惊呼：“我这么美，怎么还没当上国王？” 主人笑道：“因为你没有‘喵’民拥护。” 布偶猫委屈：“我有啊，铲屎官你不是天天跪着拥护我吗？”'
+        },
+        next=('node_output',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-4acf-62cf-8002-aed204b5115d'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 2,
+            'parents': {}
+        },
+        created_at='2026-06-12T06:32:43.584774+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-3be4-6523-8001-dd86f05c34b8'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='b9042203-0ddf-f638-aeeb-e0501601381a',
+                name='node_output',
+                path=('__pregel_pull', 'node_output'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'final_output': '关于 猫咪: 布偶猫 的七言绝句：\n《布偶猫》\n雪团云絮落仙踪，碧眼盈盈醉九重。\n静若琼瑶闲卧月，清姿一步一玲珑。\n笑话：\n一只布偶猫照镜子，惊呼：“我这么美，怎么还没当上国王？” 主人笑道：“因为你没有‘喵’民拥护。” 布偶猫委屈：“我有啊，铲屎官你不是天天跪着拥护我吗？”'
+                }
+            ),
+        ),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={
+            'topic': '猫咪: 布偶猫'
+        },
+        next=('node_poem', 'node_joke'),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-3be4-6523-8001-dd86f05c34b8'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 1,
+            'parents': {}
+        },
+        created_at='2026-06-12T06:32:42.020569+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-3bde-6373-8000-9750b4be0665'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='eab6bf51-4986-a60f-753c-e493b78c56b8',
+                name='node_poem',
+                path=('__pregel_pull', 'node_poem'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'poem': '《布偶猫》\n雪团云絮落仙踪，碧眼盈盈醉九重。\n静若琼瑶闲卧月，清姿一步一玲珑。'
+                }
+            ),
+            PregelTask(
+                id='a228a7bf-4c3b-2ad3-039f-12ac0107c87b',
+                name='node_joke',
+                path=('__pregel_pull', 'node_joke'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'joke': '一只布偶猫照镜子，惊呼：“我这么美，怎么还没当上国王？” 主人笑道：“因为你没有‘喵’民拥护。” 布偶猫委屈：“我有啊，铲屎官你不是天天跪着拥护我吗？”'
+                }
+            )
+        ),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={
+            'topic': '猫咪'
+        },
+        next=('node_change_topic',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-3bde-6373-8000-9750b4be0665'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-12T06:32:42.018069+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-3bdc-60a4-bfff-d4fdcf6e6a9e'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='e0034c08-dd19-0ae9-7059-f8414745d212',
+                name='node_change_topic',
+                path=('__pregel_pull', 'node_change_topic'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'topic': '猫咪: 布偶猫'
+                }
+            ),
+        ),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={},
+        next=('__start__',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f166288-3bdc-60a4-bfff-d4fdcf6e6a9e'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-12T06:32:42.017182+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='1a1ac312-152a-dcc3-2aa7-c2588f651448',
+                name='__start__',
+                path=('__pregel_pull', '__start__'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'topic': '猫咪'
+                }
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+##### 重放
+`get_state_history()` 返回的是历史检查点列表，并且默认按照时间倒序排列。
+
+`history_checkpoints` 结构如下：
+
+```python
+history_checkpoints[0] -> 最终完成后的检查点
+next=()
+history_checkpoints[1] -> node_output 执行前的检查点
+next=('node_output',)
+history_checkpoints[2] -> node_poem、node_joke 执行前的检查点
+next=('node_poem', 'node_joke')
+history_checkpoints[3] -> node_change_topic 执行前的检查点
+next=('node_change_topic',)
+history_checkpoints[4] -> __start__ 执行前的输入检查点
+next=('__start__',)
+```
+
+因此，如果希望从写诗写笑话开始重放，选择 `next == ('node_poem', 'node_joke')` 的检查点即可。
+
+示例如下
+
+```python
+with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
+    #5. 第一次使用PostgresSaver作为检查点 需要调用方法 setup()
+    #checkpointer.setup()
+    graph = builder.compile(checkpointer=checkpointer)
+
+    config = {
+        "configurable":{
+            "thread_id":"chapter03-08"
+        }
+    }
+    # 获取到检查点历史
+    history_checkpoints = list(graph.get_state_history(config=config))
+
+    new_checkpoint = None
+    #next = ('node_poem', 'node_joke')
+    for checkpoint in history_checkpoints:
+        if checkpoint.next == ('node_poem', 'node_joke'):
+            new_checkpoint = checkpoint
+            break
+
+    # 如果想要实现replay的效果 状态填写None  config填写为之前某一个检查点的config
+    res = graph.invoke(None,config=new_checkpoint.config)
+    print(res)
+```
+
+运行结果如下
+
+```python
+2026-07-07 18:31:32.019 | INFO     | __main__:node_joke:59 - node_joke正在执行
+2026-07-07 18:31:32.023 | INFO     | __main__:node_poem:50 - node_poem正在执行
+2026-07-07 18:31:38.158 | INFO     | __main__:node_output:69 - node_output正在执行
+{'final_output': '关于猫咪:狸花猫的七言绝句:《狸花猫》\n玄文斑驳隐花光，夜半巡檐气自昂。\n踏雪无痕轻似梦，一窗明月一炉香。\n\n注：我的创作思路是捕捉狸花猫的神秘与灵动。首句“玄文斑驳”描绘其毛发纹理，如暗夜中的花纹；次句“夜半巡檐”展现其夜行习性，气度不凡。后两句以“踏雪无痕”喻其轻盈，结句“明月炉香”营造温馨画面，暗合狸花猫守护家园的意象，使全诗动静相生，虚实相映。\n 笑话:# 狸花猫的烦恼\n\n有只狸花猫去宠物医院看病，医生问它：“哪里不舒服？”\n\n狸花猫叹了口气说：“医生，我总觉得自己不够‘花’。”\n\n医生疑惑：“你可是标准的狸花猫啊，条纹多漂亮！”\n\n狸花猫委屈地说：“可是隔壁那只三花猫，人家身上有黑、白、橘三种颜色，比我缤纷多了！我整天就这一身灰黑条纹，太单调了。”\n\n医生笑了：“那你想要怎么办？”\n\n狸花猫眼睛一亮：“医生，您能不能给我开点染色剂？我想在背上加几块橘色斑点，尾巴再来点白的，耳朵尖染成黑的…”\n\n医生打断它：“等等，那样你就变成‘四不像’了！”\n\n狸花猫思考了一会，突然骄傲地挺起胸膛：“你说得对！我这一身条纹可是老祖宗传下来的迷彩服，抓老鼠时特别管用！三花猫再好看，还得靠我帮忙抓家里的老鼠呢！”\n\n医生欣慰地说：“这就对了。”\n\n狸花猫走出诊室，正好遇到一只胖橘猫。胖橘猫嘲笑它：“哟，这不是那只会抓老鼠却不会卖萌的狸花猫吗？”\n\n狸花猫淡定地回了一句：“我会抓老鼠，你会什么？”\n\n胖橘猫想了想，尴尬地说：“我…我会吃。”\n\n狸花猫笑道：“那不就成了？你负责吃，我负责抓，咱们各有各的活法！”\n\n—— **适合自己的，才是最好的。** 🐱\n'}
+```
+
+本例中：
+
+1. `node_poem` 和 `node_joke` 被重新执行。
+2. `node_output` 被重新执行。
+
+由于没有执行change_topic,所以可以一直写同一只猫的内容
+
+
+
+
+
+
+
+
+
+#### Fork
+##### 用法说明
+`Fork` 依赖状态图的 `update_state()` 方法
+
+示例如下
+
+```python
+change_input_config = graph.update_state(
+    config=before_router_config.config,
+    values={"user_input": "帮我写一个关于布偶猫的笑话"},
+    as_node=START
+)
+```
+
+其中：
+
++ `config`：历史检查点的配置信息，通常包含 `thread_id`、`checkpoint_ns` 和 `checkpoint_id`。`LangGraph` 会据此检索历史检查点
++ `values`：要应用到该检查点上的状态更新
++ `as_node`：指定这次状态更新应当被视为哪个节点产生的输出。
+
+
+
+`LangGraph` 会按照该节点的写入逻辑，将 `values` 写入状态通道，并据此决定后续从哪些节点继续执行。
+
+**<font style="color:#DF2A3F;">基于分叉检查点运行时，并不是重新执行 </font>**`**<font style="color:#DF2A3F;">as_node</font>**`**<font style="color:#DF2A3F;"> 本身，而是从它的后继节点继续推进</font>**
+
+如 `START` 所属超步编号为 `0`，则恢复时从编号为 `1` 的超步开始运行。
+
+注意
+
+`update_state()` 不会修改原来的历史检查点，而是基于某个历史检查点创建一个新的检查点。这个新检查点相当于一条新的执行分支。
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 准备检查点历史
+###### 准备运行图并运行一次
+示例如下
+
+```python
+from typing import TypedDict, Annotated, Literal
+from langgraph.graph import StateGraph, START, END
+from langchain.messages import HumanMessage
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain_deepseek import ChatDeepSeek
+from loguru import logger
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+class OverAllState(TypedDict):
+    username: str
+    user_input: str
+    output: str
+
+
+class StructuredOutputState(TypedDict):
+    topic:Annotated[str,"主题"]
+    mode:Annotated[Literal["poem","joke"],"模式"]
+
+
+
+model_with_structure=model.with_structured_output(schema=StructuredOutputState)
+
+
+def router_node(state: OverAllState) -> StructuredOutputState:
+    logger.info("路由节点已执行")
+    user_input = state["user_input"]
+    res = model_with_structure.invoke(
+        [
+            HumanMessage(user_input)
+        ]
+    )
+    logger.info("路由结果-res: {}", res)
+
+    return res
+
+def router(state: StructuredOutputState) -> Literal["node_poem", "node_joke", "node_default"]:
+    logger.info("路由函数已执行")
+    if state["mode"] == "poem":
+        logger.info("路由至 node_poem 节点")
+        return "node_poem"
+    elif state["mode"] == "joke":
+        logger.info("路由至 node_joke 节点")
+        return "node_joke"
+
+    logger.info("路由至兜底节点")
+    return "node_default"
+
+def node_poem(state: StructuredOutputState) -> OverAllState:
+    logger.info(f"node_poem 已执行")
+    topic = state["topic"]
+    poem = model.invoke([HumanMessage(f"写一首关于 {topic} 的七言绝句，不要赏析，只给诗句即可")]).content
+
+    return {
+        "output": poem
+    }
+
+def node_joke(state: StructuredOutputState) -> OverAllState:
+    logger.info(f"node_joke 已执行")
+    topic = state["topic"]
+    joke = model.invoke([HumanMessage(f"写一个关于 {topic} 的笑话，尽可能简单，不超过一百字")]).content
+
+    return {
+        "output": joke
+    }
+
+def node_default(state: StructuredOutputState) -> OverAllState:
+    logger.info(f"node_default 已执行")
+
+    return {
+        "output": "无法处理的任务类型"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("router_node", router_node)
+builder.add_node("node_poem", node_poem)
+builder.add_node("node_joke", node_joke)
+builder.add_node("node_default", node_default)
+
+builder.add_edge(START, "router_node")
+builder.add_conditional_edges(
+    "router_node",
+    router,
+    path_map=["node_poem", "node_joke", "node_default"]
+)
+builder.add_edge("node_poem", END)
+builder.add_edge("node_joke", END)
+builder.add_edge("node_default", END)
+
+checkpointer = InMemorySaver()
+config = {"configurable": {"thread_id": "123"}}
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+res = graph.invoke({
+    "username": "小黄",
+    "user_input": "帮我写一首关于布偶猫的七言绝句"
+}, config=config)
+print(res)
+```
+
+执行逻辑如下：
+
+1. `router_node` 根据用户输入提取结构化结果，例如 `{"topic": "布偶猫", "mode": "poem"}`。
+2. `router` 根据 `mode` 决定后续分支。
+3. 如果 `mode == "poem"`，进入 `node_poem`。
+4. 如果 `mode == "joke"`，进入 `node_joke`。
+5. 如果无法识别，则进入 `node_default`。
+
+
+
+运行结果如下
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792144167235-9adf0dc2-623e-451a-8d4b-09aad126eaca.png)
+
+```python
+2026-06-11 14:26:48.353 | INFO     | __main__:router_node:31 - 路由节点已执行
+2026-06-11 14:26:49.618 | INFO     | __main__:router_node:38 - 路由结果-res: {'topic': '布偶猫', 'mode': 'poem'}
+2026-06-11 14:26:49.619 | INFO     | __main__:router:43 - 路由函数已执行
+2026-06-11 14:26:49.619 | INFO     | __main__:router:45 - 路由至 node_poem 节点
+2026-06-11 14:26:49.620 | INFO     | __main__:node_poem:55 - node_poem 已执行
+{
+    'username': '小黄', 
+    'user_input': '帮我写一首关于布偶猫的七言绝句', 
+    'output': '《布偶猫》\n蓝眼澄明玉作团，云踪雪影卧雕栏。\n无端一跃梅花落，犹带娇声唤月寒。'
+}
+```
+
+
+
+
+
+
+
+###### 获取历史检查点列表
+示例如下
+
+```python
+history_checkpoints = list(graph.get_state_history(config=config))
+print(history_checkpoints)
+```
+
+运行结果如下
+
+```python
+[
+    StateSnapshot(
+        values={
+            "username": "小黄",
+            "user_input": "帮我写一首关于布偶猫的七言绝句",
+            "output": (
+                "《布偶猫》\n"
+                "蓝眼澄明玉作团，云踪雪影卧雕栏。\n"
+                "无端一跃梅花落，犹带娇声唤月寒。"
+            ),
+            "topic": "布偶猫",
+            "mode": "poem",
+        },
+        next=(),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f1655e8-8784-65e9-8002-e21663d55c94",
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 2,
+            "parents": {},
+        },
+        created_at="2026-06-11T06:26:51.611071+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f1655e8-7488-66c4-8001-f46b7c2d9a4e",
+            }
+        },
+        tasks=(),
+        interrupts=(),
+    ),
+
+    StateSnapshot(
+        values={
+            "username": "小黄",
+            "user_input": "帮我写一首关于布偶猫的七言绝句",
+            "topic": "布偶猫",
+            "mode": "poem",
+        },
+        next=("node_poem",),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f1655e8-7488-66c4-8001-f46b7c2d9a4e",
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 1,
+            "parents": {},
+        },
+        created_at="2026-06-11T06:26:49.620436+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f1655e8-6871-6073-8000-ddcbe680da21",
+            }
+        },
+        tasks=(
+            PregelTask(
+                id="cb3a8901-3a87-d0b0-3bab-d1adda5563d8",
+                name="node_poem",
+                path=("__pregel_pull", "node_poem"),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "output": (
+                        "《布偶猫》\n"
+                        "蓝眼澄明玉作团，云踪雪影卧雕栏。\n"
+                        "无端一跃梅花落，犹带娇声唤月寒。"
+                    )
+                },
+            ),
+        ),
+        interrupts=(),
+    ),
+
+    StateSnapshot(
+        values={
+            "username": "小黄",
+            "user_input": "帮我写一首关于布偶猫的七言绝句",
+        },
+        next=("router_node",),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f1655e8-6871-6073-8000-ddcbe680da21",
+            }
+        },
+        metadata={
+            "source": "loop",
+            "step": 0,
+            "parents": {},
+        },
+        created_at="2026-06-11T06:26:48.352564+00:00",
+        parent_config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f1655e8-686b-66c7-bfff-24e0e8d44f4c",
+            }
+        },
+        tasks=(
+            PregelTask(
+                id="fb88436e-b163-6308-6341-7d8368e041f9",
+                name="router_node",
+                path=("__pregel_pull", "router_node"),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "topic": "布偶猫",
+                    "mode": "poem",
+                },
+            ),
+        ),
+        interrupts=(),
+    ),
+
+    StateSnapshot(
+        values={},
+        next=("__start__",),
+        config={
+            "configurable": {
+                "thread_id": "123",
+                "checkpoint_ns": "",
+                "checkpoint_id": "1f1655e8-686b-66c7-bfff-24e0e8d44f4c",
+            }
+        },
+        metadata={
+            "source": "input",
+            "step": -1,
+            "parents": {},
+        },
+        created_at="2026-06-11T06:26:48.350273+00:00",
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id="a1b5e5fb-ee60-fd7b-68bc-475fa9cb66e2",
+                name="__start__",
+                path=("__pregel_pull", "__start__"),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    "username": "小黄",
+                    "user_input": "帮我写一首关于布偶猫的七言绝句",
+                },
+            ),
+        ),
+        interrupts=(),
+    ),
+]
+```
+
+###### 获取 `router_node` 之前的检查点
+示例如下
+
+`router_node` 的上一个检查点的 `next` 字段为 `('router_node',)`，据此筛选检查点
+
+```python
+before_router_checkpoint = next(h for h in history_checkpoints if h.next == ('router_node',))
+before_router_checkpoint
+```
+
+运行结果如下
+
+```python
+StateSnapshot(
+    values={
+        "username": "小黄",
+        "user_input": "帮我写一首关于布偶猫的七言绝句",
+    },
+    next=("router_node",),
+    config={
+        "configurable": {
+            "thread_id": "123",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f1655e8-6871-6073-8000-ddcbe680da21",
+        }
+    },
+    metadata={
+        "source": "loop",
+        "step": 0,
+        "parents": {},
+    },
+    created_at="2026-06-11T06:26:48.352564+00:00",
+    parent_config={
+        "configurable": {
+            "thread_id": "123",
+            "checkpoint_ns": "",
+            "checkpoint_id": "1f1655e8-686b-66c7-bfff-24e0e8d44f4c",
+        }
+    },
+    tasks=(
+        PregelTask(
+            id="fb88436e-b163-6308-6341-7d8368e041f9",
+            name="router_node",
+            path=("__pregel_pull", "router_node"),
+            error=None,
+            interrupts=(),
+            state=None,
+            result={
+                "topic": "布偶猫",
+                "mode": "poem",
+            },
+        ),
+    ),
+    interrupts=(),
+)
+```
+
+该检查点表示：
+
+用户输入已经写入状态，下一步将要执行 `router_node`。
+
+从这个检查点分叉，本文采用两种方案（还可以有别的方案）：
+
+1. 修改输入，让 `router_node` 重新执行。见 `6.5.4.2.3.` 节
+2. 直接伪造 `router_node` 的输出，从而跳过 `router_node`。见 `6.5.4.2.4.` 节
+
+
+
+
+
+
+
+##### 只改状态
+###### 更新配置
+示例如下
+
+```python
+change_input_config = graph.update_state(
+    config=before_router_checkpoint.config,
+    values={"user_input": "帮我写一个关于布偶猫的笑话"},
+    as_node=START
+)
+change_input_config
+```
+
+这里把 `as_node` 设置为 `START`，表示：
+
+把这次状态更新视为 `START` 的输出。
+
+因此，后续运行时会从 `START` 的后继节点继续推进，也就是重新执行 `router_node`。
+
+上述代码运行结果如下
+
+```python
+{
+    "configurable": {
+        "thread_id": "123",
+        "checkpoint_ns": "",
+        "checkpoint_id": "1f1655f8-86fb-6dd1-8001-9e7808dfaf1a",
+    }
+}
+```
+
+执行 `update_state()` 后会返回一个新的配置，其中包含新的 `checkpoint_id`。这个新的 `checkpoint_id` 不同于原有历史检查点，说明 `update_state()` 创建了一个新的检查点分支。
+
+需要注意：
+
+`update_state()` 返回的是新检查点的配置，不是新状态本身。
+
+新的状态已经被记录在检查点后端，运行时生效。可以执行以下代码查看新建的检查点快照：
+
+graph.get_state(change_input_config)
+
+此处不再演示。
+
+
+
+
+
+
+
+
+
+###### 重新运行
+示例如下
+
+```python
+graph.invoke(None, change_input_config)
+```
+
+
+
+运行结果如下
+
+```python
+2026-06-11 14:13:44.267 | INFO     | __main__:router_node:31 - 路由节点已执行
+2026-06-11 14:13:45.222 | INFO     | __main__:router_node:38 - 路由结果-res: {'topic': '布偶猫', 'mode': 'joke'}
+2026-06-11 14:13:45.223 | INFO     | __main__:router:43 - 路由函数已执行
+2026-06-11 14:13:45.223 | INFO     | __main__:router:48 - 路由至 node_joke 节点
+2026-06-11 14:13:45.225 | INFO     | __main__:node_joke:64 - node_joke 已执行
+{
+    "username": "小黄",
+    "user_input": "帮我写一个关于布偶猫的笑话",
+    "output": (
+        "一只布偶猫照镜子，问：“魔镜魔镜，谁是世界上最美的猫？”  \n"
+        "镜子没说话。  \n"
+        "猫急了：“快说呀！不然我卖萌把你甜碎。”  \n"
+        "镜子终于开口：“……我死机了，重启中。”"
+    ),
+}
+```
+
+由运行结果可知：
+
+1. `user_input` 已经从“帮我写一首关于布偶猫的七言绝句”变成“帮我写一个关于布偶猫的笑话”。而 `username` 没有被更新，仍然保持原值 `"小黄"`。说明 `values` 是 状态更新 而非完整的 状态替换。
+2. `router_node` 开始的节点全部重新运行。由于新的输入被识别为笑话任务，因此后续进入 `node_joke`。
+
+
+
+
+
+
+
+
+
+##### 改状态且跳过某些节点
+###### 更新配置
+如果不希望重新执行 `router_node`，而是直接指定 `router_node` 的输出，可以把 `as_node` 设置为 `"router_node"`。
+
+示例如下
+
+```python
+skip_router_config = graph.update_state(
+    config=before_router_checkpoint.config,
+    values={"topic": "狸花猫", "mode": "笑话"},
+    as_node="router_node"
+)
+skip_router_config
+```
+
+1. 此处把 `{"topic": "狸花猫", "mode": "笑话"}` 当作 `router_node` 的输出。
+2. 因此，后续运行时，`router_node` 本身不会被重新执行，从它的后继节点继续推进。
+3. 由于 `router_node` 挂载了条件边：
+
+```python
+builder.add_conditional_edges(
+    "router_node",
+    router,
+    path_map=["node_poem", "node_joke", "node_default"]
+)
+```
+
+所以当 `update_state()` 把 `values` 视为 `router_node` 的输出时，条件路由函数 `router` 也会根据这次更新后的状态计算后续分支。
+
+这里把 `mode` 设置为 `"笑话"`，`router` 函数命中兜底分支 `node_default`。
+
+运行结果如下
+
+```python
+2026-06-11 14:14:02.223 | INFO     | __main__:router:43 - 路由函数已执行
+2026-06-11 14:14:02.223 | INFO     | __main__:router:51 - 路由至兜底节点
+{
+    "configurable": {
+        "thread_id": "123",
+        "checkpoint_ns": "",
+        "checkpoint_id": "1f1655cb-de15-6c4e-8001-ca03b011e993",
+    }
+}
+```
+
+可以看到：
+
+1. `update_state()` 创建了一个新的检查点，返回的 `skip_router_config` 指向这个新检查点。
+2. 日志中出现了：
+
+```python
+路由函数已执行
+路由至兜底节点
+```
+
+这说明 `router_node` 的节点函数没有被重新执行，但与 `router_node` 条件边相关的路由函数被执行了。
+
+3. `update_state()` 底层会根据 `as_node` 找到对应图节点的 `writers`。
+
+对于 `router_node`，`writers` 包括状态写入器和条件边对应的路由逻辑。
+
+4. 执行 `update_state()` 时，传入的 `values` 会被当作 `router_node` 的输出，交给该节点的 `writers` 处理。
+
+状态写入器会把 `values` 转换为对状态 `Channel` 的写入；条件边对应的路由逻辑会根据当前状态计算后继分支，并生成类似 `branch:to:node_default` 这样的触发通道写入。
+
+随后，`update_state()` 会把这些写入应用到检查点中，并保存一个新的检查点。
+
+因此，状态更新和路由结果已经记录在 `skip_router_config` 指向的新检查点中。后续再调用：
+
+5. graph.invoke(None, skip_router_config)
+
+时，运行图会基于这个新检查点继续执行，被触发的后继节点也会继续运行。
+
+综上，`graph.update_state()` 的作用可以理解为：
+
+不执行指定节点的节点函数本身，而是把传入的 `values` 当作该节点已经产生的输出，执行该节点对应的 `writers`，应用状态写入和可能存在的路由写入，然后生成一个新的检查点。
+
+因此，在本例中可以看到：`router_node` 的节点逻辑没有被执行，但它挂载的路由函数被执行，状态更新也已经生效。
+
+
+
+
+
+
+
+
+
+###### 重新运行
+示例如下
+
+```python
+graph.invoke(None, skip_router_config)
+```
+
+
+
+运行结果如下
+
+```python
+2026-06-11 16:49:42.501 | INFO     | __main__:node_default:73 - node_default 已执行
+{
+    "username": "小黄",
+    "user_input": "帮我写一首关于布偶猫的七言绝句",
+    "output": "无法处理的任务类型"
+}
+```
+
+和分析一致，触发了兜底分支。
+
+这种方式常用于测试场景。例如：
+
++ 跳过不稳定的大模型路由节点。
++ 手动指定路由结果，测试不同分支。
++ 修改历史状态，验证后续节点能否正常运行。
++ 基于同一个历史检查点探索多条可能的执行路径。
+
+不过在正式业务流程中，应谨慎使用这种方式。因为它是在伪造某个节点的输出，如果伪造的状态不符合后续节点的预期，可能导致逻辑混乱，甚至抛出运行时异常。
+
+
+
+
+
+
+
+
+
+
+
+# <font style="color:rgb(51, 51, 51);">图记忆管理</font>
+`Agent` 的三种记忆：
+
++ **<font style="color:#DF2A3F;">短期记忆：通过运行时状态 </font>**`**<font style="color:#DF2A3F;">State</font>**`**<font style="color:#DF2A3F;"> 访问，并由检查点存储器 </font>**`**<font style="color:#DF2A3F;">Checkpointer</font>**`**<font style="color:#DF2A3F;"> 保存</font>**，它按照 `thread_id` 组织，可以实现线程内的记忆共享。
++ **<font style="color:#DF2A3F;">长期记忆：通过长期记忆存储器 </font>**`**<font style="color:#DF2A3F;">Store</font>**`**<font style="color:#DF2A3F;"> 访问和存储。</font>**数据通常按照元组类型的命名空间组织，以键值对的形式存储，提供跨会话的记忆共享。
+    - 可以按照命名空间+可选的过滤条件精确检索
+    - 也可以通过语义模糊匹配。
++ **<font style="color:#DF2A3F;">运行时上下文：通过上下文对象 </font>**`**<font style="color:#DF2A3F;">Context</font>**`**<font style="color:#DF2A3F;"> 访问</font>**，只对本次调用生效，不会被持久化。
+
+它更适合传递本次运行所需的外部依赖或调用参数，如用户名、模型配置、数据库连接、权限信息等。
+
+我们不止一次提到，`**<font style="color:#DF2A3F;">Agent</font>**`**<font style="color:#DF2A3F;"> 底层就是一个简易的 </font>**`**<font style="color:#DF2A3F;">ReAct</font>**`**<font style="color:#DF2A3F;"> 架构的 </font>**`**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 状态图，所以 </font>**`**<font style="color:#DF2A3F;">Agent</font>**`**<font style="color:#DF2A3F;"> 的记忆机制本质上就是 </font>**`**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 状态图的记忆机制。</font>**
+
+生产环境建议用基于持久化数据库的记忆存储器，如 `PostgresSaver` 和 `PostgresStore`。
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+## 短期记忆
+只要编译图时启用了 `Checkpointer`，并且调用图时复用同一个 `thread_id`，`LangGraph` 就可以在多次调用之间共享同一会话线程下的状态。
+
+我们一直在用，不在赘述。
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+## 长期记忆
+长期记忆存储器在编译图时通过 `store` 参数传递，图节点中可以通过 `Runtime` 对象访问。
+
+本节会在一个案例中同时用到短期记忆和长期记忆，两者均使用 `PostgreSQL` 作为持久化后端——短期记忆通过 `PostgresSaver`，长期记忆通过 `PostgresStore`，数据不会随进程退出而丢失。 
+
+
+
+### 准备长期记忆
+示例如下
+
+```python
+from typing import Final, Tuple
+from langgraph.store.postgres import PostgresStore
+
+# 与 6.2.4 节使用同一数据库
+DB_URL = "postgresql://langgraph_user:123456@localhost:5432/langgraph_db?sslmode=disable"
+with PostgresStore.from_conn_string(DB_URL) as store:
+    # setup() 创建长期记忆所需的表结构，幂等操作
+    store.setup()
+
+    # 命名空间 - 层级结构：("users", "用户名")
+    # Final 的作用是告诉静态类型检查器，该变量不应该被重新赋值，但 python 运行时不会阻止重新赋值
+    USERS_NS: Final[Tuple[str]] = ("users", )
+    PREFERENCES_KEY: Final[str] = "preferences"
+
+    # 三层: (领域, 用户实体)
+    # 每个 key 存储该用户的不同类型数据
+    namespace1 = (*USERS_NS, "Alice")
+    value1 = {
+        "course": "计算机组成原理",
+        "sports": "跑步",
+        "food": "紫光园奶皮子酸奶"
+    }
+
+    namespace2 = (*USERS_NS, "Bob")
+    value2 = {
+        "course": "数字电路与模拟电路",
+        "sports": "跑步",
+        "food": "奶皮子糖葫芦"
+    }
+
+    namespace3 = (*USERS_NS, "Black")
+    value3 = {
+        "course": "数字电路与模拟电路",
+        "sports": "羽毛球",
+        "food": "紫光园奶皮子酸奶"
+    }
+
+    store.put(namespace1, PREFERENCES_KEY, value1)
+    store.put(namespace2, PREFERENCES_KEY, value2)
+    store.put(namespace3, PREFERENCES_KEY, value3)
+
+    for item in store.search(USERS_NS):
+        print(item)
+```
+
+运行结果如下
+
+```python
+Item(namespace=['users', 'Alice'], key='preferences', value={'course': '计算机组成原理', 'sports': '跑步', 'food': '紫光园奶皮子酸奶'}, created_at='2026-06-12T09:54:50.593300+00:00', updated_at='2026-06-12T09:54:50.593303+00:00', score=None)
+Item(namespace=['users', 'Bob'], key='preferences', value={'course': '数字电路与模拟电路', 'sports': '跑步', 'food': '奶皮子糖葫芦'}, created_at='2026-06-12T09:54:50.593329+00:00', updated_at='2026-06-12T09:54:50.593329+00:00', score=None)
+Item(namespace=['users', 'Black'], key='preferences', value={'course': '数字电路与模拟电路', 'sports': '羽毛球', 'food': '紫光园奶皮子酸奶'}, created_at='2026-06-12T09:54:50.593348+00:00', updated_at='2026-06-12T09:54:50.593348+00:00', score=None)
+```
+
+这里使用 `USERS_NS` 作为顶层命名空间，`store.search(USERS_NS)` 会查询所有以 `("users",)` 开头的记忆数据。返回的每条数据都是一个 `Item` 实例。
+
+需要注意：
+
+1. `namespace` 使用元组是硬性约束，天然表达层级结构。本例使用两层命名空间 `("users", "Alice")`，清晰区分了领域（`users`）和实体（用户名），而具体存储什么类型的数据则由 `key` 参数表达（如 `"preferences"`）。
+2. `(*USERS_NS, "Alice")` 的写法表示对已有元组进行解包，再拼接新的命名空间片段。
+3. `PostgresStore` 将长期记忆持久化到 `PostgreSQL` 中，程序重启后数据不会丢失，适合生产环境。本节使用和 6.2.4节、6.5.4.1节 相同的数据库实例。
+4. 如果希望支持语义检索，需要在 `Store` 中配置索引和 `embedding` 函数。未配置索引时，`search()` 只能按照命名空间和过滤条件检索。
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+### 访问长期记忆
+长期记忆存储器可以通过节点函数中的 `runtime.store` 访问。
+
+示例如下
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.postgres import PostgresSaver
+from langgraph.store.postgres import PostgresStore
+from langgraph.graph.message import MessagesState
+from langgraph.runtime import Runtime
+from langchain.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
+from langchain_deepseek import ChatDeepSeek
+
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+class OverAllState(MessagesState):
+    username: str
+    user_input: str
+    output: str
+    preferences: dict[str, str] # 用户偏好
+
+def check_preferences_node(state: OverAllState, runtime: Runtime) -> OverAllState:
+    # 从短期记忆中获取用户名
+    username = state["username"]
+    # 获取长期记忆存储器 store
+    store = runtime.store
+
+    # 根据用户信息拼接命名空间，查询用户偏好
+    namespace = (*USERS_NS, username)
+    key = PREFERENCES_KEY
+    item = store.get(namespace, key)
+
+    if not item:
+        logger.warning("长期记忆中没有 {} 的偏好数据", username)
+        return {}
+
+    logger.info("长期记忆中保存的用户偏好: {}", item.value)
+    return {
+        "preferences": item.value
+    }
+
+# 路由函数，如果状态中没有用户偏好，则从长期记忆中查询，否则直接执行模型节点
+def router(state: OverAllState) -> Literal["check_preferences_node", "llm_node"]:
+    if not state.get("preferences"):
+        logger.info("需要从长期记忆中查询用户偏好")
+        return "check_preferences_node"
+    logger.info("用户偏好已存在，不必查询")
+    return "llm_node"
+
+def llm_node(state: OverAllState) -> OverAllState:
+    # 长期记忆中未必有用户偏好
+    preferences = state.get("preferences", {})
+    user_input = state["user_input"]
+    human_prompt = (f"这是用户的偏好: \n{preferences}\n"
+              f"这是用户的需求: \n{user_input}\n")
+    system_prompt = "请根据用户偏好解决用户需求"
+
+    # 获取历史消息列表，如果历史为空则初始化系统提示词
+    messages: list[SystemMessage | HumanMessage | AIMessage | ToolMessage] = [
+        SystemMessage(content=system_prompt)
+    ] if not state.get("messages", []) else state["messages"]
+
+    model_response = model.invoke(messages + [HumanMessage(content=human_prompt)])
+    output = model_response.content
+
+    return {
+        "messages": messages + [HumanMessage(content=human_prompt), model_response],
+        "output": output
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("check_preferences_node", check_preferences_node)
+builder.add_node("llm_node", llm_node)
+builder.add_conditional_edges(START, router, path_map=["check_preferences_node", "llm_node"])
+builder.add_edge("check_preferences_node", "llm_node")
+builder.add_edge("llm_node", END)
+
+# DB_URL 与 6.2.4 节一致
+DB_URL = "postgresql://langgraph_user:123456@localhost:5432/langgraph_db?sslmode=disable"
+# 编译时传递短期记忆和长期记忆存储器（均使用 PostgreSQL）
+with PostgresSaver.from_conn_string(DB_URL) as checkpointer, \
+     PostgresStore.from_conn_string(DB_URL) as store:
+    checkpointer.setup()
+    graph = builder.compile(checkpointer=checkpointer, store=store)
+    from IPython.display import display
+    display(graph)
+
+    config = {"configurable": {"thread_id": "345"}}
+    res = graph.invoke({"username": "Alice", "user_input": "我有点无聊，和我聊聊天吧"}, config=config)
+
+    print('=' * 30, '->  <-', '=' * 30)
+    print(res)
+
+    # 第二次调用：复用同一个 thread_id，观察短期记忆缓存效果
+    new_res = graph.invoke({"user_input": "推荐一下酸奶"}, config=config)
+    new_messages = new_res.pop("messages")
+    print('=' * 30, '->  <-', '=' * 30)
+    print(new_res)
+```
+
+运行结果如下
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792144637253-33f08534-2ab4-4bec-91b3-a60b82bcdbf6.png)
+
+```python
+2026-06-12 18:53:39.351 | INFO     | __main__:router:51 - 需要从长期记忆中查询用户偏好
+2026-06-12 18:53:39.356 | INFO     | __main__:check_preferences_node:43 - 长期记忆中保存的用户偏好: {'course': '计算机组成原理', 'sports': '跑步', 'food': '紫光园奶皮子酸奶'}
+============================== -> 不包含消息列表的运行结果 <- ==============================
+{
+    'username': 'Alice',
+    'user_input': '我有点无聊，和我聊聊天吧', 
+    'output': '哈哈，好啊！正好你学了《计算机组成原理》，我有个脑洞问题想请教一下：如果让你把“跑步的节奏感”比喻成计算机里的一个部件（比如CPU、内存、流水线），你会怎么对应呢？😄 顺便，我推荐你边慢跑边思考这个问题，跑完再来份紫光园奶皮子酸奶犒劳自己，简直完美！', 
+    'preferences': {
+        'course': '计算机组成原理', 
+        'sports': '跑步', 
+        'food': '紫光园奶皮子酸奶'
+    }
+}
+============================== -> 消息列表 <- ==============================
+================================ System Message ================================
+
+请根据用户偏好解决用户需求
+================================ Human Message =================================
+
+这是用户的偏好: 
+{
+    'course': '计算机组成原理', 
+    'sports': '跑步', 
+    'food': '紫光园奶皮子酸奶'
+}
+这是用户的需求: 
+我有点无聊，和我聊聊天吧
+
+================================== Ai Message ==================================
+
+哈哈，好啊！正好你学了《计算机组成原理》，我有个脑洞问题想请教一下：如果让你把“跑步的节奏感”比喻成计算机里的一个部件（比如CPU、内存、流水线），你会怎么对应呢？😄 顺便，我推荐你边慢跑边思考这个问题，跑完再来份紫光园奶皮子酸奶犒劳自己，简直完美！
+
+```
+
+运行流程如下：
+
+1. 第一次调用时，状态中还没有 `preferences`。
+2. 路由函数会路由至 `check_preferences_node`。
+3. `check_preferences_node` 从长期记忆存储器中读取用户偏好。
+4. 读取到的偏好会写入图状态，成为当前会话线程中的短期记忆。
+5. 后续节点可以直接从状态中读取 `preferences`。
+
+
+
+
+
+
+
+
+
+### 再次调用
+在同一个 `with` 块中再次调用计算图，并复用同一个 `thread_id`，可以看到短期记忆的效果。该代码已包含在上节的 `with` 代码块末尾。
+
+运行结果如下
+
+```python
+2026-06-12 18:54:12.446 | INFO     | __main__:router:53 - 用户偏好已存在，不必查询
+    ============================== -> 不包含消息列表的运行结果 <- ==============================
+    {
+        'username': 'Alice', 
+        'user_input': '推荐一下酸奶', 
+        'output': '哈哈，看来你对紫光园奶皮子酸奶是真爱啊！不过既然你点名要推荐酸奶，我得先问一句——你是想换换口味试试别的，还是想让我帮你吹爆紫光园这款？（毕竟按你的偏好，它简直是“计算机组成原理”级别的完美搭配：**奶皮子像CPU缓存一样浓缩精华，酸甜度像流水线调度一样平衡，吃完跑步时还能提供“数据预取”般的能量**😂）\n\n如果是**忠于原味**，那必须再安利一次紫光园：浓稠拉丝、奶香爆炸，跑完步来一罐，简直像给肌肉做了个“中断响应”！如果是**想尝鲜**，我推荐：\n1. **兰格格天边的额吉**——蒙古风味，酸度低、像RISC精简指令集一样纯净；\n2. **简爱父爱配方**——无添加糖，适合跑步后控糖，像低功耗处理器；\n3. **卡士原态酪乳**——口感像固态硬盘般扎实绵密，适合当夜宵。\n\n不过……你确定要换掉紫光园吗？🤔', 
+        'preferences': {
+            'course': '计算机组成原理', 
+            'sports': '跑步', 
+            'food': '紫光园奶皮子酸奶'
+        }
+    }
+    ============================== -> 消息列表 <- ==============================
+    ================================ System Message ================================
+
+    请根据用户偏好解决用户需求
+    ================================ Human Message =================================
+
+    这是用户的偏好: 
+    {
+        'course': '计算机组成原理', 
+        'sports': '跑步', 
+        'food': '紫光园奶皮子酸奶'
+    }
+    这是用户的需求: 
+    我有点无聊，和我聊聊天吧
+
+    ================================== Ai Message ==================================
+
+    哈哈，好啊！正好你学了《计算机组成原理》，我有个脑洞问题想请教一下：如果让你把“跑步的节奏感”比喻成计算机里的一个部件（比如CPU、内存、流水线），你会怎么对应呢？😄 顺便，我推荐你边慢跑边思考这个问题，跑完再来份紫光园奶皮子酸奶犒劳自己，简直完美！
+    ================================ Human Message =================================
+
+    这是用户的偏好: 
+    {
+        'course': '计算机组成原理', 
+        'sports': '跑步', 
+        'food': '紫光园奶皮子酸奶'
+    }
+    这是用户的需求: 
+    推荐一下酸奶
+
+    ================================== Ai Message ==================================
+
+    哈哈，看来你对紫光园奶皮子酸奶是真爱啊！不过既然你点名要推荐酸奶，我得先问一句——你是想换换口味试试别的，还是想让我帮你吹爆紫光园这款？（毕竟按你的偏好，它简直是“计算机组成原理”级别的完美搭配：**奶皮子像CPU缓存一样浓缩精华，酸甜度像流水线调度一样平衡，吃完跑步时还能提供“数据预取”般的能量**😂）
+
+    如果是**忠于原味**，那必须再安利一次紫光园：浓稠拉丝、奶香爆炸，跑完步来一罐，简直像给肌肉做了个“中断响应”！如果是**想尝鲜**，我推荐：
+        1. **兰格格天边的额吉**——蒙古风味，酸度低、像RISC精简指令集一样纯净；
+            2. **简爱父爱配方**——无添加糖，适合跑步后控糖，像低功耗处理器；
+                3. **卡士原态酪乳**——口感像固态硬盘般扎实绵密，适合当夜宵。
+
+    不过……你确定要换掉紫光园吗？🤔
+```
+
+第二次运行前，状态中已经包含：
+
++ `username`
++ `preferences`
++ `messages`
++ 上一次调用生成的 `output`
+
+因此路由函数会直接判断：
+
+logger.info("用户偏好已存在，不必查询")
+
+因此，本次调用不会重新访问长期记忆存储器，而是直接复用当前会话状态中缓存的用户偏好。
+
+这正是短期记忆和长期记忆协作的典型模式：
+
+第一次调用从长期记忆中读取数据，并写入短期记忆；后续同一会话线程内优先复用短期记忆，避免重复查询长期记忆。
+
+<font style="color:rgb(119, 119, 119);"></font>
+
+
+
+## 运行时上下文
+在某些场景下，我**<font style="color:#DF2A3F;background-color:#FBDE28;">们希望在调用图时传入一些仅对当次调用有效的信息</font>**，比如当前登录用户、请求来源、调用方标识等。这些信息不适合放入图状态（图状态会被持久化并在同一会话中跨调用共享），而应该通过运行时上下文（Runtime Context）传递。
+
+**<font style="color:#DF2A3F;">运行时上下文的特点是：</font>**
+
+**<font style="color:#DF2A3F;">仅对本次调用生效，不会被持久化，也不会在同一会话的下一次调用中自动恢复。</font>**
+
+运行时上下文的使用方式：
+
+1. **<font style="color:#DF2A3F;">初始化状态图时，使用 </font>**`**<font style="color:#DF2A3F;">context_schema</font>**`**<font style="color:#DF2A3F;"> 定义上下文类型。</font>**
+2. **<font style="color:#DF2A3F;">调用图时通过 </font>**`**<font style="color:#DF2A3F;">context</font>**`**<font style="color:#DF2A3F;"> 参数传入上下文对象。</font>**
+3. **<font style="color:#DF2A3F;">节点或路由函数中通过 </font>**`**<font style="color:#DF2A3F;">runtime.context</font>**`**<font style="color:#DF2A3F;"> 访问上下文。</font>**
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+### <font style="color:rgb(51, 51, 51);">访问运行时上下文</font>
+<font style="color:rgb(51, 51, 51);">下面通过一个简单的客服机器人案例演示运行时上下文的用法。</font>
+
+**<font style="color:rgb(51, 51, 51);">场景</font>**<font style="color:rgb(51, 51, 51);">：不同的用户调用同一个机器人，机器人根据运行时上下文中的</font>**<font style="color:rgb(51, 51, 51);">用户名</font>**<font style="color:rgb(51, 51, 51);">和</font>**<font style="color:rgb(51, 51, 51);">会员等级</font>**<font style="color:rgb(51, 51, 51);">，生成不同风格的回复。</font>
+
+图结构：
+
+```python
+START -> llm_node -> END
+```
+
+
+
+示例如下
+
+```python
+from dataclasses import dataclass
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import MessagesState
+from langgraph.runtime import Runtime
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 1. 定义运行时上下文类型
+@dataclass
+class UserContext:
+    username: str
+    membership_level: str  # "普通用户" / "VIP"
+
+# 2. 定义图状态
+class OverAllState(MessagesState):
+    user_input: str
+    output: str
+
+# 3. 定义节点：通过 runtime.context 访问运行时上下文
+def llm_node(state: OverAllState, runtime: Runtime[UserContext]) -> OverAllState:
+    runtime_context = runtime.context
+
+    if runtime_context:
+        username = runtime_context.username
+        level = runtime_context.membership_level
+        logger.info(f"当前用户: {username}, 会员等级: {level}")
+
+        if level == "VIP":
+            system_prompt = f"你是高级客服助理。当前VIP用户是{username}，请使用尊称'您'，语气热情周到，回复末尾加上'🎖️VIP专属服务'。"
+        else:
+            system_prompt = f"你是普通客服助理。当前用户是{username}，请友好简洁地回复。"
+    else:
+        logger.warning("运行时上下文为空，使用默认风格")
+        system_prompt = "你是客服助理，请友好简洁地回复。"
+
+    user_input = state["user_input"]
+    messages = state.get("messages", [])
+    response = model.invoke(
+        [HumanMessage(content=system_prompt)] +
+        messages +
+        [HumanMessage(content=user_input)]
+    )
+
+    return {
+        "messages": [response],
+        "output": response.content
+    }
+
+# 4. 构建图，传入 context_schema
+builder = StateGraph(state_schema=OverAllState, context_schema=UserContext)
+builder.add_node("llm_node", llm_node)
+builder.add_edge(START, "llm_node")
+builder.add_edge("llm_node", END)
+
+graph = builder.compile()
+
+# === 第一次调用：传入运行时上下文（VIP用户） ===
+print("=" * 30, "第一次调用：VIP用户", "=" * 30)
+config = {"configurable": {"thread_id": "demo-7.3"}}
+res = graph.invoke(
+    {"user_input": "你好，帮我查一下最近有什么优惠活动"},
+    config=config,
+    context=UserContext(username="Alice", membership_level="VIP")
+)
+
+print(f"output: {res['output']}")
+print()
+
+# === 第二次调用：不传运行时上下文 ===
+print("=" * 30, "第二次调用：不传上下文", "=" * 30)
+res2 = graph.invoke(
+    {"user_input": "再帮我看看有没有新品"},
+    config=config
+)
+
+print(f"output: {res2['output']}")
+
+from IPython.display import display
+display(graph)
+```
+
+运行结果如下
+
+```python
+2026-07-09 17:40:27.208 | INFO     | __main__:llm_node:39 - 当前用户: Alice, 会员等级: VIP
+    ============================== 第一次调用：VIP用户 ==============================
+    2026-07-09 17:40:29.116 | WARNING  | __main__:llm_node:46 - 运行时上下文为空，使用默认风格
+        output: 尊敬的Alice您好！非常感谢您的咨询🎉 我们近期为VIP用户准备了多项专属优惠活动，包括但不限于：1）满额立减（消费满888元立减88元）；2）积分翻倍（指定商品享3倍积分）；3）限时闪购（每日10:00-12:00精选好物低至5折）。如需了解具体参与商品或为您定制个性化推荐，请随时告知，我将全力为您服务！🎖️VIP专属服务
+
+    ============================== 第二次调用：不传上下文 ==============================
+    output: 您好！目前新品信息尚未更新，建议您关注官方渠道获取最新动态。如有其他问题，欢迎随时咨询，我会尽力为您解答！😊
+```
+
+分析
+
+1. 第一次调用传入了 `context=UserContext(username=”Alice”, membership_level=”VIP”)`，节点通过 `runtime.context` 读取到用户名和会员等级，生成了VIP风格的回复，末尾带上了 `🎖️VIP专属服务` 标识。
+2. 第二次调用使用了相同的 `thread_id`，但没有传入 `context`。此时 `runtime.context` 为 `None`，节点走入了默认风格分支，回复中不再有VIP标识。
+
+这个对比可以清晰地看到：
+
+运行时上下文仅对当次调用生效，不会被持久化。即使使用相同的 `thread_id`，下一次调用也不会自动继承上一次的上下文。
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+### 小结
+运行时上下文适合传递以下信息：
+
+| **<font style="color:#DF2A3F;">适合放入运行时上下文</font>** | 不适合（应放入图状态） |
+| --- | --- |
+| **<font style="color:#DF2A3F;">当前登录用户信息</font>** | 需要在多轮对话间共享的数据 |
+| **<font style="color:#DF2A3F;">请求来源（Web / API / 小程序）</font>** | 需要在检查点中恢复的执行进度 |
+| **<font style="color:#DF2A3F;">调用方标识、Trace ID</font>** | 需要跨调用持久化的业务数据 |
+| **<font style="color:#DF2A3F;">本次调用的功能开关</font>** | 节点间需要传递的计算结果 |
+
+
+简单来说：
+
+> **<font style="color:#DF2A3F;">跨调用共享、需要持久化的数据 → 放入 State；仅当次调用有效的信息 → 放入 Runtime Context。</font>**
+>
+
+## Node总结：LangGraph的节点
+### 节点的本质
+从用户视角看，`LangGraph` 的节点通常是一个可调用对象，最常见的是同步或异步 `Python` 函数：
+
+```python
+def sync_node(state: State) -> State:
+    ...
+
+async def async_node(state: State) -> State:
+    ...
+```
+
+除此之外，节点也可以是符合要求的其他可调用对象或 `**<font style="color:#DF2A3F;">Runnable</font>**`**<font style="color:#DF2A3F;"> 实例。</font>**
+
+从源码实现角度看，节点最终会被转换或包装为可运行对象，**<font style="color:#DF2A3F;">并作为 </font>**`**<font style="color:#DF2A3F;">PregelNode.bound</font>**`**<font style="color:#DF2A3F;"> 保存</font>**
+
+
+
+
+
+### 节点函数的完整形态
+状态图节点的第一个位置参数用于接收图状态。
+
+此外，`LangGraph` 还可以在运行时注入运行时配置、运行时对象和流式写入器等参数。
+
+普通图节点通常使用以下四个参数：
+
++ `**<font style="color:#DF2A3F;">state</font>**`**<font style="color:#DF2A3F;">：输入节点的图状态。</font>**`**<font style="color:#DF2A3F;">state</font>**`**<font style="color:#DF2A3F;"> 是位置传参，因此参数名称不重要，但通常约定命名为 </font>**`**<font style="color:#DF2A3F;">state</font>**`
++ `**<font style="color:#DF2A3F;">config</font>**`**<font style="color:#DF2A3F;">：状态图的运行时配置，它是一个 </font>**`**<font style="color:#DF2A3F;">RunnableConfig</font>**`**<font style="color:#DF2A3F;"> 实例，底层运行时在节点函数执行前通过关键字传参动态注入。</font>**
+
+可以通过 `config`**<font style="color:#DF2A3F;"> 访问当前线程的 </font>**`**<font style="color:#DF2A3F;">thread_id</font>**`**<font style="color:#DF2A3F;">、超步序号、递归限制等配置信息。</font>**如下
+
+```python
+config["configurable"]["thread_id"] 
+config["recursion_limit"]
+config["metadata"]
+```
+
++ `runtime`：状态图的运行时对象，可以通过它访问运行时上下文、长期记忆存储器等信息。底层运行时在节点函数执行前通过关键字传参动态注入。
++ `writer`：流式写入器，**<font style="color:#DF2A3F;">通常用于自定义流式输出</font>**。详见流处理章节。
+
+
+
+
+
+典型写法如下： 
+
+```python
+def node(state: State, config: RunnableConfig, runtime: Runtime[Context]) -> State:
+    ...
+```
+
++ 编译图时传入 `checkpointer`，**<font style="color:#DF2A3F;">并在调用时传入 </font>**`**<font style="color:#DF2A3F;">config</font>**`，可以在节点中通过 `config` 间接访问当前调用的配置信息，如 `thread_id`。
++ 编译图时传入 `store` 后，**<font style="color:#DF2A3F;">可以在节点中通过 </font>**`**<font style="color:#DF2A3F;">runtime.store</font>**`**<font style="color:#DF2A3F;"> 访问长期记忆存储器。</font>**
++ 初始化状态图时传入 `context_schema`，并在调用时传入 `context` 后，可以在节点中通过 `**<font style="color:#DF2A3F;">runtime.context</font>**`**<font style="color:#DF2A3F;"> 访问运行时上下文。</font>**
+
+
+
+
+
+
+
+
+
+### 节点的触发和执行
+#### 节点的触发
+##### 用户视角
+从用户层面看，节点由图中的控制流关系（普通边、条件边和动态控制指令）触发：
+
++ 普通边决定**<font style="color:#DF2A3F;">固定的后继节点。</font>**
++ 条件边根据路由函数的返回值决定后继节点。
+    - **<font style="color:#DF2A3F;">可以返回普通节点名称</font>**
+    - **<font style="color:#DF2A3F;">也可以返回 </font>**`**<font style="color:#DF2A3F;">Send</font>**`**<font style="color:#DF2A3F;"> 实例，从而动态派发多个并行任务</font>**，常用于 `Map-Reduce` 场景。
++ `**<font style="color:#DF2A3F;">Command.goto</font>**`**<font style="color:#DF2A3F;"> 可以在节点返回时动态指定后继节点</font>**。
+
+
+
+
+
+##### 源码视角
+从源码实现角度看，`LangGraph` 会将图状态和节点之间的触发关系组织为通道。
+
+其中，状态字段通常对应状态通道，节点之间的控制流关系则通过**<font style="color:#DF2A3F;">触发通道或屏障通道表示</font>**。对于普通的单节点触发关系，目标节点通常会订阅如下形式的内部通道：
+
+```python
+branch:to:<node_name>
+```
+
+
+
+例如，对于普通边：
+
+```python
+builder.add_edge("node_a", "node_b")
+```
+
+运行时 `node_a` 的写入器会向以下通道写入数据：
+
+```python
+branch:to:node_b
+```
+
+而 `node_b` 会将该通道注册为自己的触发通道。
+
+条件边和 `Command.goto` 最终也会根据目标节点生成相应的触发通道写入。`Send` 则会生成动态派发任务所需的 `Send` 数据包。
+
+对于多个前驱节点共同汇聚到同一个节点的情况，底层还可能使用类似下面的屏障通道：
+
+```python
+join:<node_a>+<node_b>:<node_c>
+```
+
+用于等待指定的前驱节点全部完成。
+
+当某个节点订阅的触发通道在当前超步中产生新的写入后，该节点会在下一超步被调度。
+
+
+
+
+
+#### 节点的执行
+##### 用户视角
+从用户层面看，节点执行过程可以理解为：
+
+1. `LangGraph` 从当前图状态中读取节点需要的字段，并构造节点输入。
+2. 调用节点函数，执行其业务逻辑。
+3. 节点函数返回状态更新、`Command` 或其他受支持的结果。
+4. `LangGraph` 将节点返回值转换为状态通道和控制通道的写入条目。
+5. **<font style="color:#DF2A3F;">如果当前节点挂载了条件边，则执行条件边路由逻辑</font>**，根据包含当前节点更新的状态决定后继节点。
+6. **<font style="color:#DF2A3F;">当前超步的所有任务执行完毕后，</font>**`**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 汇总这些写入</font>**，并根据各状态字段的 `Reducer` 规则更新图状态。
+
+节点通常只需要返回发生变化的字段，而不需要返回完整状态。例如：
+
+```python
+def node_a(state: State) -> State:
+    return {"count": state["count"] + 1}
+```
+
+其中：
+
+{"count": state["count"] + 1}
+
+表示对状态的更新，而不是一份必须包含所有字段的完整状态。
+
+
+
+
+
+
+
+##### 源码视角
+从源码实现角度看，节点业务逻辑、状态写入逻辑和控制流写入逻辑会被组合成一个可顺序执行的可运行对象。
+
+编译节点时，`LangGraph` 会创建一个 `PregelNode`。
+
+相关源码位于 `CompiledStateGraph` 类的 `attach_node()` 方法中，如下
+
+```python
+self.nodes[key] = PregelNode(
+    triggers=[branch_channel],
+    # read state keys and managed values
+    channels=("__root__" if is_single_input else input_channels),
+    # coerce state dict to schema class (eg. pydantic model)
+    mapper=mapper,
+    # publish to state keys
+    writers=[ChannelWrite(write_entries)],
+    metadata=node.metadata,
+    retry_policy=node.retry_policy,
+    cache_policy=node.cache_policy,
+    bound=node.runnable,  # type: ignore[arg-type]
+)
+```
+
+其中：
+
++ `bound` 保存节点的业务逻辑；
++ `writers` 保存节点执行完成后需要调用的写入器；
++ `triggers` 保存能够触发该节点的通道。
+
+可以近似表示为：
+
+```python
+PregelNode
+├── bound：节点业务逻辑
+├── writers：状态和控制流写入器
+└── triggers：能够触发该节点的通道
+```
+
+因此，从整体上看，节点执行并不是简单地”调用一个函数并返回结果”，而是：
+
+执行业务逻辑，生成状态和控制流写入，并通过目标节点触发通道或动态任务写入，为下一超步生成待调度任务，持续推动计算图运行。
+
+
+
+
+
+# 中断
+`LangGraph` 提供了两种中断机制：
+
++ **<font style="color:#DF2A3F;">动态中断：在图的任意节点中调用 </font>**`**<font style="color:#DF2A3F;">interrupt()</font>**`**<font style="color:#DF2A3F;"> 函数实现</font>**它可以放在代码的任意位置，并且可以根据应用逻辑设置条件触发，所以是动态的。动态中断提供了人机交互接口，使得调用者可以人为干预计算图的运行，是业务逻辑的一部分。
++ **<font style="color:#DF2A3F;">静态中断：在编译或调用状态图时通过 </font>**`**<font style="color:#DF2A3F;">interrupt_before</font>**`**<font style="color:#DF2A3F;"> 和 </font>**`**<font style="color:#DF2A3F;">interrupt_after</font>**`**<font style="color:#DF2A3F;"> 参数设置断点</font>**它是在运行前确定的，不能根据业务逻辑条件触发，所以是静态的。静态中断主要用于调试，不是业务逻辑的一部分。
+
+
+
+
+
+## 动态中断
+### 概述
++ `**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 的动态中断机制允许用户在图执行过程中设置暂停点</font>**<font style="color:#DF2A3F;">，</font>等待外部输入后再继续执行，提供了人机交互接口。
++ 当中断触发时，`**<font style="color:#DF2A3F;">LangGraph</font>**`**<font style="color:#DF2A3F;"> 会通过持久化机制保存当前图状态，并无限期等待直到用户恢复执行。</font>**
++ 中断通过在任意图节点中调用 `interrupt()` 函数实现，该函数可以接收任何可 `JSON` 序列化的值，并将该值暴露给调用方。
++ 中断触发后，调用方根据 `interrupt()` 暴露的信息生成反馈，重新调用图时通过 `Command` 将反馈传递给计算图，恢复图的运行。
++ 恢复运行后，调用方通过 `Command` 传递的反馈会作为 `interrupt()` 函数的返回值，参与后续计算。
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 启用中断
+1. 配置检查点存储器
+2. 设置 `thread_id`：如果要确保中断后可以恢复执行，就需要保存运行图的完整状态，**<font style="color:#DF2A3F;">所以必须启用可恢复执行。</font>**
+3. **<font style="color:#DF2A3F;">在需要中断的位置调用 </font>**`**<font style="color:#DF2A3F;">interrupt()</font>**`
+
+
+
+
+
+
+
+
+
+
+
+### 恢复中断
+满足以下要求：
+
++ **<font style="color:#DF2A3F;">基于相同的配置再次调用计算图</font>**
++ **<font style="color:#DF2A3F;">将输入替换为 </font>**`**<font style="color:#DF2A3F;">Command()</font>**`**<font style="color:#DF2A3F;"> 实例即可恢复运行。</font>**
+
+`LangGraph` **<font style="color:#DF2A3F;">会从中断节点继续运行，该节点会被再次执行</font>**。
+
+通过 `Command` 实例的 `resume` 属性将用户反馈传递给计算图，中断节点重新运行时，传递给 `resume` 属性的值将会作为 `interrupt()` 函数的返回值。
+
+
+
+
+
+
+
+
+
+### 常见使用模式
+根据中断发生的位置、业务场景以及执行结构，动态中断可以衍生出多种常见的使用模式。本节将介绍以下模式：
+
+1. **<font style="color:#DF2A3F;">基础 HITL 模式：状态图触发一次中断，获取人类输入后继续执行。</font>**
+2. 多个并行中断：多个并行任务分别产生中断，并根据 中断 `ID` 接收各自的恢复数据。
+3. 审批模式：根据人类审批（批准、拒绝或其它处理方式），决定后续执行路径。
+4. 审核与编辑模式：将模型生成的内容交给人类检查，并允许人类直接修改后继续处理。
+5. 工具执行审批模式：在调用工具或执行具有副作用的操作之前，由人类确认是否允许执行。
+6. 单节点串行中断模式：在同一个节点内多次触发中断，上一个中断恢复后才能触发下一个。
+7. 人类输入验证模式：对人类输入进行校验；当输入不符合要求时，再次中断并要求重新输入。
+
+需要注意，这些模式并不是完全互斥的。例如，工具执行审批本质上也是审批模式的一种，只是它专门应用于工具调用场景。
+
+
+
+
+
+#### 基础 HITL 模式
+##### 什么是`HITL`
+`**<font style="color:#DF2A3F;">HITL(Human In The Loop)</font>**`**<font style="color:#DF2A3F;"> 即人在环，是一种经典的人机协同设计模式，它允许计算图在运行过程中暂停，等待人工审批、修正意见或补充信息，</font>**然后从暂停位置恢复执行。
+
+
+
+
+
+##### 基础`HITL`模式的实现
+调用 `interrupt()` 可以暂停状态图的执行，并等待外部输入后恢复运行。因此它是实现 `HITL` 的核心机制。
+
+不过，仅仅调用 `interrupt()` 并不一定构成 `HITL`。只有当中断后的决策、输入或修改确实由人类完成时，才能称为 `HITL`；如果恢复数据完全由程序自动提供，本质上仍然是普通的中断与恢复机制。
+
+
+
+```python
+from typing import TypedDict
+
+from langgraph.graph import StateGraph,START,END
+from langgraph.types import interrupt, Command
+from langgraph.checkpoint.memory import InMemorySaver
+
+
+#1. 声明状态
+class OverAllState(TypedDict):
+    username:str
+
+#2. 声明节点
+def node_a(state:OverAllState)->OverAllState:
+    username = interrupt("请输入您的姓名")
+    return {
+        "username":username
+    }
+
+#3. 构建图
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a",node_a)
+builder.add_edge(START,"node_a")
+builder.add_edge("node_a",END)
+
+#4. 想要使用中断 => 必须配置检查点
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable":{"thread_id":"123"}}
+interrupt_res = graph.invoke({},config=config)
+print(interrupt_res)
+
+prompt = interrupt_res['__interrupt__'][0].value
+print(prompt)
+username = input(prompt)
+# 5. 恢复图的中断执行
+resume_res = graph.invoke(Command(resume=username),config=config)
+print(resume_res)
+```
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792403497584-3474cff2-01d1-45f7-8505-9a274b13c74f.png)
+
+```python
+============================== -> interrupt_res <- ==============================
+
+{'__interrupt__': [Interrupt(value='请输入您的姓名', id='3543beca616d469fe1ccd35250ef5acf')]}
+
+============================== -> resumed_res <- ==============================
+
+{'username': '小黄'}
+```
+
+
+
+
+
+
+
+
+
+
+
+#### <font style="color:rgb(51, 51, 51);">多个并行中断</font>
+**<font style="color:rgb(51, 51, 51);">示例如下</font>**
+
+```python
+from typing import TypedDict
+
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Command, interrupt
+from langgraph.checkpoint.memory import InMemorySaver
+
+class OverAllState(TypedDict):
+    username: str
+    age: int
+
+def node_a(state: OverAllState) -> OverAllState:
+    username = interrupt("请输入您的姓名")
+    return {
+        "username": username
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    age = interrupt("请输入您的年龄")
+    return {
+        "age": age
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "node_a")
+builder.add_edge(START, "node_b")
+builder.add_edge("node_a", END)
+builder.add_edge("node_b", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "123"}}
+interrupted_res = graph.invoke({}, config=config)
+print('=' * 30, '-> interrupt_res <-', '=' * 30)
+print(interrupted_res)
+
+# 构建 中断ID -> 恢复指令 的映射
+resume_map = {}
+for i in interrupted_res['__interrupt__']:
+    user_input = input(f"{i.value}: ")
+    if "年龄" in i.value:
+        resume_map[i.id] = int(user_input)
+    else:
+        resume_map[i.id] = user_input
+
+resumed_res = graph.invoke(Command(resume=resume_map), config=config)
+print('=' * 30, '-> resumed_res <-', '=' * 30)
+print(resumed_res)
+```
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+```python
+============================== -> interrupt_res <- ==============================
+
+{'__interrupt__': [Interrupt(value='请输入您的年龄', id='2770f00729006c756d481fffa712bb27'), Interrupt(value='请输入您的姓名', id='db7e81e1d4f5cab611f07e0469e99854')]}
+
+============================== -> resumed_res <- ==============================
+
+{'username': '小黄', 'age': 19}
+```
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+
+
+
+
+
+
+#### <font style="color:rgb(51, 51, 51);">审批模式</font>
+> 在 Agent 执行敏感或高风险操作前，强制暂停流程，等待人类审查并做出决策后，才决定是否继续。它将人类的监督从被动的“事后监控”转变为主动的“事前控制”，是构建可靠、安全 AI 应用的关键一环。
+>
+
+
+
+
+
+**<font style="color:rgb(51, 51, 51);">示例如下</font>**
+
+**<font style="color:rgb(51, 51, 51);"></font>**
+
+**<font style="color:rgb(51, 51, 51);"></font>**
+
+```python
+from time import sleep
+from typing import TypedDict, Literal
+
+from langchain_core.messages import HumanMessage
+from langgraph.graph import StateGraph,START,END
+from langgraph.types import interrupt, Command
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model =ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking":{
+            "type":"disabled"
+        }
+    }
+)
+
+#1. 声明状态
+class OverAllState(TypedDict):
+    topic:str
+    poem:str
+    is_approved:bool
+
+#2. 声明节点
+def approve_node(state:OverAllState) -> Command[Literal["llm_node","default_node"]]:
+    is_approved = interrupt("是否同意调用模型?")
+    goto = "llm_node" if is_approved else "default_node"
+    return Command(
+        goto=goto,
+        update={"is_approved":is_approved}
+    )
+
+def llm_node(state:OverAllState) -> OverAllState:
+    topic = state["topic"]
+    res = model.invoke([HumanMessage(content=f"帮我写一首关于{topic}主题的七言绝句,只写诗句,不需要赏析")]).content
+
+    return {
+        "poem":res
+    }
+
+def default_node(state:OverAllState) -> OverAllState:
+    return {
+        "poem":"请求被拒绝"
+    }
+
+#3. 构建图
+builder = StateGraph(state_schema=OverAllState)
+
+builder.add_node("approve_node",approve_node)
+builder.add_node("llm_node",llm_node)
+builder.add_node("default_node",default_node)
+builder.add_edge(START,"approve_node")
+builder.add_edge("llm_node",END)
+builder.add_edge("default_node",END)
+
+#4. 添加检查点后端
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+#5. 首次执行 -> 触发中断
+config = {"configurable":{"thread_id":"234"}}
+interrupt_res = graph.invoke({"topic":"菊花"},config=config)
+print(interrupt_res)
+#6. 人工审核
+user_approved = input("是否同意调用模型?(y/n)").strip().lower() == 'y'
+# 重新调用图
+approved_res = graph.invoke(Command(resume=user_approved),config=config)
+print(approved_res)
+
+#7. 审核不通过
+config1 = {"configurable":{"thread_id":"456"}}
+interrupt_res = graph.invoke({"topic":"牡丹花"},config=config1)
+print(interrupt_res)
+
+user_approved = input("是否同意调用模型?(y/n)").strip().lower() == 'y'
+# 重新调用图
+approved_res = graph.invoke(Command(resume=user_approved),config=config1)
+print(approved_res)
+```
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+**<font style="color:rgb(51, 51, 51);"></font>**
+
+```python
+{'topic': '菊花', '__interrupt__': [Interrupt(value='是否同意调用模型?', id='91edf41ecf736a242c18fd61d40ad5b4')]}
+
+{'topic': '菊花', 'poem': '《咏菊》\n西风猎猎卷霜华，独抱秋心隐士家。\n冷艳不争桃李色，寒香偏入野人茶。', 'is_approved': True}
+
+{'topic': '牡丹花', '__interrupt__': [Interrupt(value='是否同意调用模型?', id='47958afc1277b7ce6bf850a5f27f2e46')]}
+{'topic': '牡丹花', 'poem': '请求被拒绝', 'is_approved': False}
+```
+
+
+
+
+
+
+
+
+
+#### <font style="color:rgb(51, 51, 51);">审核与编辑模式</font>
+**<font style="color:rgb(51, 51, 51);">示例如下</font>**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Command, interrupt
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+from langgraph.checkpoint.memory import InMemorySaver
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+class OverAllState(TypedDict):
+    topic: str
+    poem: str
+    reviewed_poem: str
+
+def llm_node(state: OverAllState) -> OverAllState:
+    topic = state['topic']
+
+    res = model.invoke([HumanMessage(content=f"帮我写一首关于 {topic} 的七言绝句，只给出诗句，不要赏析")]).content
+    return {
+        "poem": res
+    }
+
+def review_node(state: OverAllState) -> OverAllState:
+    reviewed_poem = interrupt({
+        "instruction": "请审核并修改大模型生成的七言绝句",
+        "poem": state['poem']
+    })
+    return {
+        "reviewed_poem": reviewed_poem
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("llm_node", llm_node)
+builder.add_node("review_node", review_node)
+builder.add_edge(START, "llm_node")
+builder.add_edge("llm_node", "review_node")
+builder.add_edge("review_node", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "review_test"}}
+interrupted_res = graph.invoke({"topic": "布偶猫"}, config=config)
+print('=' * 30, '-> interrupt_res <-', '=' * 30)
+print(interrupted_res)
+
+print("原始诗句：")
+print(interrupted_res['__interrupt__'][0].value['poem'])
+user_review = input("请审核并修改诗句（直接回车保留原诗）: ")
+if not user_review.strip():
+    user_review = interrupted_res['__interrupt__'][0].value['poem']
+reviewed_res = graph.invoke(Command(resume=user_review), config=config)
+print('=' * 30, '-> reviewed_res <-', '=' * 30)
+print(reviewed_res)
+```
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+```python
+============================== -> interrupt_res <- ==============================
+
+{'topic': '布偶猫', 'poem': '《布偶猫》\n冰眸玉骨雪团身，蓝影衔春卧月轮。\n偶启朱唇呼入梦，云鬟一枕醉红尘。', '__interrupt__': [Interrupt(value={'instruction': '请审核并修改大模型生成的七言绝句', 'poem': '《布偶猫》\n冰眸玉骨雪团身，蓝影衔春卧月轮。\n偶启朱唇呼入梦，云鬟一枕醉红尘。'}, id='de13581234c57fb8b5d9620295b8239e')]}
+
+============================== -> reviewed_res <- ==============================
+
+{'topic': '布偶猫', 'poem': '《布偶猫》\n冰眸玉骨雪团身，蓝影衔春卧月轮。\n偶启朱唇呼入梦，云鬟一枕醉红尘。', 'reviewed_poem': '已审核：《布偶猫》\n冰眸玉骨雪团身，蓝影衔春卧月轮。\n偶启朱唇呼入梦，云鬟一枕醉红尘。'}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792403693802-8e63703f-e9f9-4a8d-a1a0-9f290b8a02bf.png)
+
+
+
+
+
+#### <font style="color:rgb(51, 51, 51);">工具执行审批模式</font>
+**<font style="color:rgb(51, 51, 51);">示例如下</font>**
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Command, interrupt
+from langgraph.graph.message import MessagesState
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain.messages import HumanMessage, ToolMessage
+from langchain.tools import tool
+from langchain_deepseek import ChatDeepSeek
+
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+@tool(parse_docstring=True)
+def get_weather(city: str) -> str:
+    """
+    查询指定城市的当日天气
+
+    Args:
+        city: 城市名称
+    """
+    is_approved = interrupt({
+        "action": "get_weather",
+        "question": "是否同意查询天气？"
+    })
+
+    logger.info("is_approved: {}", is_approved)
+    if is_approved:
+        return f"{city} 今天天气不错"
+    else:
+        return "用户拒绝查询天气"
+
+tools_by_name = {"get_weather": get_weather}
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+model_with_tools = model.bind_tools([get_weather])
+
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state['messages']
+    response = model_with_tools.invoke(messages)
+
+    return {
+        "messages": [response]
+    }
+
+def tool_node(state: MessagesState) -> MessagesState:
+    last_msg = state['messages'][-1]
+
+    tool_msgs = []
+    for tool_call in last_msg.tool_calls:
+        tool = tools_by_name[tool_call["name"]]
+        logger.info("工具 {} 被调用, 对应的 tool_call: {}", tool_call["name"], tool_call)
+        tool_res = tool.invoke(tool_call["args"])
+        tool_msg = ToolMessage(
+            name = tool_call["name"],
+            content = tool_res,
+            tool_call_id = tool_call["id"]
+        )
+        tool_msgs.append(tool_msg)
+
+    return {
+        "messages": tool_msgs
+    }
+
+def router(state: MessagesState) -> Literal["tool_node", END]:
+    if state['messages'][-1].tool_calls:
+        return "tool_node"
+    return END
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_node("tool_node", tool_node)
+builder.add_edge(START, "llm_node")
+builder.add_conditional_edges("llm_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "llm_node")
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "tool_test"}}
+interrupted_res = graph.invoke({"messages": [HumanMessage("今天北京天气如何？")]}, config=config)
+print('=' * 30, '-> interrupt_res <-', '=' * 30)
+for msg in interrupted_res['messages']:
+    msg.pretty_print()
+print('=' * 30, '-> interrupt_info <-', '=' * 30)
+print(interrupted_res['__interrupt__'])
+
+user_approved = input("是否同意查询天气？(y/n): ").strip().lower() == 'y'
+approved_res = graph.invoke(Command(resume=user_approved), config=config)
+print('=' * 30, '-> approved_res <-', '=' * 30)
+for msg in approved_res['messages']:
+    msg.pretty_print()
+```
+
+**<font style="color:rgb(51, 51, 51);">运行结果如下</font>**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792403703942-5fee7e9a-80d2-4017-b384-a3ed79e0d3a4.png)
+
+```python
+2026-06-16 14:51:50.662 | INFO     | __main__:tool_node:59 - 工具 get_weather 被调用, 对应的 tool_call: {'name': 'get_weather', 'args': {'city': '北京'}, 'id': 'call_00_EGxsgveRV6mFkXsTtN4H9369', 'type': 'tool_call'}
+============================== -> interrupt_res <- ==============================
+================================ Human Message =================================
+
+今天北京天气如何？
+================================== Ai Message ==================================
+
+好的，我来查询一下今天北京的天气情况。
+Tool Calls:
+  get_weather (call_00_EGxsgveRV6mFkXsTtN4H9369)
+ Call ID: call_00_EGxsgveRV6mFkXsTtN4H9369
+  Args:
+    city: 北京
+============================== -> interrupt_info <- ==============================
+[Interrupt(value={'action': 'get_weather', 'question': '是否同意查询天气？'}, id='907128d6bef87a8473833ec0c90589ea')]
+2026-06-16 14:51:50.675 | INFO     | __main__:tool_node:59 - 工具 get_weather 被调用, 对应的 tool_call: {'name': 'get_weather', 'args': {'city': '北京'}, 'id': 'call_00_EGxsgveRV6mFkXsTtN4H9369', 'type': 'tool_call'}
+2026-06-16 14:51:50.677 | INFO     | __main__:get_weather:27 - is_approved: True
+============================== -> approved_res <- ==============================
+================================ Human Message =================================
+
+今天北京天气如何？
+================================== Ai Message ==================================
+
+好的，我来查询一下今天北京的天气情况。
+Tool Calls:
+  get_weather (call_00_EGxsgveRV6mFkXsTtN4H9369)
+ Call ID: call_00_EGxsgveRV6mFkXsTtN4H9369
+  Args:
+    city: 北京
+================================= Tool Message =================================
+Name: get_weather
+
+北京 今天天气不错
+================================== Ai Message ==================================
+
+今天北京的天气**不错**哦！☀️ 是个适合出行的好天气。如果需要更详细的天气信息（如温度、风力等），可以随时告诉我，我帮你进一步查询！
+```
+
+
+
+
+
+
+
+#### 单节点串行中断模式
+示例如下
+
+```python
+from typing import TypedDict, Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.types import interrupt, Command
+
+class OverAllState(TypedDict):
+    username: str # 姓名
+    age: int # 年龄
+    gender: Literal["male", "female"] # 性别
+
+def get_info_node(state: OverAllState) -> OverAllState:
+    username = interrupt("请输入您的用户名：")
+    age = interrupt("请输入您的年龄：")
+    gender = interrupt("请输入您的性别：(male/female)")
+
+    return {
+        "username": username,
+        "age": age,
+        "gender": gender
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("get_info_node", get_info_node)
+builder.add_edge(START, "get_info_node")
+builder.add_edge("get_info_node", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "seq_interrupt_test"}}
+username_interrupted_res = graph.invoke({}, config=config)
+print('=' * 30, '-> username_interrupted_res <-', '=' * 30)
+print(username_interrupted_res)
+
+user_name = input("请输入您的用户名：")
+age_interrupted_res = graph.invoke(Command(resume=user_name), config=config)
+print('=' * 30, '-> age_interrupted_res <-', '=' * 30)
+print(age_interrupted_res)
+
+user_age = input("请输入您的年龄：")
+gender_interrupted_res = graph.invoke(Command(resume=int(user_age)), config=config)
+print('=' * 30, '-> gender_interrupted_res <-', '=' * 30)
+print(gender_interrupted_res)
+
+user_gender = input("请输入您的性别：(male/female): ")
+resumed_res = graph.invoke(Command(resume=user_gender), config=config)
+print('=' * 30, '-> resumed_res <-', '=' * 30)
+print(resumed_res)
+```
+
+运行结果如下
+
+```python
+============================== -> username_interrupted_res <- ==============================
+{'__interrupt__': [Interrupt(value='请输入您的用户名：', id='0359f8a0b1ca357d2d092d5c55d80ec1')]}
+============================== -> age_interrupted_res <- ==============================
+{'__interrupt__': [Interrupt(value='请输入您的年龄：', id='0359f8a0b1ca357d2d092d5c55d80ec1')]}
+============================== -> gender_interrupted_res <- ==============================
+{'__interrupt__': [Interrupt(value='请输入您的性别：(male/female)', id='0359f8a0b1ca357d2d092d5c55d80ec1')]}
+============================== -> resumed_res <- ==============================
+{'username': '小黄', 'age': 15, 'gender': 'male'}
+```
+
+中断恢复时，整个被中断的节点函数都会重新运行。
+
++ **<font style="color:#DF2A3F;">单个节点中串行地多次调用 </font>**`**<font style="color:#DF2A3F;">interrupt()</font>**`**<font style="color:#DF2A3F;"> 函数时，检查点存储器会记录历史的 </font>**`**<font style="color:#DF2A3F;">resume</font>**`**<font style="color:#DF2A3F;"> 信息</font>**，`LangGraph` 运行时会读取这些信息，并在 `interrupt()` 函数中维护索引，按照节点内调用 `interrupt()` 函数的顺序，**<font style="color:#DF2A3F;">逐个取出历史 </font>**`**<font style="color:#DF2A3F;">resume</font>**`**<font style="color:#DF2A3F;"> 的值，并将它们作为 </font>**`**<font style="color:#DF2A3F;">interrupt()</font>**`**<font style="color:#DF2A3F;"> 函数的返回值。</font>**
++ 所以，已经被恢复的 `interrupt()` 不会被重复触发。并且，由此可以推断，我们要保证历史 `resume` 可以被正确应用，**<font style="color:#DF2A3F;">就应保证中断恢复前后的多次 </font>**`**<font style="color:#DF2A3F;">interrupt()</font>**`**<font style="color:#DF2A3F;"> 相对顺序保持不变。</font>**
++ **<font style="color:#DF2A3F;">当历史 </font>**`**<font style="color:#DF2A3F;">resume</font>**`**<font style="color:#DF2A3F;"> 耗尽后，本次恢复运行时传入的 </font>**`**<font style="color:#DF2A3F;">resume</font>**`**<font style="color:#DF2A3F;"> 会作为本次中断的返回值</font>**，然后节点函数继续运行。
+
+所有中断都触发并恢复后，计算图正常结束。
+
+
+
+
+
+
+
+### 使用规范
+
+
+#### <font style="color:#DF2A3F;">不要用</font>`<font style="color:#DF2A3F;">try/catch</font>`<font style="color:#DF2A3F;">包裹</font>`<font style="color:#DF2A3F;">interrupt()</font>`<font style="color:#DF2A3F;">调用</font>
+中断的触发是通过抛出 `GraphInterrupt` 异常实现的，如果用 `try/catch` 包裹，则**<font style="color:#DF2A3F;">底层运行时无法感知断点，不会中断计算图。</font>**
+
+
+
+```python
+def node_a(state: State):
+    # ✅ 正确用法：先打断点，再处理异常
+    interrupt("What's your name?")
+    try:
+        fetch_data()  # 这一步可能失败
+    except Exception as e:
+        print(e)
+    return state
+```
+
+
+
+```python
+def node_a(state: State):
+    # ❌ 错误用法，用 try/catch 包裹 interrupt()，这将会导致 GraphInterrupt 被捕获而无法触发中断
+    try:
+        interrupt("What's your name?")
+        fetch_data()  # 这一步可能失败
+    except Exception as e:
+        print(e)
+    return state
+```
+
+####  
+
+
+#### <font style="color:#DF2A3F;">不要更改单个节点内</font>`<font style="color:#DF2A3F;">interrupt</font>`<font style="color:#DF2A3F;">的调用顺序</font>
+上文提到：
+
+1. 恢复运行时整个节点函数都会重新运行，而非精确地从断点继续
+2. 同一节点中存在多个断点时：历史恢复记录被记录在检查点中，并在恢复运行时按顺序加载
+
+一旦中断恢复前后的断点顺序、数量不完全一致，将会导致语义混乱，程序执行结果无法满足预期。
+
+这条规范就是为了避免这样的情况。
+
+
+
+```python
+def node_a(state: State):
+    # ✅ 正确用法，断点顺序固定
+    name = interrupt("What's your name?")
+    age = interrupt("What's your age?")
+    city = interrupt("What's your city?")
+
+    return {
+        "name": name,
+        "age": age,
+        "city": city
+    }
+```
+
+
+
+
+
+
+
+**错误用法**
+
+1. **<font style="color:#DF2A3F;">可能跳过其中部分断点</font>**
+
+```python
+def node_a(state: State):
+    # ❌ 错误用法，以状态为条件，可能跳过部分断点
+    name = interrupt("What's your name?")
+
+    # 第一次运行到此处时，可能不会触发分支内的断点
+    # 恢复时，resume 本应作为 city，但如果分支内断点触发，将被错误地作为 age，导致语义混乱
+    if state.get("needs_age"):
+        age = interrupt("What's your age?")
+
+    city = interrupt("What's your city?")
+
+    return {"name": name, "city": city}
+```
+
+断点以状态为条件，如果中断恢复前后状态发生了变化，断点的顺序和数量可能发生变化，导致语义混乱。
+
+
+
+2.**<font style="color:#DF2A3F;"> 基于不确定的数据循环，并在其中设置断点</font>**
+
+```python
+def node_a(state: State):
+    # ❌ 错误用法：基于不确定的数据循环
+    # 每次调用时的断点数量可能不同
+    results = []
+    for item in state.get("dynamic_list", []):  # List might change between runs
+        result = interrupt(f"Approve {item}?")
+        results.append(result)
+
+    return {"results": results}
+```
+
+基于状态中可变的值循环，并在循环中设置断点，如果中断恢复前后状态发生变化，断点数量可能变化，导致语义混乱。
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+
+
+
+
+#### <font style="color:#DF2A3F;">不要在</font>`<font style="color:#DF2A3F;">interrupt()</font>`<font style="color:#DF2A3F;">中传递复杂类型</font>
++ `LangGraph` 运行时会将 `interrupt()` 函**<font style="color:#DF2A3F;">数接收到的参数经过 </font>**`**<font style="color:#DF2A3F;">JSON</font>**`**<font style="color:#DF2A3F;"> 序列化 之后传递给调用者。</font>**
++ 如果传递不支持 `JSON` 序列化 的复杂类型，如函数，将会抛出异常，如下所示
+
+```python
+TypeError: Type is not msgpack serializable: Interrupt
+```
+
+
+
+
+
+
+
+**正确用法**
+
+1. 简单类型
+
+```python
+def node_a(state: State):
+    # ✅ 正确用法：传递可以序列化的简单类型数据
+    name = interrupt("What's your name?")
+    count = interrupt(42)
+    approved = interrupt(True)
+
+    return {"name": name, "count": count, "approved": approved}
+```
+
+2. 结构化数据
+
+```python
+def node_a(state: State):
+    # ✅ 正确用法：传递仅包含基本数据类型的可序列化字典
+    response = interrupt({
+        "question": "Enter user details",
+        "fields": ["name", "email", "age"],
+        "current_values": state.get("user", {})
+    })
+
+    return {"user": response}
+```
+
+
+
+
+
+**错误用法**
+
+1. 函数
+
+```python
+def validate_input(value):
+    return len(value) > 0
+
+def node_a(state: State):
+    # ❌ 错误用法：传递函数
+    # 函数不支持 JSON 序列化
+    response = interrupt({
+        "question": "What's your name?",
+        "validator": validate_input  # 此处会导致失败
+    })
+    return {"name": response}
+```
+
+2. 类的实例
+
+```python
+class DataProcessor:
+    def __init__(self, config):
+        self.config = config
+
+def node_a(state: State):
+    processor = DataProcessor({"mode": "strict"})
+
+    # ❌ 错误用法：传递类的实例
+    # 此处的自定义实例不支持 JSON 序列化
+    response = interrupt({
+        "question": "Enter data to process",
+        "processor": processor  # 这将会导致失败
+    })
+    return {"result": response}
+```
+
+
+
+
+
+#### <font style="color:#DF2A3F;">断点之前的副作用操作必须是幂等的</font>
++ 副作用操作：修改了外部环境的操作，如
+    - 写数据库
+    - 写文件
+    - 发送邮件或消息
++ 幂等性：**<font style="color:#DF2A3F;">多次执行的结果等价于一次执行。</font>**
+
+**<font style="color:#DF2A3F;"></font>**
+
+我们知道，中断恢复时，**<font style="color:#DF2A3F;">断点所在的函数会被重复执行</font>**，所以，如果断点之前存在不满足幂等性的副作用操作，将会导致多次调用结果不一致。
+
+如：写数据操作不满足幂等性，可能导致写入多条重复记录。
+
+
+
+
+
+**正确用法**
+
+1. 在断点之前使用满足幂等性的操作
+
+```python
+def node_a(state: State):
+    # ✅ 正确用法：使用幂等的 upsert 操作
+    # 多次运行结果一致
+    db.upsert_user(
+        user_id=state["user_id"],
+        status="pending_approval"
+    )
+
+    approved = interrupt("Approve this change?")
+
+    return {"approved": approved}
+```
+
+`upsert` 的语义是：写入或更新，如果有相同记录则覆盖更新，否则新增。满足幂等性。
+
+
+
+
+
+2. 将副作用操作放在断点之后
+
+```python
+def node_a(state: State):
+    # ✅ 正确用法：将副作用操作放在断点之后
+    # 确保副作用操作只运行一次
+    approved = interrupt("Approve this change?")
+
+    if approved:
+        db.create_audit_log(
+            user_id=state["user_id"],
+            action="approved"
+        )
+
+    return {"approved": approved}
+```
+
+上述代码将副作用操作置于断点之后，之后中断触发并恢复运行之后，副作用操作才会被执行，后者只会被执行一次。
+
+
+
+3. 将副作用操作和断点置于不同的节点
+
+```python
+def approval_node(state: State):
+    # ✅ 正确用法：当前节点只做中断
+    approved = interrupt("Approve this change?")
+
+    return {"approved": approved}
+
+def notification_node(state: State):
+    # ✅ 正确用法：副作用操作发生在独立的节点中
+    # 当前节点独立于中断，所以副作用操作，不会因为中断恢复而重复执行
+    if (state.approved):
+        send_notification(
+            user_id=state["user_id"],
+            status="approved"
+        )
+
+    return state
+```
+
+这种方式更彻底，将中断和副作用操作完全隔离。
+
+
+
+
+
+**错误用法**
+
+1. 在断点之前向数据库中新增数据
+
+```python
+def node_a(state: State):
+    # ❌ 错误用法：在断点之前向数据库中新增数据
+    # 中断恢复会导致数据重复
+    audit_id = db.create_audit_log({
+        "user_id": state["user_id"],
+        "action": "pending_approval",
+        "timestamp": datetime.now()
+    })
+
+    approved = interrupt("Approve this change?")
+
+    return {"approved": approved, "audit_id": audit_id}
+```
+
+2. 将数据追加到已存在的列表
+
+```python
+def node_a(state: State):
+    # ❌ 错误用法：在断点之前向列表追加数据
+    # 这将会在中断恢复时导致列表数据重复
+    db.append_to_history(state["user_id"], "approval_requested")
+
+    approved = interrupt("Approve this change?")
+
+    return {"approved": approved}
+```
+
+
+
+
+
+
+
+### 中断触发和恢复前后的检查点
+##### 示例代码
+```python
+from typing import TypedDict
+
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Command, interrupt
+from langgraph.checkpoint.memory import InMemorySaver
+
+class OverAllState(TypedDict):
+    username: str
+    age: int
+
+def node_a(state: OverAllState) -> OverAllState:
+    username = interrupt("请输入您的姓名")
+    age = interrupt("请输入您的年龄")
+    return {
+        "username": username,
+        "age": age
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "123"}}
+username_interrupted_res = graph.invoke({}, config=config)
+print('=' * 30, '-> username_interrupted_res <-', '=' * 30)
+print(username_interrupted_res)
+username_interrupted_his = list(graph.get_state_history(config=config))
+print('=' * 30, '-> username_interrupted_his <-', '=' * 30)
+print(username_interrupted_his)
+
+age_interrupted_res = graph.invoke(Command(resume="小黄"), config=config)
+print('=' * 30, '-> age_interrupted_res <-', '=' * 30)
+print(age_interrupted_res)
+age_interrupted_his = list(graph.get_state_history(config=config))
+print('=' * 30, '-> age_interrupted_his <-', '=' * 30)
+print(age_interrupted_his)
+
+resumed_res = graph.invoke(Command(resume=123), config=config)
+print('=' * 30, '-> resumed_res <-', '=' * 30)
+print(resumed_res)
+resumed_his = list(graph.get_state_history(config=config))
+print('=' * 30, '-> resumed_his <-', '=' * 30)
+print(resumed_his)
+```
+
+##### 运行结果分析
+###### 第一次中断
+调用结果
+
+```python
+============================== -> username_interrupted_res <- ==============================
+{'__interrupt__': [Interrupt(value='请输入您的姓名', id='488d1fa95a4053d41ab09786f5260ae9')]}
+```
+
+历史检查点
+
+```python
+============================== -> username_interrupted_his <- ==============================
+[
+    StateSnapshot(
+        values={},
+        next=('node_a',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4aa0-631a-8000-12a45e5b02a0'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-17T08:19:59.195818+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4a9d-68e8-bfff-3573d795ed80'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='a7e05e86-30c1-a590-a7bf-e3542eb53d4b',
+                name='node_a',
+                path=('__pregel_pull', 'node_a'),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='请输入您的姓名',
+                        id='488d1fa95a4053d41ab09786f5260ae9'
+                    ),
+                ),
+                state=None,
+                result=None
+            ),
+        ),
+        interrupts=(
+            Interrupt(
+                value='请输入您的姓名',
+                id='488d1fa95a4053d41ab09786f5260ae9'
+            ),
+        )
+    ),
+
+    StateSnapshot(
+        values={},
+        next=('__start__',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4a9d-68e8-bfff-3573d795ed80'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-17T08:19:59.194743+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='173d6621-cd7b-3edd-a3d5-8d1c3bb8dc53',
+                name='__start__',
+                path=('__pregel_pull', '__start__'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={}
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+当前工作流只有一个节点，所以只有一个真正执行用户自定义节点的超步，对应的超步编号为 `1`
+
+中断触发时，检查点存储器中记录的最新检查点超步为 `0`，中断信息只能和这个超步绑定
+
+中断信息存了两份：
+
++ `**<font style="color:#DF2A3F;">StateSnapshot</font>**`**<font style="color:#DF2A3F;"> 的 </font>**`**<font style="color:#DF2A3F;">tasks</font>**`**<font style="color:#DF2A3F;"> 属性下记录的 </font>**`**<font style="color:#DF2A3F;">PregelTask</font>**`**<font style="color:#DF2A3F;"> 实例的 </font>**`**<font style="color:#DF2A3F;">interrupts</font>**`**<font style="color:#DF2A3F;"> 字段记录了当前任务触发的中断信息。</font>**
++ `**<font style="color:#DF2A3F;">StateSnapshot</font>**`**<font style="color:#DF2A3F;"> 的 </font>**`**<font style="color:#DF2A3F;">interrupts</font>**`**<font style="color:#DF2A3F;"> 属性记录了当前超步发生的所有中断</font>**
+
+当存在多个并行中断时
+
++ 中断信息被记录在各自所属任务的 `PregelTask` 实例中
++ 同时也会被汇总在 `StateSnapshot` 的 `tasks` 属性中
+
+
+
+###### 第一次恢复
+调用结果
+
+```python
+============================== -> age_interrupted_res <- ==============================
+{'__interrupt__': [Interrupt(value='请输入您的年龄', id='488d1fa95a4053d41ab09786f5260ae9')]}
+```
+
+历史检查点
+
+```python
+============================== -> age_interrupted_his <- ==============================
+
+[
+    StateSnapshot(
+        values={},
+        next=('node_a',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4aa0-631a-8000-12a45e5b02a0'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-17T08:19:59.195818+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4a9d-68e8-bfff-3573d795ed80'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='a7e05e86-30c1-a590-a7bf-e3542eb53d4b',
+                name='node_a',
+                path=('__pregel_pull', 'node_a'),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='请输入您的年龄',
+                        id='488d1fa95a4053d41ab09786f5260ae9'
+                    ),
+                ),
+                state=None,
+                result={}
+            ),
+        ),
+        interrupts=(
+            Interrupt(
+                value='请输入您的年龄',
+                id='488d1fa95a4053d41ab09786f5260ae9'
+            ),
+        )
+    ),
+
+    StateSnapshot(
+        values={},
+        next=('__start__',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4a9d-68e8-bfff-3573d795ed80'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-17T08:19:59.194743+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='173d6621-cd7b-3edd-a3d5-8d1c3bb8dc53',
+                name='__start__',
+                path=('__pregel_pull', '__start__'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={}
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">checkpoint_id</font>**`**<font style="color:#DF2A3F;">、任务</font>**`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">id</font>**`**<font style="color:#DF2A3F;">、中断</font>**`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">id</font>**`**<font style="color:#DF2A3F;"> 和历史检查点完全一致，只是 </font>**`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">Interrupt</font>**`**<font style="color:#DF2A3F;"> 实例的 </font>**`**<font style="color:#DF2A3F;background-color:rgb(243, 244, 244);">value</font>**`**<font style="color:#DF2A3F;"> 属性变成了第二次中断的值。</font>**
+
+<font style="color:rgb(51, 51, 51);">由此可见，恢复运行时检查点的更新确实是覆盖写入，历史中断信息不会被保留。</font>
+
+<font style="color:rgb(51, 51, 51);">并且，中断恢复时传递的 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">resume</font>**`<font style="color:rgb(51, 51, 51);"> 在 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">graph.get_state_history()</font>**`<font style="color:rgb(51, 51, 51);"> 时也不可见。</font>
+
+
+
+
+
+
+
+
+
+###### 第二次恢复
+调用结果
+
+```python
+============================== -> resumed_res <- ==============================
+{'username': '小黄', 'age': 123}
+```
+
+历史检查点
+
+```python
+============================== -> resumed_his <- ==============================
+
+[
+    StateSnapshot(
+        values={
+            'username': '小黄',
+            'age': 123
+        },
+        next=(),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4ab5-60bc-8001-df8746dc9400'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 1,
+            'parents': {}
+        },
+        created_at='2026-06-17T08:19:59.204348+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4aa0-631a-8000-12a45e5b02a0'
+            }
+        },
+        tasks=(),
+        interrupts=()
+    ),
+
+    StateSnapshot(
+        values={},
+        next=('node_a',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4aa0-631a-8000-12a45e5b02a0'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-17T08:19:59.195818+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4a9d-68e8-bfff-3573d795ed80'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='a7e05e86-30c1-a590-a7bf-e3542eb53d4b',
+                name='node_a',
+                path=('__pregel_pull', 'node_a'),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='请输入您的年龄',
+                        id='488d1fa95a4053d41ab09786f5260ae9'
+                    ),
+                ),
+                state=None,
+                result={
+                    'username': '小黄',
+                    'age': 123
+                }
+            ),
+        ),
+        interrupts=(
+            Interrupt(
+                value='请输入您的年龄',
+                id='488d1fa95a4053d41ab09786f5260ae9'
+            ),
+        )
+    ),
+
+    StateSnapshot(
+        values={},
+        next=('__start__',),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a255-4a9d-68e8-bfff-3573d795ed80'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-17T08:19:59.194743+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='173d6621-cd7b-3edd-a3d5-8d1c3bb8dc53',
+                name='__start__',
+                path=('__pregel_pull', '__start__'),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={}
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+<font style="color:rgb(51, 51, 51);">两个断点全部恢复运行后，编号为 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">1</font>**`<font style="color:rgb(51, 51, 51);"> 的超步终于完成，任务实例的 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">result</font>**`<font style="color:rgb(51, 51, 51);"> 被更新，状态被更新，最后一个超步的 </font>`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">values</font>**`<font style="color:rgb(51, 51, 51);"> 是更新后的状态值，计算图运行完成。</font>
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 多个并行中断触发时的检查点
+#####  示例代码
+```python
+from typing import TypedDict
+
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Command, interrupt
+from langgraph.checkpoint.memory import InMemorySaver
+
+class OverAllState(TypedDict):
+    username: str
+    age: int
+
+def node_a(state: OverAllState) -> OverAllState:
+    username = interrupt("请输入您的姓名")
+    return {
+        "username": username
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    age = interrupt("请输入您的年龄")
+    return {
+        "age": age
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "node_a")
+builder.add_edge(START, "node_b")
+builder.add_edge("node_a", END)
+builder.add_edge("node_b", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "123"}}
+interrupted_res = graph.invoke({}, config=config)
+print('=' * 30, '-> interrupt_res <-', '=' * 30)
+print(interrupted_res)
+
+list(graph.get_state_history(config=config))
+
+# 6. 恢复执行
+resume_map = {}
+for i in interrupted_res['__interrupt__']:
+    user_input = input(f"{i.value}:")
+    if "年龄" in i.value:
+        resume_map[i.id] = int(user_input)
+    else:
+        resume_map[i.id] = user_input
+
+resumed_res = graph.invoke(Command(resume=resume_map),config=config)
+print(resumed_res)
+
+list(graph.get_state_history(config=config))
+```
+
+#####  结果分析
+计算图返回值
+
+```python
+============================== -> interrupt_res <- ==============================
+
+{
+    '__interrupt__': [
+        Interrupt(
+            value='请输入您的姓名',
+            id='0cae1932a74087f02711c6f1677b4b17'
+        ),
+        Interrupt(
+            value='请输入您的年龄',
+            id='cd216e1ad6907c2432636ff5f32cfcf3'
+        )
+    ]
+}
+```
+
+同一个超步中并行触发的中断信息被放在列表中返回。
+
+历史检查点列表
+
+```python
+[
+    StateSnapshot(
+        values={},
+
+        next=(
+            'node_a',
+            'node_b'
+        ),
+
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a329-8b50-69e0-8000-7bdce1ba7379'
+            }
+        },
+
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+
+        created_at='2026-06-17T09:54:56.810630+00:00',
+
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a329-8b4e-6085-bfff-3100dea319cc'
+            }
+        },
+
+        tasks=(
+            PregelTask(
+                id='689d8040-4b34-02a2-eb32-d901bbb3c67c',
+                name='node_a',
+                path=(
+                    '__pregel_pull',
+                    'node_a'
+                ),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='请输入您的姓名',
+                        id='0cae1932a74087f02711c6f1677b4b17'
+                    ),
+                ),
+                state=None,
+                result=None
+            ),
+
+            PregelTask(
+                id='034cbe3c-e0a6-025a-ce03-46436ce38fc3',
+                name='node_b',
+                path=(
+                    '__pregel_pull',
+                    'node_b'
+                ),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='请输入您的年龄',
+                        id='cd216e1ad6907c2432636ff5f32cfcf3'
+                    ),
+                ),
+                state=None,
+                result=None
+            )
+        ),
+
+        interrupts=(
+            Interrupt(
+                value='请输入您的姓名',
+                id='0cae1932a74087f02711c6f1677b4b17'
+            ),
+            Interrupt(
+                value='请输入您的年龄',
+                id='cd216e1ad6907c2432636ff5f32cfcf3'
+            )
+        )
+    ),
+
+
+    StateSnapshot(
+        values={},
+
+        next=(
+            '__start__',
+        ),
+
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a329-8b4e-6085-bfff-3100dea319cc'
+            }
+        },
+
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+
+        created_at='2026-06-17T09:54:56.809574+00:00',
+
+        parent_config=None,
+
+        tasks=(
+            PregelTask(
+                id='3df213dc-5fa0-a8aa-b1dc-428da9010be6',
+                name='__start__',
+                path=(
+                    '__pregel_pull',
+                    '__start__'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={}
+            ),
+        ),
+
+        interrupts=()
+    )
+]
+```
+
+如前所述，编号为 `1` 的超步执行时中断触发，此时检查点后端中存储的最新的超步编号为 `0`，因此中断信息记录在超步 `0` 的 `StateSnapshot` 实例中。
+
++ 快照实例的 `interrupts` 属性记录了并行触发的两个中断的信息。
++ 并且，各自的中断信息被记录在对应的任务实例中。
+
+#### 同一超步部分任务触发中断时的检查点
+##### 示例代码
+```python
+from typing import TypedDict
+
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Command, interrupt
+from langgraph.checkpoint.memory import InMemorySaver
+
+class OverAllState(TypedDict):
+    username: str
+    age: int
+
+def node_a(state: OverAllState) -> OverAllState:
+    username = interrupt("请输入您的姓名")
+    return {
+        "username": username
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    age = 12
+    return {
+        "age": age
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "node_a")
+builder.add_edge(START, "node_b")
+builder.add_edge("node_a", END)
+builder.add_edge("node_b", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "123"}}
+interrupted_res = graph.invoke({}, config=config)
+print('=' * 30, '-> interrupt_res <-', '=' * 30)
+print(interrupted_res)
+
+list(graph.get_state_history(config=config))
+```
+
+##### 结果分析
+计算图返回值
+
+```python
+============================== -> interrupt_res <- ==============================
+
+{
+    'age': 12,
+    '__interrupt__': [
+        Interrupt(
+            value='请输入您的姓名',
+            id='bbff88193340fd0ed196be702608e385'
+        )
+    ]
+}
+```
+
+历史检查点列表
+
+```python
+============================== -> state_history <- ==============================
+
+[
+    StateSnapshot(
+        values={},
+        next=(
+            'node_a',
+            'node_b'
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a32c-b47b-6ca9-8000-79ee3c65e7ce'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-17T09:56:21.658113+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a32c-b479-6766-bfff-901ed37f684d'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='e16690fc-c0f8-e9fc-e30d-706a64f24209',
+                name='node_a',
+                path=(
+                    '__pregel_pull',
+                    'node_a'
+                ),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='请输入您的姓名',
+                        id='bbff88193340fd0ed196be702608e385'
+                    ),
+                ),
+                state=None,
+                result=None
+            ),
+            PregelTask(
+                id='b628264b-d4ca-c09f-5197-6eb1c953b947',
+                name='node_b',
+                path=(
+                    '__pregel_pull',
+                    'node_b'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'age': 12
+                }
+            )
+        ),
+        interrupts=(
+            Interrupt(
+                value='请输入您的姓名',
+                id='bbff88193340fd0ed196be702608e385'
+            ),
+        )
+    ),
+
+    StateSnapshot(
+        values={},
+        next=(
+            '__start__',
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16a32c-b479-6766-bfff-901ed37f684d'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-17T09:56:21.657164+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='5dc4ad26-1baa-7c18-2580-153a19d4c175',
+                name='__start__',
+                path=(
+                    '__pregel_pull',
+                    '__start__'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={}
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+由上可知，同一个超步中：
+
++ **<font style="color:#DF2A3F;">发生中断的任务，其中断信息被记录在任务实例和快照的 </font>**`**<font style="color:#DF2A3F;">interrupts</font>**`**<font style="color:#DF2A3F;"> 字段中</font>**
++ **<font style="color:#DF2A3F;">未触发中断的任务正常结束，其结果被记录在任务实例的 </font>**`**<font style="color:#DF2A3F;">result</font>**`**<font style="color:#DF2A3F;"> 字段中</font>**
+
+底层负责执行节点逻辑的是超步的第二阶段，如果存在多个并行任务，则会将任务提交到线程池，在独立的线程中运行，**<font style="color:#DF2A3F;">负责执行第二阶段的 </font>**`**<font style="color:#DF2A3F;">PregelRunner</font>**`**<font style="color:#DF2A3F;"> 实</font>**例会收集提交后的 `future` 对象，并等待所有任务完成。
+
+当中断触发时，对应的线程会抛出 `GraphInterrupt`**<font style="color:#DF2A3F;">，对应的 </font>**`**<font style="color:#DF2A3F;">future</font>**`**<font style="color:#DF2A3F;"> 对象会收集异常</font>**。
+
+`PregelRunner` 实例在 `future` 对应的任务完成后，收集中断信息或任务执行结果，**<font style="color:#DF2A3F;">写入检查点存储器。</font>**
+
+**<font style="color:#DF2A3F;">所以一个超步中某个任务触发中断，不会导致其它并行任务的终止，正常运行的任务结果、中断任务的中断信息都被记录在检查点后端。</font>**
+
+
+
+
+
+
+
+
+
+
+
+## 静态断点
+`LangGraph` 提供了用于调试的 静态断点。
+
+它是在状态图编译或调用时设置的，不会在运行时动态触发，**<font style="color:#DF2A3F;">不属于业务逻辑</font>**，所以称为 静态 断点。
+
+动态断点提供了接收人类反馈的接口，**<font style="color:#DF2A3F;">而静态断点只是暂停计算图的运行，不能向调用者传递信息</font>**，也不能接收调用者的反馈。
+
+
+
+
+
+### 用法说明
+1. 静态断点也需要基于检查点恢复，所以必须配置检查点，启用可恢复运行机制。
+2. 计算图会在 `**<font style="color:#DF2A3F;">interrupt_before</font>**`**<font style="color:#DF2A3F;"> 指定的节点执行之前产生中断，暂停计算</font>**
+3. 计算图会在 `**<font style="color:#DF2A3F;">interrupt_after</font>**`**<font style="color:#DF2A3F;"> 指定的节点执行之后产生中断，暂停计算</font>**
+4. 计算图运行到断点位置会中断，和动态断点不同的是，它会在超步边界而非内部中断。
+
+断点前的超步：三个阶段全部完成；断点后的超步：三个阶段都没有开始。
+
+5. 静态断点不会返回任何中断信息，**<font style="color:#DF2A3F;">只会将当前最新的状态返回。</font>**
+
+因此，我们可以用静态断点查看每个超步边界的中间状态。
+
+6. 传入相同的配置并将 `None` 作为输入，再次调用计算图，会从断点位置继续运行。
+7. 支持在两个阶段设置静态断点
+    - **<font style="color:#DF2A3F;background-color:#FBDE28;">状态图编译时 ： 推荐在编译的时候把中断写清楚即可</font>**
+
+```python
+graph = builder.compile(
+    checkpointer=checkpointer,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+```
+
+    - **<font style="color:#DF2A3F;">计算图调用时</font>**
+
+```python
+first_res = graph.invoke(
+    {},
+    config=config,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+```
+
+**<font style="color:#DF2A3F;">断点都是在运行时生效，计算图调用时设置的断点优先级更高。</font>**
+
+如果调用时传入的断点列表不为空，则会覆盖编译时配置。
+
+
+
+### 底层原理
+1. 编译时设置的静态断点保存在编译图的 `interrupt_before_nodes` 和 `interrupt_after_nodes` 中。
+
+运行时采用调用参数优先、编译配置兜底的规则。
+
+调用时传入非空节点列表会完全覆盖编译配置，而 `None` 或空列表会回退到编译配置。
+
+2. `interrupt_before` 在超步的第一阶段：当前超步的任务列表计算完成后、节点任务开始执行前进行检查。
+    - 如果检查点中的状态和上一次静态断点或图的初始状态相比，产生了变化
+    - 并且当前超步的任务列表和 `interrupt_before` 列表存在交集
+
+则抛出 `GraphInterrupt`。
+
+3. `interrupt_after` 在超步的第三阶段：当前超步的任务全部执行完成、写入应用到通道并创建检查点之后进行检查。
+    - 如果检查点中的状态和上一次静态断点或图的初始状态相比，产生了变化
+    - 并且当前超步的任务列表和 `interrupt_after` 列表存在交集
+
+则抛出 `GraphInterrupt`。
+
+如果存在这样的拓扑图
+
+4. node_a -> node_b
+
+那么在 `node_a` 之后 和 `node_b` 之前 设置断点只会中断一次。
+
+因为二者对应同一个超步边界，如果同时配置：
+
+    - `node_a` 的 `after` 先触发；
+    - 恢复运行时检查点中记录的上次断点可见状态会被更新，和最新状态保持一致
+    - 而产生中断之前已经保存了检查点，恢复运行时会从 `node_b` 的超步开始
+    - `node_b` 的超步第一阶段，检查点和上次静态断点相比，没有变化，所以不会中断
+    - **<font style="color:#DF2A3F;">因此，</font>**`**<font style="color:#DF2A3F;">node_a</font>**`**<font style="color:#DF2A3F;"> 之后 和 </font>**`**<font style="color:#DF2A3F;">node_b</font>**`**<font style="color:#DF2A3F;"> 之前 设置断点只会中断一次</font>**
+
+
+
+
+
+### 示例
+####  编译时设置断点
+##### 顺序结构设置断点
+示例如下
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+from loguru import logger
+
+class OverAllState(TypedDict):
+    final_res: str
+
+def node_a(state: OverAllState) -> OverAllState:
+    logger.info("node_a 被执行")
+    return {
+        "final_res": "node_a 运行的中间结果"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    logger.info("node_b 被执行")
+    return {
+        "final_res": "node_b 运行的中间结果"
+    }
+
+def node_c(state: OverAllState) -> OverAllState:
+    logger.info("node_c 被执行")
+    return {
+        "final_res": "node_c 运行的中间结果"
+    }
+
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_node("node_c", node_c)
+
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_b", "node_c")
+builder.add_edge("node_c", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(
+    checkpointer=checkpointer,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "123"}}
+
+logger.info("{}-> 第一次执行 <-{}", "=" * 10, "=" * 10)
+first_res = graph.invoke({}, config=config)
+logger.info("第一次执行结果：{}", first_res)
+
+logger.info("{}-> 第二次执行 <-{}", "=" * 10, "=" * 10)
+second_res = graph.invoke(None, config=config)
+logger.info("第二次执行结果：{}", second_res)
+
+logger.info("{}-> 第三次执行 <-{}", "=" * 10, "=" * 10)
+third_res = graph.invoke(None, config=config)
+logger.info("第三次执行结果：{}", third_res)
+
+logger.info("{}-> 第四次执行 <-{}", "=" * 10, "=" * 10)
+final_res = graph.invoke(None, config=config)
+logger.info("第四次执行结果：{}", final_res)
+
+logger.info("{}-> 完毕 <-{}", "=" * 10, "=" * 10)
+```
+
+运行结果如下
+
+编译时设置的断点在渲染拓扑结构时被感知，图中对应结点新增了断点标记：
+
+__interrupt = before,after
+
+这表示该节点之前和之后都设置了断点。
+
+日志如下
+
+
+
+```python
+2026-06-18 11:22:52.094 | INFO     | __main__:<module>:51 - ==========-> 第一次执行 <-==========
+2026-06-18 11:22:52.100 | INFO     | __main__:<module>:53 - 第一次执行结果：None
+2026-06-18 11:22:52.100 | INFO     | __main__:<module>:55 - ==========-> 第二次执行 <-==========
+2026-06-18 11:22:52.102 | INFO     | __main__:node_a:11 - node_a 被执行
+2026-06-18 11:22:52.104 | INFO     | __main__:<module>:57 - 第二次执行结果：{'final_res': 'node_a 运行的中间结果'}
+    2026-06-18 11:22:52.104 | INFO     | __main__:<module>:59 - ==========-> 第三次执行 <-==========
+    2026-06-18 11:22:52.105 | INFO     | __main__:node_b:17 - node_b 被执行
+    2026-06-18 11:22:52.107 | INFO     | __main__:<module>:61 - 第三次执行结果：{'final_res': 'node_b 运行的中间结果'}
+        2026-06-18 11:22:52.107 | INFO     | __main__:<module>:63 - ==========-> 第四次执行 <-==========
+        2026-06-18 11:22:52.108 | INFO     | __main__:node_c:23 - node_c 被执行
+        2026-06-18 11:22:52.110 | INFO     | __main__:<module>:65 - 第四次执行结果：{'final_res': 'node_c 运行的中间结果'}
+            2026-06-18 11:22:52.111 | INFO     | __main__:<module>:67 - ==========-> 完毕 <-==========
+```
+
+由日志可知，`**<font style="color:#DF2A3F;">node_a</font>**`**<font style="color:#DF2A3F;"> 和 </font>**`**<font style="color:#DF2A3F;">node_b</font>**`**<font style="color:#DF2A3F;"> 之间只产生了一次中断，和分析相符</font>**。
+
+##### 存在并行节点时设置断点
+为了确定断点是 以节点 为边界还是 以超步 为边界设置的，我们在存在并行节点的计算图中测试
+
+示例如下
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+from loguru import logger
+
+class OverAllState(TypedDict):
+    final_res: str
+
+def node_a(state: OverAllState) -> OverAllState:
+    logger.info("node_a 被执行")
+    return {
+        "final_res": "node_a 运行的中间结果"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    logger.info("node_b 被执行")
+    return {
+        "final_res": "node_b 运行的中间结果"
+    }
+
+def node_c(state: OverAllState) -> OverAllState:
+    logger.info("node_c 被执行")
+    return {
+        "final_res": "node_c 运行的中间结果"
+    }
+
+def node_d(state: OverAllState) -> OverAllState:
+    logger.info("node_d 被执行")
+    return {}
+
+def node_e(state: OverAllState) -> OverAllState:
+    logger.info("node_e 被执行")
+    return {}
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_node("node_c", node_c)
+builder.add_node("node_d", node_d)
+builder.add_node("node_e", node_e)
+
+builder.add_edge(START, "node_a")
+builder.add_edge(START, "node_d")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_d", "node_e")
+builder.add_edge(["node_b", "node_e"], "node_c")
+builder.add_edge("node_c", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(
+    checkpointer=checkpointer,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "123"}}
+
+logger.info("{}-> 第一次执行 <-{}", "=" * 10, "=" * 10)
+first_res = graph.invoke({}, config=config)
+logger.info("第一次执行结果：{}", first_res)
+
+logger.info("{}-> 第二次执行 <-{}", "=" * 10, "=" * 10)
+second_res = graph.invoke(None, config=config)
+logger.info("第二次执行结果：{}", second_res)
+
+logger.info("{}-> 第三次执行 <-{}", "=" * 10, "=" * 10)
+third_res = graph.invoke(None, config=config)
+logger.info("第三次执行结果：{}", third_res)
+
+logger.info("{}-> 第四次执行 <-{}", "=" * 10, "=" * 10)
+final_res = graph.invoke(None, config=config)
+logger.info("第四次执行结果：{}", final_res)
+
+logger.info("{}-> 完毕 <-{}", "=" * 10, "=" * 10)
+```
+
+运行结果如下
+
+```python
+2026-06-18 11:28:49.920 | INFO     | __main__:<module>:62 - ==========-> 第一次执行 <-==========
+2026-06-18 11:28:49.922 | INFO     | __main__:<module>:64 - 第一次执行结果：None
+2026-06-18 11:28:49.923 | INFO     | __main__:<module>:66 - ==========-> 第二次执行 <-==========
+2026-06-18 11:28:49.925 | INFO     | __main__:node_a:11 - node_a 被执行
+2026-06-18 11:28:49.927 | INFO     | __main__:node_d:29 - node_d 被执行
+2026-06-18 11:28:49.931 | INFO     | __main__:<module>:68 - 第二次执行结果：{'final_res': 'node_a 运行的中间结果'}
+    2026-06-18 11:28:49.931 | INFO     | __main__:<module>:70 - ==========-> 第三次执行 <-==========
+    2026-06-18 11:28:49.933 | INFO     | __main__:node_b:17 - node_b 被执行
+    2026-06-18 11:28:49.935 | INFO     | __main__:node_e:33 - node_e 被执行
+    2026-06-18 11:28:49.939 | INFO     | __main__:<module>:72 - 第三次执行结果：{'final_res': 'node_b 运行的中间结果'}
+        2026-06-18 11:28:49.940 | INFO     | __main__:<module>:74 - ==========-> 第四次执行 <-==========
+        2026-06-18 11:28:49.940 | INFO     | __main__:node_c:23 - node_c 被执行
+        2026-06-18 11:28:49.942 | INFO     | __main__:<module>:76 - 第四次执行结果：{'final_res': 'node_c 运行的中间结果'}
+            2026-06-18 11:28:49.943 | INFO     | __main__:<module>:78 - ==========-> 完毕 <-==========
+```
+
+`node_a` 和 `node_d` 属于同一个超步
+
+`node_b` 和 `node_e` 属于同一个超步
+
+**<font style="color:#DF2A3F;">我们只在 </font>**`**<font style="color:#DF2A3F;">node_a</font>**`**<font style="color:#DF2A3F;"> 和 </font>**`**<font style="color:#DF2A3F;">node_b</font>**`**<font style="color:#DF2A3F;"> 前后设置了超步，但它们的并行节点也被中断了。</font>**
+
+**<font style="color:#DF2A3F;">显然，</font>****<font style="color:#DF2A3F;background-color:#FBDE28;">中断发生在超步边界</font>****<font style="color:#DF2A3F;">，而非节点边界，与分析相符。</font>**
+
+#### 调用时设置断点
+调用时的断点配置只对本次调用生效。
+
+##### 正确用法：恢复调用时设置相同的断点
+示例如下
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+from loguru import logger
+
+class OverAllState(TypedDict):
+    final_res: str
+
+def node_a(state: OverAllState) -> OverAllState:
+    logger.info("node_a 被执行")
+    return {
+        "final_res": "node_a 运行的中间结果"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    logger.info("node_b 被执行")
+    return {
+        "final_res": "node_b 运行的中间结果"
+    }
+
+def node_c(state: OverAllState) -> OverAllState:
+    logger.info("node_c 被执行")
+    return {
+        "final_res": "node_c 运行的中间结果"
+    }
+
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_node("node_c", node_c)
+
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_b", "node_c")
+builder.add_edge("node_c", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(
+    checkpointer=checkpointer
+)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "123"}}
+
+logger.info("{}-> 第一次执行 <-{}", "=" * 10, "=" * 10)
+first_res = graph.invoke(
+    {},
+    config=config,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+logger.info("第一次执行结果：{}", first_res)
+
+logger.info("{}-> 第二次执行 <-{}", "=" * 10, "=" * 10)
+second_res = graph.invoke(
+    None,
+    config=config,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+logger.info("第二次执行结果：{}", second_res)
+
+logger.info("{}-> 第三次执行 <-{}", "=" * 10, "=" * 10)
+third_res = graph.invoke(
+    None,
+    config=config,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+logger.info("第三次执行结果：{}", third_res)
+
+logger.info("{}-> 第四次执行 <-{}", "=" * 10, "=" * 10)
+final_res = graph.invoke(
+    None,
+    config=config,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+logger.info("第四次执行结果：{}", final_res)
+
+logger.info("{}-> 完毕 <-{}", "=" * 10, "=" * 10)
+```
+
+运行结果如下
+
+```python
+2026-06-18 11:32:55.457 | INFO     | __main__:<module>:49 - ==========-> 第一次执行 <-==========
+2026-06-18 11:32:55.460 | INFO     | __main__:<module>:56 - 第一次执行结果：None
+2026-06-18 11:32:55.460 | INFO     | __main__:<module>:58 - ==========-> 第二次执行 <-==========
+2026-06-18 11:32:55.461 | INFO     | __main__:node_a:11 - node_a 被执行
+2026-06-18 11:32:55.463 | INFO     | __main__:<module>:65 - 第二次执行结果：{'final_res': 'node_a 运行的中间结果'}
+    2026-06-18 11:32:55.463 | INFO     | __main__:<module>:67 - ==========-> 第三次执行 <-==========
+    2026-06-18 11:32:55.463 | INFO     | __main__:node_b:17 - node_b 被执行
+    2026-06-18 11:32:55.465 | INFO     | __main__:<module>:74 - 第三次执行结果：{'final_res': 'node_b 运行的中间结果'}
+        2026-06-18 11:32:55.466 | INFO     | __main__:<module>:76 - ==========-> 第四次执行 <-==========
+        2026-06-18 11:32:55.467 | INFO     | __main__:node_c:23 - node_c 被执行
+        2026-06-18 11:32:55.468 | INFO     | __main__:<module>:83 - 第四次执行结果：{'final_res': 'node_c 运行的中间结果'}
+            2026-06-18 11:32:55.468 | INFO     | __main__:<module>:85 - ==========-> 完毕 <-==========
+```
+
+我们期望在 `node_a` 和 `node_b` 前后中断，此时运行结果和预期相符。
+
+##### 错误用法：恢复调用时不再设置断点
+示例如下
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+from loguru import logger
+
+class OverAllState(TypedDict):
+    final_res: str
+
+def node_a(state: OverAllState) -> OverAllState:
+    logger.info("node_a 被执行")
+    return {
+        "final_res": "node_a 运行的中间结果"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    logger.info("node_b 被执行")
+    return {
+        "final_res": "node_b 运行的中间结果"
+    }
+
+def node_c(state: OverAllState) -> OverAllState:
+    logger.info("node_c 被执行")
+    return {
+        "final_res": "node_c 运行的中间结果"
+    }
+
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_node("node_c", node_c)
+
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_b", "node_c")
+builder.add_edge("node_c", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(
+    checkpointer=checkpointer
+)
+
+from IPython.display import display
+display(graph)
+
+config = {"configurable": {"thread_id": "123"}}
+
+logger.info("{}-> 第一次执行 <-{}", "=" * 10, "=" * 10)
+first_res = graph.invoke(
+    {},
+    config=config,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+logger.info("第一次执行结果：{}", first_res)
+
+logger.info("{}-> 第二次执行 <-{}", "=" * 10, "=" * 10)
+second_res = graph.invoke(
+    None,
+    config=config,
+    interrupt_before=["node_a", "node_b"],
+    interrupt_after=["node_a", "node_b"]
+)
+logger.info("第二次执行结果：{}", second_res)
+
+logger.info("{}-> 第三次执行 <-{}", "=" * 10, "=" * 10)
+third_res = graph.invoke(None, config=config)
+logger.info("第三次执行结果：{}", third_res)
+
+logger.info("{}-> 第四次执行 <-{}", "=" * 10, "=" * 10)
+final_res = graph.invoke(None, config=config)
+logger.info("第四次执行结果：{}", final_res)
+
+logger.info("{}-> 完毕 <-{}", "=" * 10, "=" * 10)
+```
+
+运行结果如下
+
+```python
+2026-06-18 11:35:16.236 | INFO     | __main__:<module>:49 - ==========-> 第一次执行 <-==========
+2026-06-18 11:35:16.259 | INFO     | __main__:<module>:56 - 第一次执行结果：None
+2026-06-18 11:35:16.260 | INFO     | __main__:<module>:58 - ==========-> 第二次执行 <-==========
+2026-06-18 11:35:16.261 | INFO     | __main__:node_a:11 - node_a 被执行
+2026-06-18 11:35:16.263 | INFO     | __main__:<module>:65 - 第二次执行结果：{'final_res': 'node_a 运行的中间结果'}
+    2026-06-18 11:35:16.263 | INFO     | __main__:<module>:67 - ==========-> 第三次执行 <-==========
+    2026-06-18 11:35:16.264 | INFO     | __main__:node_b:17 - node_b 被执行
+    2026-06-18 11:35:16.265 | INFO     | __main__:node_c:23 - node_c 被执行
+    2026-06-18 11:35:16.266 | INFO     | __main__:<module>:69 - 第三次执行结果：{'final_res': 'node_c 运行的中间结果'}
+        2026-06-18 11:35:16.267 | INFO     | __main__:<module>:71 - ==========-> 第四次执行 <-==========
+        2026-06-18 11:35:16.267 | INFO     | __main__:<module>:73 - 第四次执行结果：{'final_res': 'node_c 运行的中间结果'}
+            2026-06-18 11:35:16.268 | INFO     | __main__:<module>:75 - ==========-> 完毕 <-==========
+```
+
+本例中，我们只在初次调用和第一次恢复运行时设置断点。
+
+由日志可知，按照期望，第二次恢复运行之后，`node_b` 执行完成后还应中断一次，然而，因为本次没有设置断点，因此计算图不再中断，`node_b` 和 `node_c` 都在本次调用完成，计算图结束。
+
+在第四次调用时，计算图已经运行完毕，恢复运行实际上不会执行任何逻辑，只是将计算图的最终状态返回。
+
+
+
+
+
+
+
+
+
+
+
+# 项目部署
+## 本地部署并对接`LangSmith`
+> `LangSmith` 是 `LangChain` 官方提供的 `Agent` 应用工程平台，主要用于对基于 `LangGraph`、`LangChain` 等框架开发的 `Agent` 应用进行运行链路追踪、调试、评估和生产监控。
+>
+
+`LangChain` 官方提供了开箱即用的 `LangSmith` 云服务，访问地址为：
+
+[https://smith.langchain.com](https://smith.langchain.com/)
+
+此外，`LangSmith` 也支持混合部署和私有化部署。
+
+除了基本的运行链路追踪，`LangSmith` 云服务 还提供了用于调试的 `studio`，要使用这个模块的功能，需要在本地部署 `LangGraph` 项目，这正是本节要完成的任务。
+
+本节将部署一个经典的 `HITL` 应用，并在 `LangSmith` 云服务 的 `studio` 中调试。
+
+
+
+
+
+### 补充依赖
+本章用命令行工具 `langgraph-cli` 部署项目，需要补充相关依赖，如下所示。
+
+在 `requiremtents_full.txt` 中补充依赖
+
+```python
+# LangGraph 本地 Agent Server、Studio、热重载
+langgraph-cli[inmem]==0.4.30
+```
+
+放在
+
+```python
+# =========================================================
+# LangGraph / Agent 编排
+# 作用：构建 Agent、状态图、多步骤工作流、检查点、PostgreSQL 持久化
+# =========================================================
+```
+
+模块下
+
+然后命令行启用项目的 `conda` 环境，执行
+
+(langgraph) PS C:\Users\Lenovo\OneDrive\文档\AI\langgraph> pip install -r .\requirements_full.txt
+
+即可。
+
+### 准备本地项目
+在项目任意位置创建 `hitl_demo` 目录，作为 `LangGraph` 本地项目的根目录。
+
+####  项目结构
+项目结构如下所示
+
+```python
+hitl_demo/
+├── src
+├── __init__.py
+│   └── agent.py
+├── .env
+└── langgraph.json
+```
+
+其中：
+
++ `src`：源码包，存放业务代码
+    - `__init__.py`：`Python` 包的初始化文件
+    - `agent.py`：源码文件，包含业务逻辑，`langgraph-cli` 会根据配置文件读取其中的 `Agent` 或 `Graph` 对象。
++ `.env`：当前项目的环境变量，本次部署时，`langgraph-cli` 会从中加载环境变量。对接 `LangSmith` 云服务 时，需要确保该文件中包含相关的环境变量。
++ `langgraph.json`：项目配置文件，用于管理依赖并定位源码中的 `agent` 对象。
+
+#### 代码清单
+##### `__init__.py`
+留空即可。
+
+##### `agent.py`
+写入以下内容
+
+```python
+from typing import TypedDict, Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import interrupt
+
+class OverAllState(TypedDict):
+    username: str # 姓名
+    age: int # 年龄
+    gender: Literal["male", "female"] # 性别
+
+def get_info_node(state: OverAllState) -> OverAllState:
+    username = interrupt("请输入您的用户名：")
+    age = interrupt("请输入您的年龄：")
+    gender = interrupt("请输入您的性别：(male/female)")
+
+    return {
+        "username": username,
+        "age": age,
+        "gender": gender
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("get_info_node", get_info_node)
+builder.add_edge(START, "get_info_node")
+builder.add_edge("get_info_node", END)
+
+graph = builder.compile()
+```
+
+`graph` 对象是我们希望调试的计算图实例。
+
+注意：`langgraph-cli` 启动的本地服务会帮我们管理检查点，所以代码中不要传递检查点存储器，否则启动本地服务时将报错。
+
+##### `.env`
+确保该文件中有 `LANGSMITH_API_KEY` 变量
+
+LANGSMITH_API_KEY=xxx
+
+可以根据需求添加所需的环境变量。
+
+如果希望同时启用 `LangSmith` 的追踪功能，需要添加以下环境变量
+
+```python
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
+LANGSMITH_PROJECT="hitl-demo" # 项目名称，自定义
+```
+
+配置后，可以在 `LangSmith` 云服务 的以下界面根据项目名称追踪应用运行的详细信息。
+
+##### `langgraph.json`
+写入以下内容
+
+```python
+{
+    "dependencies": ["."],
+    "graphs": {
+        "graph": "./src/agent.py:graph"
+    },
+    "env": ".env"
+}
+```
+
++ `dependencies`：`langgraph-cli` 启动的本地服务的依赖项，接收类型为列表的值
+
+列表元素只有 `"."` 表示从本次环境中加载依赖。如果在名为 `langchain` 的 `conda` 环境中加载启动 `LangGraph` 本地服务，则会从该环境中加载依赖。
+
++ `graphs`：计算图或 `Agent` 对象的映射
+
+这是个字典，其中每个键值对表示一条映射关系
+
+    - `Key`：在 `LangSmith Studio` 中显示的应用名称
+    - `Value`：相应的应用实例在项目源码中的路径
+        * `:` 之前为应用实例所在的代码
+        * `:` 之后为应用实例在代码中的变量名
++ `env`：环境变量文件路径
+
+### 启动项目
+在命令行执行 
+
+```shell
+langgraph dev
+```
+
+
+
+该命令将会启动一个轻量的本地服务，用于测试。
+
+```python
+#报错
+UnicodeDecodeError: 'gbk' codec can't decode byte 0xaf in position 60: illegal multibyte sequence
+#原因
+agent.py 里有中文注释（# 姓名、# 年龄），在 Windows 下 Python 默认用 GBK 编码读取 .py 文件，遇到 GBK 无法解码的字节就报
+UnicodeDecodeError。
+
+解决方法
+
+在 PowerShell 中（你平时用的终端），执行前先设置环境变量：
+
+conda activate langgraph
+$env:PYTHONUTF8 = "1"
+langgraph dev
+
+或者一行搞定：
+
+conda activate langgraph; $env:PYTHONUTF8 = "1"; langgraph dev
+
+永久修复（推荐）
+
+在 conda 的 langgraph 环境中设置该变量，之后 activate 就自动生效：
+
+conda activate langgraph
+conda env config vars set PYTHONUTF8=1
+conda deactivate
+conda activate langgraph
+
+这样以后每次 langgraph dev 都不用再手动设置了。
+```
+
+如下所示
+
+```python
+(langgraph) PS C:\Users\Lenovo\OneDrive\文档\AI\langgraph\tutorials\hitl_demo> langgraph dev
+```
+
+启动日志如下
+
+<font style="color:rgb(51, 51, 51);">如果配置无误，执行命令后通常会自动跳转至</font>
+
+`**<font style="color:rgb(51, 51, 51);background-color:rgb(243, 244, 244);">Studio UI</font>**`<font style="color:rgb(51, 51, 51);"> 路径 </font>
+
+[<font style="color:rgb(65, 131, 196);">https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024</font>](https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024)
+
+<font style="color:rgb(51, 51, 51);">如果没有跳转，在浏览器输入链接即可。</font>
+
+
+
+
+
+
+
+**<font style="color:rgb(51, 51, 51);">页面如下所示</font>**
+
+<font style="color:rgb(51, 51, 51);">可以看到计算图的拓扑结构。</font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+<font style="color:rgb(51, 51, 51);"></font>
+
+# <font style="color:rgb(51, 51, 51);">工具调用节点</font>
+## <font style="color:rgb(51, 51, 51);">工具节点的实现</font>
+工具是 `Agent` 扩展外部能力的重要组件之一。本节以最基础的 `ReAct` 式工具调用循环为例，分别介绍手动实现工具节点和使用预构建 `ToolNode` 两种方式。
+
+手动实现有助于理解工具调用的基本流程：模型生成工具调用请求，工具节点根据名称查找并执行工具，再将执行结果封装成与原工具调用对应的 `ToolMessage`。不过，实际项目还需要处理参数校验、异常处理、运行时注入、并行执行以及 `Command` 传播等问题。
+
+`ToolNode` 对这些通用逻辑进行了封装，适合在需要自定义图结构和工具调用流程的场景中使用。
+
+
+
+
+
+### <font style="color:rgb(51, 51, 51);">手动处理工具调用</font>
+**示例如下**
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import MessagesState
+from langchain.messages import HumanMessage, ToolMessage
+from langchain.tools import tool
+from langchain_deepseek import ChatDeepSeek
+
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+@tool(parse_docstring=True)
+def get_weather(city: str) -> str:
+    """
+    查询指定城市的当日天气
+
+    Args:
+        city: 城市名称
+    """
+    return f"{city} 今天天气不错"
+
+@tool(parse_docstring=True)
+def get_news(home_or_abroad: bool) -> str:
+    """
+    查询国内外新闻
+
+    Args:
+        home_or_abroad: 查询国内还是国外新闻，True: 国内新闻，False：国外新闻
+    """
+    if home_or_abroad:
+        return "Kimi 新模型发布"
+    return "Anthropic 暂停新模型访问"
+
+tools_by_name = {
+    "get_weather": get_weather,
+    "get_news": get_news
+}
+tools = [get_weather, get_news]
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+model_with_tools = model.bind_tools(tools=tools)
+
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state['messages']
+    response = model_with_tools.invoke(messages)
+
+    return {
+        "messages": [response]
+    }
+
+def tool_node(state: MessagesState) -> MessagesState:
+    last_msg = state['messages'][-1]
+    if not last_msg.tool_calls:
+        return {}
+
+    tool_msgs = []
+    for tool_call in last_msg.tool_calls:
+        tool = tools_by_name[tool_call["name"]]
+        logger.info("工具 {} 被调用, 对应的 tool_call: {}", tool_call["name"], tool_call)
+        tool_res = tool.invoke(tool_call["args"])
+        tool_msg = ToolMessage(
+            name = tool_call["name"],
+            content = tool_res,
+            tool_call_id = tool_call["id"]
+        )
+        tool_msgs.append(tool_msg)
+
+    return {
+        "messages": tool_msgs
+    }
+
+def router(state: MessagesState) -> Literal["tool_node", END]:
+    if state['messages'][-1].tool_calls:
+        return "tool_node"
+    return END
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_node("tool_node", tool_node)
+builder.add_edge(START, "llm_node")
+builder.add_conditional_edges("llm_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "llm_node")
+
+graph = builder.compile()
+
+from IPython.display import display
+display(graph)
+
+res = graph.invoke({"messages": [HumanMessage("今天北京天气如何？国内有哪些新闻")]})
+for msg in res['messages']:
+    msg.pretty_print()
+```
+
+> 注意
+>
+> 上面的手动实现会按照 `tool_calls` 的顺序串行执行工具，主要用于展示底层流程。`ToolNode` 在同步调用中可通过执行器并行处理多个工具调用，在异步调用中则使用 `asyncio.gather()` 并发执行。
+>
+
+
+
+**运行结果如下**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792738973341-caceaff3-ba42-4fe5-a015-c1111f74318d.png)
+
+```json
+2026-06-22 09:59:05.258 | INFO     | __main__:tool_node:67 - 工具 get_weather 被调用, 对应的 tool_call: {'name': 'get_weather', 'args': {'city': '北京'}, 'id': 'call_00_lpemFmfsKxTtEKjweosB0896', 'type': 'tool_call'}
+2026-06-22 09:59:05.259 | INFO     | __main__:tool_node:67 - 工具 get_news 被调用, 对应的 tool_call: {'name': 'get_news', 'args': {'home_or_abroad': True}, 'id': 'call_01_DDLZCKnovq6EtdrD6XXw2202', 'type': 'tool_call'}
+================================ Human Message =================================
+
+今天北京天气如何？国内有哪些新闻
+================================== Ai Message ==================================
+
+好的，我来查询今天北京的天气和国内新闻。
+Tool Calls:
+  get_weather (call_00_lpemFmfsKxTtEKjweosB0896)
+ Call ID: call_00_lpemFmfsKxTtEKjweosB0896
+  Args:
+    city: 北京
+  get_news (call_01_DDLZCKnovq6EtdrD6XXw2202)
+ Call ID: call_01_DDLZCKnovq6EtdrD6XXw2202
+  Args:
+    home_or_abroad: True
+================================= Tool Message =================================
+Name: get_weather
+
+北京 今天天气不错
+================================= Tool Message =================================
+Name: get_news
+
+Kimi 新模型发布
+================================== Ai Message ==================================
+
+以下是今天的查询结果：
+
+### 🌤️ 北京天气
+今天北京的天气**不错**，适合外出活动哦！
+
+### 📰 国内新闻
+目前有一条重要新闻：**Kimi 新模型发布**
+
+如果你想了解更多详情，可以继续问我！
+```
+
+### <font style="color:rgb(51, 51, 51);">用</font>`<font style="color:rgb(51, 51, 51);">ToolNode</font>`<font style="color:rgb(51, 51, 51);">处理工具调用</font>
+上一节的工具节点完成了以下工作：读取最后一条 `AIMessage` 中的 `tool_calls`，根据工具名称查找并执行对应工具，**<font style="color:#DF2A3F;">再把执行结果封装成与原工具调用一一对应的 </font>**`**<font style="color:#DF2A3F;">ToolMessage</font>**`。
+
+这种实现适合帮助我们理解工具调用的基本流程，但它只覆盖了最简单的场景。实际项目还需要处理无效工具名、参数校验、异常处理、运行时参数注入、`Command` 传播以及多个工具调用的并行执行等问题。
+
+`LangGraph` 提供了预构建的 `ToolNode`。只需传入工具列表，它便可以完成上述所有操作。
+
+
+
+**示例如下**
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.prebuilt.tool_node import ToolNode
+from langgraph.graph.message import MessagesState
+from langchain.messages import HumanMessage
+from langchain.tools import tool
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+@tool(parse_docstring=True)
+def get_weather(city: str) -> str:
+    """
+    查询指定城市的当日天气
+
+    Args:
+        city: 城市名称
+    """
+    return f"{city} 今天天气不错"
+
+@tool(parse_docstring=True)
+def get_news(home_or_abroad: bool) -> str:
+    """
+    查询国内外新闻
+
+    Args:
+        home_or_abroad: 查询国内还是国外新闻，True: 国内新闻，False：国外新闻
+    """
+    if home_or_abroad:
+        return "Kimi 新模型发布"
+    return "Anthropic 暂停新模型访问"
+
+tools = [get_weather, get_news]
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+model_with_tools = model.bind_tools(tools=tools)
+
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state['messages']
+    response = model_with_tools.invoke(messages)
+
+    return {
+        "messages": [response]
+    }
+
+def router(state: MessagesState) -> Literal["tool_node", END]:
+    if state['messages'][-1].tool_calls:
+        return "tool_node"
+    return END
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_node("tool_node", ToolNode(tools=tools))
+builder.add_edge(START, "llm_node")
+builder.add_conditional_edges("llm_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "llm_node")
+
+graph = builder.compile()
+
+from IPython.display import display
+display(graph)
+
+res = graph.invoke({"messages": [HumanMessage("今天北京天气如何？国内有哪些新闻？")]})
+for msg in res['messages']:
+    msg.pretty_print()
+```
+
+**运行结果如下**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792739018321-8a9e4be3-c66b-4b88-ad0f-d33b3b926702.png)
+
+```json
+================================ Human Message =================================
+
+今天北京天气如何？国内有哪些新闻？
+================================== Ai Message ==================================
+
+好的，我来同时查询北京天气和国内新闻。
+Tool Calls:
+  get_weather (call_00_BBHYjTwSiWbGolSrp7yb9812)
+ Call ID: call_00_BBHYjTwSiWbGolSrp7yb9812
+  Args:
+    city: 北京
+  get_news (call_01_3XEu887comx2s1SMtw8h3282)
+ Call ID: call_01_3XEu887comx2s1SMtw8h3282
+  Args:
+    home_or_abroad: True
+================================= Tool Message =================================
+Name: get_weather
+
+北京 今天天气不错
+================================= Tool Message =================================
+Name: get_news
+
+Kimi 新模型发布
+================================== Ai Message ==================================
+
+以下是您查询的信息：
+
+---
+
+### 🌤️ 北京今日天气
+北京今天**天气不错**，适合外出活动。
+
+### 📰 国内新闻
+今日国内有一条重要新闻：**Kimi 新模型发布**。
+
+如果您想了解更多详细内容，随时可以继续问我！
+```
+
+## <font style="color:rgb(51, 51, 51);">进阶用法</font>
+### `ToolRuntime`介绍
+`ToolRuntime` 是专门面向工具调用的运行时对象。
+
+按照官方规范：
+
++ 工具函数中存在名为 `runtime`
++ 并且类型标注为 `ToolRuntime` 的参数时
+
+底层运行时会在调用工具前自动注入**<font style="color:#DF2A3F;"> </font>**`**<font style="color:#DF2A3F;">ToolRuntime</font>**`**<font style="color:#DF2A3F;"> 实例。</font>**根据源码实现，某些不规范的写法也能注入运行时实例，但并不规范，不推荐。
+
+需要注意，`ToolRuntime` 与图节点中使用的 `langgraph.runtime.Runtime` 并不是同一个类型。前者额外提供了当前图状态、运行配置和工具调用 ID 等工具调用专属信息。
+
+当前版本，`ToolRuntime` 的核心定义如下：
+
+```python
+@dataclass
+class ToolRuntime(_DirectlyInjectedToolArg, Generic[ContextT, StateT]):
+    state: StateT
+    context: ContextT
+    config: RunnableConfig
+    stream_writer: StreamWriter
+    tool_call_id: str | None
+    store: BaseStore | None
+```
+
++ `**<font style="color:#DF2A3F;">state</font>**`**<font style="color:#DF2A3F;">：图状态，短期记忆</font>**
++ `**<font style="color:#DF2A3F;">context</font>**`**<font style="color:#DF2A3F;">：运行时上下文</font>**
++ `**<font style="color:#DF2A3F;">config</font>**`**<font style="color:#DF2A3F;">：运行时配置，包含元数据</font>**
++ `**<font style="color:#DF2A3F;">stream_writer</font>**`**<font style="color:#DF2A3F;">：自定义流式输出写入器</font>**
++ `**<font style="color:#DF2A3F;">tool_call_id</font>**`**<font style="color:#DF2A3F;">：工具调用 </font>**`**<font style="color:#DF2A3F;">ID</font>**`
++ `**<font style="color:#DF2A3F;">store</font>**`**<font style="color:#DF2A3F;">：长期记忆</font>**
+
+**<font style="color:#DF2A3F;"></font>**
+
+借助 `runtime`，工具可以访问上述所有资源。
+
+
+
+
+
+### 在工具中更新状态
++ 工具不仅可以返回普通结果，还可以返回 `Command(update=...)`，将业务结果写入图状态。
++ 当工具由模型发起调用时，消息历史中的 `AIMessage.tool_calls` 必须紧跟与之匹配的 `ToolMessage`。
++ 当工具返回普通结果时，`ToolNode` 会帮我们完成运行结果到 `ToolMessage` 的转换，并追加到消息列表。
++ 但工具返回 `Command` 时，上述操作需要开发者完成，此时还应在 `Command.update` 的消息字段中写入对应的 `ToolMessage`。
++ 如果同一轮并行执行的多个工具可能更新同一个普通状态字段，需要为该字段配置合适的归并函数；否则可能出现并发更新冲突。本例中的两个工具分别更新 `weather_res` 和 `news_res`，因此不存在该问题。
+
+
+
+
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.prebuilt.tool_node import ToolNode, ToolRuntime
+from langgraph.types import Command
+from langgraph.graph.message import MessagesState
+
+from langchain.messages import HumanMessage, ToolMessage
+from langchain.tools import tool
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+class OverAllState(MessagesState):
+    weather_res: str
+    news_res: str
+
+@tool(parse_docstring=True)
+def get_weather(city: str, runtime: ToolRuntime) -> Command:
+    """
+    查询指定城市的当日天气
+
+    Args:
+        city: 城市名称
+    """
+    res = f"{city} 今天天气不错"
+    tool_call_id = runtime.tool_call_id
+    tool_msg = ToolMessage(tool_call_id=tool_call_id, content=res)
+    return Command(
+        update = {
+            "weather_res": res,
+            "messages": [tool_msg]
+        }
+    )
+
+@tool(parse_docstring=True)
+def get_news(home_or_abroad: bool, runtime: ToolRuntime) -> Command:
+    """
+    查询国内外新闻
+
+    Args:
+        home_or_abroad: 查询国内还是国外新闻，True: 国内新闻，False：国外新闻
+    """
+    if home_or_abroad:
+        res = "Kimi 新模型发布"
+    else:
+        res = "Anthropic 暂停新模型访问"
+    tool_call_id = runtime.tool_call_id
+    tool_msg = ToolMessage(tool_call_id=tool_call_id, content=res)
+    return Command(
+        update = {
+            "news_res": res,
+            "messages": [tool_msg]
+        }
+    )
+
+tools = [get_weather, get_news]
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+model_with_tools = model.bind_tools(tools=tools)
+
+def llm_node(state: OverAllState) -> OverAllState:
+    messages = state['messages']
+    response = model_with_tools.invoke(messages)
+
+    return {
+        "messages": [response]
+    }
+
+def router(state: OverAllState) -> Literal["tool_node", END]:
+    if state['messages'][-1].tool_calls:
+        return "tool_node"
+    return END
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("llm_node", llm_node)
+builder.add_node("tool_node", ToolNode(tools=tools))
+builder.add_edge(START, "llm_node")
+builder.add_conditional_edges("llm_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "llm_node")
+
+graph = builder.compile()
+
+from IPython.display import display
+display(graph)
+
+res = graph.invoke({"messages": [HumanMessage("今天北京天气如何？国内有哪些新闻？")]})
+print('=' * 30, '-> messages <-', '=' * 30)
+for msg in res.pop('messages'):
+    msg.pretty_print()
+
+print('=' * 30, '-> res without messages <-', '=' * 30)
+print(res)
+```
+
+运行结果如下
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792739246030-23bbe0e0-8467-4547-8268-9f516e729942.png)
+
+
+
+
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260622104243639.png)
+
+```json
+============================== -> messages <- ==============================
+================================ Human Message =================================
+
+今天北京天气如何？国内有哪些新闻？
+================================== Ai Message ==================================
+
+好的，我来同时查询北京天气和国内新闻。
+Tool Calls:
+  get_weather (call_00_hbEppxygz7DLDwaxg8X19090)
+ Call ID: call_00_hbEppxygz7DLDwaxg8X19090
+  Args:
+    city: 北京
+  get_news (call_01_wkG4j5Hjq4wkyTOaxzxT5267)
+ Call ID: call_01_wkG4j5Hjq4wkyTOaxzxT5267
+  Args:
+    home_or_abroad: True
+================================= Tool Message =================================
+Name: get_weather
+
+北京 今天天气不错
+================================= Tool Message =================================
+Name: get_news
+
+Kimi 新模型发布
+================================== Ai Message ==================================
+
+为您查询到以下信息：
+
+### 🌤️ 北京今日天气
+今天北京的天气**不错**，比较适宜出行。
+
+### 📰 国内新闻
+- **Kimi 新模型发布** — 国内AI领域又有新动态。
+
+如果您想了解更多详情，可以继续问我！
+============================== -> res without messages <- ==============================
+{'weather_res': '北京 今天天气不错', 'news_res': 'Kimi 新模型发布'}
+```
+
+
+
+### 工具节点执行与容错机制
++ `ToolNode` 提供同步工具调用包装器 `**<font style="color:#DF2A3F;background-color:#FBDE28;">wrap_tool_call</font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;">，用于在工具执行前后插入自定义逻辑</font>**。
++ 它与 `LangChain Agent` 中间件 `wrap_tool_call` 的核心机制相同：接收当前工具调用请求 `request` 和真正执行工具的回调 `execute`，可以选择不调用、调用一次或多次 `execute(request)`，并最终返回 `ToolMessage` 或 `Command`。
++ 因此，`wrap_tool_call` 可以用于重试、缓存、请求改写、短路返回和自定义控制流等场景。异步工具链路还可以使用对应的 `awrap_tool_call`。
+
+此处通过重试和缓存机制的实现，介绍 `wrap_tool_call` 的用法。
+
+#### 实现重试机制
+示例如下
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.prebuilt.tool_node import ToolNode
+from langgraph.graph.message import MessagesState
+
+from langchain.messages import HumanMessage, ToolMessage
+from langchain.tools import tool
+from langchain_deepseek import ChatDeepSeek
+
+from dataclasses import dataclass
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+import random
+
+@tool(parse_docstring=True)
+def get_weather(city: str) -> str:
+    """
+    查询指定城市的当日天气
+
+    Args:
+        city: 城市名称
+    """
+    # 70% 概率因网络波动而调用失败
+    rand_int = random.randint(1,10)
+    if rand_int < 8:
+        raise ConnectionError("网络波动失败")
+    return f"{city} 今天天气不错"
+
+tools = [get_weather]
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+model_with_tools = model.bind_tools(tools=tools)
+
+@dataclass
+class UserContext:
+    max_attempts: int
+
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state['messages']
+    response = model_with_tools.invoke(messages)
+
+    return {
+        "messages": [response]
+    }
+
+def router(state: MessagesState) -> Literal["tool_node", END]:
+    if state['messages'][-1].tool_calls:
+        return "tool_node"
+    return END
+
+def wrap_tool_call(request, execute):
+    max_attempts = request.runtime.context.max_attempts
+    tool_call_id = request.runtime.tool_call_id
+
+    tool_msg = ""
+    for i in range(max_attempts):
+        try:
+            tool_msg = execute(request)
+            break
+        except ConnectionError as e:
+            logger.info("工具调用失败，当前调用次数: {}, 调用次数上限: {}, 异常信息: {}", i + 1, max_attempts, e)
+
+    if not tool_msg:
+        tool_msg = ToolMessage(
+            tool_call_id = tool_call_id,
+            content = "调用次数到达上限，调用失败"
+        )
+
+    return tool_msg
+
+builder = StateGraph(state_schema=MessagesState, context_schema=UserContext)
+builder.add_node("llm_node", llm_node)
+builder.add_node("tool_node", ToolNode(tools=tools, wrap_tool_call=wrap_tool_call))
+builder.add_edge(START, "llm_node")
+builder.add_conditional_edges("llm_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "llm_node")
+
+graph = builder.compile()
+
+from IPython.display import display
+display(graph)
+
+res = graph.invoke(
+    {"messages": [HumanMessage("今天北京天气如何？")]},
+    context = UserContext(max_attempts=3))
+for msg in res['messages']:
+    msg.pretty_print()
+```
+
+运行结果如下
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792739318150-a70965e7-6cf2-4059-80fe-67df48884e31.png)
+
+按照当前设计，每次工具调用有 `70%` 的概率失败，最多尝试 `3` 次。仍然可能最终失败，如下所示。
+
+```json
+2026-06-22 11:12:21.039 | INFO     | __main__:wrap_tool_call:71 - 工具调用失败，当前调用次数: 1, 调用次数上限: 3, 异常信息: 网络波动失败
+2026-06-22 11:12:21.042 | INFO     | __main__:wrap_tool_call:71 - 工具调用失败，当前调用次数: 1, 调用次数上限: 3, 异常信息: 网络波动失败
+2026-06-22 11:12:21.046 | INFO     | __main__:wrap_tool_call:71 - 工具调用失败，当前调用次数: 1, 调用次数上限: 3, 异常信息: 网络波动失败
+================================ Human Message =================================
+
+今天北京天气如何？
+================================== Ai Message ==================================
+
+好的，我来查询一下北京今天的天气情况。
+Tool Calls:
+  get_weather (call_00_iYUeyQlDB0NuAAkcU1Zy3110)
+ Call ID: call_00_iYUeyQlDB0NuAAkcU1Zy3110
+  Args:
+    city: 北京
+================================= Tool Message =================================
+
+调用次数到达上限，调用失败
+================================== Ai Message ==================================
+
+抱歉，查询天气的服务暂时遇到了问题，无法获取到北京今天的天气信息。可能是以下原因导致的：
+
+1. **服务暂时不可用** - 可能是天气数据接口出现了临时故障
+2. **网络问题** - 查询过程中网络连接不稳定
+
+建议您可以：
+- **稍后再试**，看看服务是否恢复
+- 通过手机上的天气App或浏览器搜索"北京天气"来获取最新信息
+
+非常抱歉给您带来不便！如果还有其他问题需要帮助，请随时告诉我。
+```
+
+也有可能最终成功，如下
+
+```json
+2026-06-22 14:03:22.371 | INFO     | __main__:wrap_tool_call:70 - 工具调用失败，当前调用次数: 1, 调用次数上限: 3, 异常信息: 网络波动失败
+================================ Human Message =================================
+
+今天北京天气如何？
+================================== Ai Message ==================================
+
+好的，我来帮你查询一下今天北京的天气情况。
+Tool Calls:
+  get_weather (call_00_IXWZ2mg3lxI09gzm9BbZ4314)
+ Call ID: call_00_IXWZ2mg3lxI09gzm9BbZ4314
+  Args:
+    city: 北京
+================================= Tool Message =================================
+Name: get_weather
+
+北京 今天天气不错
+================================== Ai Message ==================================
+
+今天北京的天气**不错**，是个适合外出活动的好日子！☀️
+
+如果你需要更详细的天气信息（比如具体温度、风向等），可以告诉我，我再帮你进一步查询。
+```
+
+
+
+#### 实现缓存机制
+示例如下
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.prebuilt.tool_node import ToolNode
+from langgraph.graph.message import MessagesState
+
+from langchain.messages import HumanMessage, ToolMessage
+from langchain.tools import tool
+from langchain_deepseek import ChatDeepSeek
+
+from loguru import logger
+import json
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+@tool(parse_docstring=True)
+def get_weather(city: str) -> str:
+    """
+    查询指定城市的当日天气
+
+    Args:
+        city: 城市名称
+    """
+    return f"{city} 今天天气不错"
+
+tools = [get_weather]
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+model_with_tools = model.bind_tools(tools=tools)
+
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state['messages']
+    response = model_with_tools.invoke(messages)
+
+    return {
+        "messages": [response]
+    }
+
+def router(state: MessagesState) -> Literal["tool_node", END]:
+    if state['messages'][-1].tool_calls:
+        return "tool_node"
+    return END
+
+global_cache = dict()
+def wrap_tool_call(request, execute):
+    tool_name = request.tool_call["name"]
+    tool_args = json.dumps(request.tool_call["args"])
+    tool_call_id = request.runtime.tool_call_id
+
+    cache_key = (tool_name, tool_args)
+    cache = global_cache.get(cache_key)
+
+    if cache:
+        logger.info("{} 调用命中缓存", tool_name)
+        tool_msg = ToolMessage(
+            tool_call_id = tool_call_id,
+            content = cache
+        )
+    else:
+        tool_msg = execute(request)
+        logger.info("将 {} 的调用结果写入缓存", tool_name)
+        global_cache[cache_key] = tool_msg.content
+
+    return tool_msg
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_node("tool_node", ToolNode(tools=tools, wrap_tool_call=wrap_tool_call))
+builder.add_edge(START, "llm_node")
+builder.add_conditional_edges("llm_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "llm_node")
+
+graph = builder.compile()
+
+from IPython.display import display
+display(graph)
+
+print('=' * 30, '-> 第一次调用 - 北京 <-', '=' * 30)
+res = graph.invoke({"messages": [HumanMessage("今天北京天气如何？")]})
+for msg in res['messages']:
+    msg.pretty_print()
+
+print('=' * 30, '-> 第二次调用 - 北京 <-', '=' * 30)
+res = graph.invoke({"messages": [HumanMessage("今天北京天气如何？")]})
+for msg in res['messages']:
+    msg.pretty_print()
+
+print('=' * 30, '-> 第三次调用 - 杭州 <-', '=' * 30)
+res = graph.invoke({"messages": [HumanMessage("今天杭州天气如何？")]})
+for msg in res['messages']:
+    msg.pretty_print()
+```
+
+> 注意
+>
+> 这里使用的 `global_cache` 只是进程内缓存，主要用于演示：它没有 `TTL`、容量限制、并发保护和持久化能力，也只缓存普通 `ToolMessage` 的内容。生产环境应根据数据时效性选择 `Redis` 等缓存系统，并把用户、权限、地域、工具版本等会影响结果的因素纳入缓存键；具有副作用的工具通常不应直接缓存。
+>
+
+  
+** 运行结果如下**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1792739365373-1db7cd46-0656-465d-a014-5896a9f07256.png)
+
+```python
+============================== -> 第一次调用 - 北京 <- ==============================
+2026-06-22 14:05:29.845 | INFO     | __main__:wrap_tool_call:67 - 将 get_weather 的调用结果写入缓存
+================================ Human Message =================================
+
+今天北京天气如何？
+================================== Ai Message ==================================
+
+好的，我来查询一下北京今天的天气情况。
+Tool Calls:
+  get_weather (call_00_RWpYgZGeskrexH2dOWol2713)
+ Call ID: call_00_RWpYgZGeskrexH2dOWol2713
+  Args:
+    city: 北京
+================================= Tool Message =================================
+Name: get_weather
+
+北京 今天天气不错
+================================== Ai Message ==================================
+
+北京今天天气不错哦！☀️ 是个适合外出活动的好天气。不过具体温度、风力等详细信息我就没法提供了，建议您出门前可以根据自己的体感适当增减衣物。希望您度过愉快的一天！😊
+============================== -> 第二次调用 - 北京 <- ==============================
+2026-06-22 14:05:32.277 | INFO     | __main__:wrap_tool_call:60 - get_weather 调用命中缓存
+================================ Human Message =================================
+
+今天北京天气如何？
+================================== Ai Message ==================================
+
+好的，我来查询一下北京今天的天气情况。
+Tool Calls:
+  get_weather (call_00_Kimj3ySGhtIFhuYjIuw67098)
+ Call ID: call_00_Kimj3ySGhtIFhuYjIuw67098
+  Args:
+    city: 北京
+================================= Tool Message =================================
+
+北京 今天天气不错
+================================== Ai Message ==================================
+
+北京今天天气不错！☀️ 是个适合出门的好天气。不过具体的温度和风力等详细信息没有提供，如果你需要了解更多细节，可以告诉我哦~ 😊
+============================== -> 第三次调用 - 杭州 <- ==============================
+2026-06-22 14:05:34.514 | INFO     | __main__:wrap_tool_call:67 - 将 get_weather 的调用结果写入缓存
+================================ Human Message =================================
+
+今天杭州天气如何？
+================================== Ai Message ==================================
+
+好的，我来查询一下杭州今天的天气情况。
+Tool Calls:
+  get_weather (call_00_KvnVrq2WNq1C9I0xKb3U7776)
+ Call ID: call_00_KvnVrq2WNq1C9I0xKb3U7776
+  Args:
+    city: 杭州
+================================= Tool Message =================================
+Name: get_weather
+
+杭州 今天天气不错
+================================== Ai Message ==================================
+
+杭州今天天气不错！☀️ 看起来是一个适合出行或者户外活动的好日子。如果你有出门的计划，可以放心安排哦～不过如果需要更具体的温度、风力等信息，建议可以再查一下实时的天气预报。😊
+```
+
+  
+ 
+
+ 
+
+# 流式执行
+##  概述
+### 什么是流式执行
+**流式执行（**`Streaming Execution`**）**，是指程序在任务尚未全部完成时，就将执行过程中已经产生的中间结果、状态变化或事件持续输出给调用方，而不是等待整个任务结束后一次性返回最终结果。
+
+简而言之：流式执行就是
+
+> 边执行、边产生事件、边向调用方返回结果。
+>
+
+### 什么是`LangGraph`的流式执行
+`LangGraph` 的流式执行是指，状态图计算过程中，将节点输出、状态更新、消息增量、自定义事件或调试信息等写入流式队列，并在特定的时机将流式队列中的信息返还给调用者。
+
+在同步执行中，这些数据最终进入内部的**同步流式队列**；在异步执行中，则进入对应的**异步队列**。调用方通过**迭代器**逐条消费这些数据，因此不必等到整张图执行完毕后再获得反馈。
+
+### `LangGraph`的流式执行`API`
+`LangGraph` 提供了两套流式执行 `API`
+
+#### `stream/astream`
+获取 `LangGraph` 执行过程中的业务数据或运行时数据
+
++ `stream`：同步 `API`
++ `astream`：异步 `API`
+
+调用方通过 `stream_mode` 选择需要消费的内容，例如状态、节点更新、模型消息、自定义数据、检查点或任务事件。这是本章的重点。
+
+`stream`**与**`astream`**的区别**
+
+| 维度 | `stream()` | `astream()` |
+| :--- | :--- | :--- |
+| 调用方式 | 同步迭代 `for chunk in graph.stream(...)` | 异步迭代 `async for chunk in graph.astream(...)` |
+| 运行环境 | 普通 Python 脚本 | `asyncio` 事件循环（Jupyter、FastAPI 等） |
+| 参数与输出 | 相同 `stream_mode`，语义一致 | 相同 `stream_mode`，语义一致 |
+| 适用场景 | 同步批处理、CLI 工具 | `async` 服务端、结合其他异步 IO |
+
+
+#### `astream_events`
+获取图运行过程中产生的 `Runnable` 标准事件（组件生命周期、父子调用关系、输入输出等）。详见 [11.3. ](#113-astream_events)`astream_events`。
+
+##  `stream/astream`
+`astream` 是 `stream` 的异步版本。二者使用相同的流模式，且在参数一致时，输出数据的语义和封装格式一致；区别主要在于调用方分别使用同步迭代和异步迭代进行消费。
+
+前面的章节我们都是通过 `invoke` 调用状态图。实际上，`invoke` 会在内部消费 `stream`，并把流式执行结果汇总为最终返回值；`ainvoke` 与 `astream` 的关系同理。
+
+### 输出格式版本说明
+从 `LangGraph 1.1` 开始，`stream/astream` 支持两种输出格式版本：
+
++ `v1`：当前默认格式。输出形态会随参数变化：
+    - 单个流模式通常直接返回该模式的数据；
+    - 多个流模式返回 `(mode, data)`；
+    - 启用子图流式输出后，还会增加命名空间信息。
++ `v2`：在 `v1` 基础上做了封装，统一返回 `StreamPart` 字典，固定包含 `type`、`ns` 和 `data` 三个字段，增强了输出的可读性，简化了解析难度、并补充了校验机制。
+
+本节基于 `v1` 展开。示例刻意把 `stream_mode` 写成列表，即使每次只指定一种模式，也会得到 `(mode, data)` 二元组，便于观测模式名称，并且可以无缝扩展到指定多种模式的情况。
+
+### `stream_mode`
+流式输出支持不同的输出模式 `stream_mode`，这规定了流式输出的内容（在 `LangGraph` 中称为 `chunk`）。`stream_mode` 可传入单个字符串或模式列表。
+
+| 模式 | 输出内容 | 适用场景 |
+| :--- | :--- | :--- |
+| `values` | 每个超步后的完整状态 | 需要完整状态快照 |
+| `updates` | 节点产生的状态更新（增量） | 只关心节点输出变化 |
+| `messages` | `messages` 状态字段的增量更新 | LLM 对话流式输出 |
+| `checkpoints` | 检查点更新事件（需检查点存储器） | 持久化监控、中断调试 |
+| `tasks` | 任务开始/结果事件（含触发通道、异常） | 运行时观测、任务追踪 |
+| `debug` | `checkpoints` + `tasks` 的统一封装，附加超步编号、时间戳 | 调试排错 |
+| `custom` | 节点/工具通过 `stream_writer` 主动写出的自定义数据 | 进度通知、阶段说明 |
+
+
+为便于观察每种模式的数据结构，本节每次只启用一种模式，但仍使用列表形式传参（得到 `(mode, data)` 二元组）。
+
+#### `values`
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+class OverAllState(TypedDict):
+    initial_state: str
+    node_a_output: str
+    node_b_output: str
+
+def node_a(state: OverAllState) -> OverAllState:
+    return {
+        "node_a_output": "节点A的输出"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    return {
+        "node_b_output": "节点B的输出"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_b", END)
+
+graph = builder.compile()
+for chunk in graph.stream(
+    {"initial_state": "初始状态"},
+    stream_mode=["values"],
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```json
+('values', {'initial_state': '初始状态'})
+('values', {'initial_state': '初始状态', 'node_a_output': '节点A的输出'})
+('values', {'initial_state': '初始状态', 'node_a_output': '节点A的输出', 'node_b_output': '节点B的输出'})
+```
+
+#### `updates`
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+class OverAllState(TypedDict):
+    initial_state: str
+    node_a_output: str
+    node_b_output: str
+
+def node_a(state: OverAllState) -> OverAllState:
+    return {
+        "node_a_output": "节点A的输出"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    return {
+        "node_b_output": "节点B的输出"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_b", END)
+
+graph = builder.compile()
+for chunk in graph.stream(
+    {"initial_state": "初始状态"},
+    stream_mode=["updates"],
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```json
+('updates', {'node_a': {'node_a_output': '节点A的输出'}})
+('updates', {'node_b': {'node_b_output': '节点B的输出'}})
+```
+
+#### `messages`
+**示例如下**
+
+```python
+from langgraph.graph import StateGraph, START, END, MessagesState
+
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    response = model.invoke(messages)
+
+    return {
+        "messages": [response],
+    }
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_edge(START, "llm_node")
+builder.add_edge("llm_node", END)
+
+graph = builder.compile()
+
+for chunk in graph.stream(
+        {
+            "messages":[HumanMessage(content="你好!")]
+        },
+    stream_mode=["values","messages"],
+):
+    print(chunk)
+
+```
+
+**运行结果如下**
+
+```json
+('values', {'messages': [HumanMessage(content='你好!', additional_kwargs={}, response_metadata={}, id='0f0ff522-bc84-4ead-8228-66221903e9b4')]})
+('messages', (AIMessageChunk(content='', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='你好', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='！', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='很高兴', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='见到', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='你', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='，', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='有什么', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='可以', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='帮', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='你的', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='吗', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='？', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='无论是', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='聊天', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='、', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='解答', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='问题', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='，', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='还是', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='需要', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='帮助', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='，', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='都可以', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='告诉我', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='哦', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='！', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='😊', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='', additional_kwargs={}, response_metadata={'finish_reason': 'stop', 'model_name': 'deepseek-v4-flash', 'system_fingerprint': 'fp_8b330d02d0_prod0820_fp8_kvcache_20260402', 'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], usage_metadata={'input_tokens': 6, 'output_tokens': 28, 'total_tokens': 34, 'input_token_details': {'cache_read': 0}, 'output_token_details': {}}, tool_call_chunks=[]), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('messages', (AIMessageChunk(content='', additional_kwargs={}, response_metadata={}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[], chunk_position='last'), {'langgraph_step': 1, 'langgraph_node': 'llm_node', 'langgraph_triggers': ('branch:to:llm_node',), 'langgraph_path': ('__pregel_pull', 'llm_node'), 'langgraph_checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'checkpoint_ns': 'llm_node:e0f03332-6641-0bb0-cf08-e99ffeb6c7a6', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+('values', {'messages': [HumanMessage(content='你好!', additional_kwargs={}, response_metadata={}, id='0f0ff522-bc84-4ead-8228-66221903e9b4'), AIMessage(content='你好！很高兴见到你，有什么可以帮你的吗？无论是聊天、解答问题，还是需要帮助，都可以告诉我哦！😊', additional_kwargs={}, response_metadata={'finish_reason': 'stop', 'model_name': 'deepseek-v4-flash', 'system_fingerprint': 'fp_8b330d02d0_prod0820_fp8_kvcache_20260402', 'model_provider': 'deepseek'}, id='lc_run--019f5a6a-64cf-7573-874a-e669e00000ba', tool_calls=[], invalid_tool_calls=[], usage_metadata={'input_tokens': 6, 'output_tokens': 28, 'total_tokens': 34, 'input_token_details': {'cache_read': 0}, 'output_token_details': {}})]})
+```
+
+#### `checkpoints`
+`checkpoints` 模式依赖检查点存储器。它输出的是运行时构造的检查点事件，其结构接近 `get_state()` 返回的状态快照.
+
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+from langgraph.types import interrupt, Command
+
+class OverAllState(TypedDict):
+    initial_state: str
+    parallel_node_a_1: str
+    parallel_node_a_2: str
+    node_b_output: str
+
+def parallel_node_a_1(state: OverAllState) -> OverAllState:
+    return {
+        "parallel_node_a_1": "并行节点A-1的输出"
+    }
+
+def parallel_node_a_2(state: OverAllState) -> OverAllState:
+    return {
+        "parallel_node_a_2": "并行节点A-2的输出"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    interrupt("hello")
+    return {
+        "node_b_output": "节点B的输出"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("parallel_node_a_1", parallel_node_a_1)
+builder.add_node("parallel_node_a_2", parallel_node_a_2)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "parallel_node_a_1")
+builder.add_edge(START, "parallel_node_a_2")
+builder.add_edge(["parallel_node_a_1", "parallel_node_a_2"], "node_b")
+builder.add_edge("node_b", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "123"}}
+for chunk in graph.stream(
+    {"initial_state": "初始状态"},
+    stream_mode=["checkpoints"],
+    config=config
+):
+    print(chunk)
+
+print('=' * 30, '-> 中断前后分界线 <-', '=' * 30)
+
+for chunk in graph.stream(
+    Command(resume=""),
+    stream_mode=["checkpoints"],
+    config=config
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```python
+# === 第 1 个检查点：input 阶段（step=-1），仅有 __start__ 任务 ===
+(
+    'checkpoints',
+    {
+        'config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e909-a431-6009-bfff-dd033caf8a09'
+            }
+        },
+        'parent_config': None,
+        'values': {},
+        'metadata': {
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        'next': ['__start__'],
+        'tasks': [
+            {
+                'id': '6f4add75-8430-fd5b-46d5-93f40b5f142a',
+                'name': '__start__',
+                'interrupts': (),
+                'state': None
+            }
+        ]
+    }
+)
+
+# === 第 2 个检查点：loop 阶段（step=0），两个并行节点待执行 ===
+(
+    'checkpoints',
+    {
+        'config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e909-a436-66f0-8000-61f51460d18e'
+            }
+        },
+        'parent_config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e909-a431-6009-bfff-dd033caf8a09'
+            }
+        },
+        'values': {
+            'initial_state': '初始状态'
+        },
+        'metadata': {
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        'next': ['parallel_node_a_1', 'parallel_node_a_2'],
+        'tasks': [
+            {
+                'id': '0aa4a4d7-1e7f-f02f-25ef-46c088c7e1e0',
+                'name': 'parallel_node_a_1',
+                'interrupts': (),
+                'state': None
+            },
+            {
+                'id': 'd3670671-0bdb-6574-be1e-915be93b239e',
+                'name': 'parallel_node_a_2',
+                'interrupts': (),
+                'state': None
+            }
+        ]
+    }
+)
+
+# === 第 3 个检查点：loop 阶段（step=1），并行节点执行完毕，node_b 待执行 ===
+(
+    'checkpoints',
+    {
+        'config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e909-a439-67c6-8001-f441fbddc2f9'
+            }
+        },
+        'parent_config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e909-a436-66f0-8000-61f51460d18e'
+            }
+        },
+        'values': {
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出'
+        },
+        'metadata': {
+            'source': 'loop',
+            'step': 1,
+            'parents': {}
+        },
+        'next': ['node_b'],
+        'tasks': [
+            {
+                'id': 'cc97ac77-de6f-470b-d3c5-d0a94ea5534e',
+                'name': 'node_b',
+                'interrupts': (),
+                'state': None
+            }
+        ]
+    }
+)
+
+============================== -> 中断前后分界线 <- ==============================
+
+# === 第 4 个检查点：中断发生时（step=1），node_b 的 interrupts 字段包含中断信息 ===
+(
+    'checkpoints',
+    {
+        'config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e909-a439-67c6-8001-f441fbddc2f9'
+            }
+        },
+        'parent_config': {
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f17e909-a436-66f0-8000-61f51460d18e'
+            }
+        },
+        'values': {
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出'
+        },
+        'metadata': {
+            'source': 'loop',
+            'step': 1,
+            'parents': {}
+        },
+        'next': ['node_b'],
+        'tasks': [
+            {
+                'id': 'cc97ac77-de6f-470b-d3c5-d0a94ea5534e',
+                'name': 'node_b',
+                'interrupts': (
+                    {
+                        'value': 'hello',
+                        'id': '486f817f7367de26620067969c8780eb'
+                    },
+                ),
+                'state': None
+            }
+        ]
+    }
+)
+
+# === 第 5 个检查点：resume 后（step=2），node_b 执行完毕，next 为空 ===
+(
+    'checkpoints',
+    {
+        'config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e926-5137-6203-8002-4e1f7ffb6aa1'
+            }
+        },
+        'parent_config': {
+            'configurable': {
+                'checkpoint_ns': '',
+                'thread_id': '123',
+                'checkpoint_id': '1f17e909-a439-67c6-8001-f441fbddc2f9'
+            }
+        },
+        'values': {
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出',
+            'node_b_output': '节点B的输出'
+        },
+        'metadata': {
+            'source': 'loop',
+            'step': 2,
+            'parents': {}
+        },
+        'next': [],
+        'tasks': []
+    }
+)
+```
+
+**查看历史检查点列表**
+
+```python
+list(graph.get_state_history(config=config))
+```
+
+**运行结果如下**
+
+```json
+[
+    StateSnapshot(
+        values={
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出',
+            'node_b_output': '节点B的输出'
+        },
+        next=(),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16eb81-f230-641b-8002-53e494a0e53c'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 2,
+            'parents': {}
+        },
+        created_at='2026-06-23T04:00:50.062223+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16eb81-f229-6a9b-8001-4049f4629aea'
+            }
+        },
+        tasks=(),
+        interrupts=()
+    ),
+
+    StateSnapshot(
+        values={
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出'
+        },
+        next=(
+            'node_b',
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16eb81-f229-6a9b-8001-4049f4629aea'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 1,
+            'parents': {}
+        },
+        created_at='2026-06-23T04:00:50.059522+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16eb81-f225-646d-8000-b7e7c665f75a'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='f2153246-63f8-7422-31f6-2712d781be78',
+                name='node_b',
+                path=(
+                    '__pregel_pull',
+                    'node_b'
+                ),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='hello',
+                        id='6e3aa823181df313cfac730c024f4ed7'
+                    ),
+                ),
+                state=None,
+                result={
+                    'node_b_output': '节点B的输出'
+                }
+            ),
+        ),
+        interrupts=(
+            Interrupt(
+                value='hello',
+                id='6e3aa823181df313cfac730c024f4ed7'
+            ),
+        )
+    ),
+
+    StateSnapshot(
+        values={
+            'initial_state': '初始状态'
+        },
+        next=(
+            'parallel_node_a_1',
+            'parallel_node_a_2'
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16eb81-f225-646d-8000-b7e7c665f75a'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-23T04:00:50.057725+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16eb81-f221-6a80-bfff-d157e04c0492'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='419afd20-961a-9a90-49dd-d19f1448ebe0',
+                name='parallel_node_a_1',
+                path=(
+                    '__pregel_pull',
+                    'parallel_node_a_1'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'parallel_node_a_1': '并行节点A-1的输出'
+                }
+            ),
+            PregelTask(
+                id='339d1e80-39f2-24d5-c677-3fb3f8314fd6',
+                name='parallel_node_a_2',
+                path=(
+                    '__pregel_pull',
+                    'parallel_node_a_2'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'parallel_node_a_2': '并行节点A-2的输出'
+                }
+            )
+        ),
+        interrupts=()
+    ),
+
+    StateSnapshot(
+        values={},
+        next=(
+            '__start__',
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16eb81-f221-6a80-bfff-d157e04c0492'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-23T04:00:50.056245+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='20116610-8f9e-c556-b647-778737961e5a',
+                name='__start__',
+                path=(
+                    '__pregel_pull',
+                    '__start__'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'initial_state': '初始状态'
+                }
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+| 对比维度 | `get_state_history()` | `checkpoints` 流 |
+| :--- | :--- | :--- |
+| 排序方式 | 时间倒序（最新在前） | 超步编号升序（正向执行顺序） |
+| 顶层 `interrupts` | 有 | **无**（中断信息附着在 `tasks[].interrupts` 中） |
+
+
+**中断时序说明**：检查点 `chunk` 在超步**第一阶段**输出，中断在**第二阶段**触发。因此中断发生时最新检查点仍为上一步（`step=1`），任务中断信息尚为空；恢复执行后第一阶段重新输出 `step=1` 检查点时，中断信息已被记录。
+
+#### `tasks`
+`tasks` 模式以任务为单位输出开始事件和结果事件。它比 `updates` 更偏向运行时观测：除了任务结果，还会暴露任务输入、触发通道、异常和中断信息。
+
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+class OverAllState(TypedDict):
+    initial_state: str
+    parallel_node_a_1: str
+    parallel_node_a_2: str
+    node_b_output: str
+
+def parallel_node_a_1(state: OverAllState) -> OverAllState:
+    return {
+        "parallel_node_a_1": "并行节点A-1的输出"
+    }
+
+def parallel_node_a_2(state: OverAllState) -> OverAllState:
+    return {
+        "parallel_node_a_2": "并行节点A-2的输出"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    return {
+        "node_b_output": "节点B的输出"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("parallel_node_a_1", parallel_node_a_1)
+builder.add_node("parallel_node_a_2", parallel_node_a_2)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "parallel_node_a_1")
+builder.add_edge(START, "parallel_node_a_2")
+builder.add_edge(["parallel_node_a_1", "parallel_node_a_2"], "node_b")
+builder.add_edge("node_b", END)
+
+graph = builder.compile()
+
+for chunk in graph.stream(
+    {"initial_state": "初始状态"},
+    stream_mode=["tasks"]
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```json
+(
+    'tasks',
+    {
+        'id': '0b0c1e51-456f-d37c-346c-2109d78f8c2a',
+        'name': 'parallel_node_a_1',
+        'input': {
+            'initial_state': '初始状态'
+        },
+        'triggers': (
+            'branch:to:parallel_node_a_1',
+        )
+    }
+)
+
+(
+    'tasks',
+    {
+        'id': '018ab5c2-0a5a-9094-8876-05668d3f27e0',
+        'name': 'parallel_node_a_2',
+        'input': {
+            'initial_state': '初始状态'
+        },
+        'triggers': (
+            'branch:to:parallel_node_a_2',
+        )
+    }
+)
+
+(
+    'tasks',
+    {
+        'id': '0b0c1e51-456f-d37c-346c-2109d78f8c2a',
+        'name': 'parallel_node_a_1',
+        'error': None,
+        'result': {
+            'parallel_node_a_1': '并行节点A-1的输出'
+        },
+        'interrupts': []
+    }
+)
+
+(
+    'tasks',
+    {
+        'id': '018ab5c2-0a5a-9094-8876-05668d3f27e0',
+        'name': 'parallel_node_a_2',
+        'error': None,
+        'result': {
+            'parallel_node_a_2': '并行节点A-2的输出'
+        },
+        'interrupts': []
+    }
+)
+
+(
+    'tasks',
+    {
+        'id': '6ebeabdb-1735-2cab-ca3e-ea2fa67be0ff',
+        'name': 'node_b',
+        'input': {
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出'
+        },
+        'triggers': (
+            'branch:to:node_b',
+            'join:parallel_node_a_1+parallel_node_a_2:node_b'
+        )
+    }
+)
+
+(
+    'tasks',
+    {
+        'id': '6ebeabdb-1735-2cab-ca3e-ea2fa67be0ff',
+        'name': 'node_b',
+        'error': None,
+        'result': {
+            'node_b_output': '节点B的输出'
+        },
+        'interrupts': []
+    }
+)
+```
+
+**任务 **`chunk`** 分为两类**：
+
+| 事件类型 | 产生时机 | 关键字段 |
+| :--- | :--- | :--- |
+| **任务开始事件** | 任务准备完毕，尚未执行 | `input`（任务输入）、`triggers`（触发通道） |
+| **任务结果事件** | 任务执行完成/失败/中断后 | `error`（异常，`None`=正常）、`result`、`interrupts` |
+
+
+并行任务时：所有**开始事件**（第一阶段）全部输出后，才出现**结果事件**（第二阶段）。
+
+#### `debug`
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+from langgraph.types import interrupt, Command
+
+class OverAllState(TypedDict):
+    initial_state: str
+    parallel_node_a_1: str
+    parallel_node_a_2: str
+    node_b_output: str
+
+def parallel_node_a_1(state: OverAllState) -> OverAllState:
+    return {
+        "parallel_node_a_1": "并行节点A-1的输出"
+    }
+
+def parallel_node_a_2(state: OverAllState) -> OverAllState:
+    return {
+        "parallel_node_a_2": "并行节点A-2的输出"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    interrupt("hello")
+    return {
+        "node_b_output": "节点B的输出"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("parallel_node_a_1", parallel_node_a_1)
+builder.add_node("parallel_node_a_2", parallel_node_a_2)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "parallel_node_a_1")
+builder.add_edge(START, "parallel_node_a_2")
+builder.add_edge(["parallel_node_a_1", "parallel_node_a_2"], "node_b")
+builder.add_edge("node_b", END)
+
+checkpointer = InMemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "123"}}
+for chunk in graph.stream(
+    {"initial_state": "初始状态"},
+    stream_mode=["debug"],
+    config=config
+):
+    print(chunk)
+
+print('=' * 30, '-> 中断前后分界线 <-', '=' * 30)
+
+for chunk in graph.stream(
+    Command(resume=""),
+    stream_mode=["debug"],
+    config=config
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```json
+(
+    'debug',
+    {
+        'step': -1,
+        'timestamp': '2026-06-23T06:02:59.369405+00:00',
+        'type': 'checkpoint',
+        'payload': {
+            'config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbe6-68b4-bfff-30257767db2f'
+                }
+            },
+            'parent_config': None,
+            'values': {},
+            'metadata': {
+                'source': 'input',
+                'step': -1,
+                'parents': {}
+            },
+            'next': [
+                '__start__'
+            ],
+            'tasks': [
+                {
+                    'id': '3a25e32c-3a9a-a6fa-3c77-e958d2cf0021',
+                    'name': '__start__',
+                    'interrupts': (),
+                    'state': None
+                }
+            ]
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 0,
+        'timestamp': '2026-06-23T06:02:59.371035+00:00',
+        'type': 'checkpoint',
+        'payload': {
+            'config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbe9-63f9-8000-bc529e935a70'
+                }
+            },
+            'parent_config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbe6-68b4-bfff-30257767db2f'
+                }
+            },
+            'values': {
+                'initial_state': '初始状态'
+            },
+            'metadata': {
+                'source': 'loop',
+                'step': 0,
+                'parents': {}
+            },
+            'next': [
+                'parallel_node_a_1',
+                'parallel_node_a_2'
+            ],
+            'tasks': [
+                {
+                    'id': '8f4954b8-e096-ed44-fd3b-b5741b66ce14',
+                    'name': 'parallel_node_a_1',
+                    'interrupts': (),
+                    'state': None
+                },
+                {
+                    'id': '33b02562-5b8b-c072-3dd4-d939f02f3835',
+                    'name': 'parallel_node_a_2',
+                    'interrupts': (),
+                    'state': None
+                }
+            ]
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 1,
+        'timestamp': '2026-06-23T06:02:59.371050+00:00',
+        'type': 'task',
+        'payload': {
+            'id': '8f4954b8-e096-ed44-fd3b-b5741b66ce14',
+            'name': 'parallel_node_a_1',
+            'input': {
+                'initial_state': '初始状态'
+            },
+            'triggers': (
+                'branch:to:parallel_node_a_1',
+            )
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 1,
+        'timestamp': '2026-06-23T06:02:59.371054+00:00',
+        'type': 'task',
+        'payload': {
+            'id': '33b02562-5b8b-c072-3dd4-d939f02f3835',
+            'name': 'parallel_node_a_2',
+            'input': {
+                'initial_state': '初始状态'
+            },
+            'triggers': (
+                'branch:to:parallel_node_a_2',
+            )
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 1,
+        'timestamp': '2026-06-23T06:02:59.371811+00:00',
+        'type': 'task_result',
+        'payload': {
+            'id': '8f4954b8-e096-ed44-fd3b-b5741b66ce14',
+            'name': 'parallel_node_a_1',
+            'error': None,
+            'result': {
+                'parallel_node_a_1': '并行节点A-1的输出'
+            },
+            'interrupts': []
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 1,
+        'timestamp': '2026-06-23T06:02:59.371861+00:00',
+        'type': 'task_result',
+        'payload': {
+            'id': '33b02562-5b8b-c072-3dd4-d939f02f3835',
+            'name': 'parallel_node_a_2',
+            'error': None,
+            'result': {
+                'parallel_node_a_2': '并行节点A-2的输出'
+            },
+            'interrupts': []
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 1,
+        'timestamp': '2026-06-23T06:02:59.372140+00:00',
+        'type': 'checkpoint',
+        'payload': {
+            'config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbee-6f65-8001-4e724c2acb07'
+                }
+            },
+            'parent_config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbe9-63f9-8000-bc529e935a70'
+                }
+            },
+            'values': {
+                'initial_state': '初始状态',
+                'parallel_node_a_1': '并行节点A-1的输出',
+                'parallel_node_a_2': '并行节点A-2的输出'
+            },
+            'metadata': {
+                'source': 'loop',
+                'step': 1,
+                'parents': {}
+            },
+            'next': [
+                'node_b'
+            ],
+            'tasks': [
+                {
+                    'id': 'e7d4c64e-8ab7-99ec-4031-170fd0122ed7',
+                    'name': 'node_b',
+                    'interrupts': (),
+                    'state': None
+                }
+            ]
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 2,
+        'timestamp': '2026-06-23T06:02:59.372150+00:00',
+        'type': 'task',
+        'payload': {
+            'id': 'e7d4c64e-8ab7-99ec-4031-170fd0122ed7',
+            'name': 'node_b',
+            'input': {
+                'initial_state': '初始状态',
+                'parallel_node_a_1': '并行节点A-1的输出',
+                'parallel_node_a_2': '并行节点A-2的输出'
+            },
+            'triggers': (
+                'branch:to:node_b',
+                'join:parallel_node_a_1+parallel_node_a_2:node_b'
+            )
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 2,
+        'timestamp': '2026-06-23T06:02:59.372332+00:00',
+        'type': 'task_result',
+        'payload': {
+            'id': 'e7d4c64e-8ab7-99ec-4031-170fd0122ed7',
+            'name': 'node_b',
+            'error': None,
+            'result': {},
+            'interrupts': [
+                {
+                    'value': 'hello',
+                    'id': 'b195d3f05c81aac2aab438899fe67823'
+                }
+            ]
+        }
+    }
+)
+
+============================== -> 中断前后分界线 <- ==============================
+
+(
+    'debug',
+    {
+        'step': 1,
+        'timestamp': '2026-06-23T06:02:59.373847+00:00',
+        'type': 'checkpoint',
+        'payload': {
+            'config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbee-6f65-8001-4e724c2acb07'
+                }
+            },
+            'parent_config': {
+                'configurable': {
+                    'thread_id': '123',
+                    'checkpoint_ns': '',
+                    'checkpoint_id': '1f16ec92-fbe9-63f9-8000-bc529e935a70'
+                }
+            },
+            'values': {
+                'initial_state': '初始状态',
+                'parallel_node_a_1': '并行节点A-1的输出',
+                'parallel_node_a_2': '并行节点A-2的输出'
+            },
+            'metadata': {
+                'source': 'loop',
+                'step': 1,
+                'parents': {}
+            },
+            'next': [
+                'node_b'
+            ],
+            'tasks': [
+                {
+                    'id': 'e7d4c64e-8ab7-99ec-4031-170fd0122ed7',
+                    'name': 'node_b',
+                    'interrupts': (
+                        {
+                            'value': 'hello',
+                            'id': 'b195d3f05c81aac2aab438899fe67823'
+                        },
+                    ),
+                    'state': None
+                }
+            ]
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 2,
+        'timestamp': '2026-06-23T06:02:59.373864+00:00',
+        'type': 'task',
+        'payload': {
+            'id': 'e7d4c64e-8ab7-99ec-4031-170fd0122ed7',
+            'name': 'node_b',
+            'input': {
+                'initial_state': '初始状态',
+                'parallel_node_a_1': '并行节点A-1的输出',
+                'parallel_node_a_2': '并行节点A-2的输出'
+            },
+            'triggers': (
+                'branch:to:node_b',
+                'join:parallel_node_a_1+parallel_node_a_2:node_b'
+            )
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 2,
+        'timestamp': '2026-06-23T06:02:59.374037+00:00',
+        'type': 'task_result',
+        'payload': {
+            'id': 'e7d4c64e-8ab7-99ec-4031-170fd0122ed7',
+            'name': 'node_b',
+            'error': None,
+            'result': {
+                'node_b_output': '节点B的输出'
+            },
+            'interrupts': []
+        }
+    }
+)
+
+(
+    'debug',
+    {
+        'step': 2,
+        'timestamp': '2026-06-23T06:02:59.374356+00:00',
+        'type': 'checkpoint',
+        'payload': {
+            'config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbf3-6ffe-8002-32361c07b81c'
+                }
+            },
+            'parent_config': {
+                'configurable': {
+                    'checkpoint_ns': '',
+                    'thread_id': '123',
+                    'checkpoint_id': '1f16ec92-fbee-6f65-8001-4e724c2acb07'
+                }
+            },
+            'values': {
+                'initial_state': '初始状态',
+                'parallel_node_a_1': '并行节点A-1的输出',
+                'parallel_node_a_2': '并行节点A-2的输出',
+                'node_b_output': '节点B的输出'
+            },
+            'metadata': {
+                'source': 'loop',
+                'step': 2,
+                'parents': {}
+            },
+            'next': [],
+            'tasks': []
+        }
+    }
+)
+```
+
+**查看历史检查点**
+
+```python
+list(graph.get_state_history(config=config))
+```
+
+**结果如下**
+
+```json
+[
+    StateSnapshot(
+        values={
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出',
+            'node_b_output': '节点B的输出'
+        },
+        next=(),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16ec92-fbf3-6ffe-8002-32361c07b81c'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 2,
+            'parents': {}
+        },
+        created_at='2026-06-23T06:02:59.374073+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16ec92-fbee-6f65-8001-4e724c2acb07'
+            }
+        },
+        tasks=(),
+        interrupts=()
+    ),
+
+    StateSnapshot(
+        values={
+            'initial_state': '初始状态',
+            'parallel_node_a_1': '并行节点A-1的输出',
+            'parallel_node_a_2': '并行节点A-2的输出'
+        },
+        next=(
+            'node_b',
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16ec92-fbee-6f65-8001-4e724c2acb07'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 1,
+            'parents': {}
+        },
+        created_at='2026-06-23T06:02:59.372008+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16ec92-fbe9-63f9-8000-bc529e935a70'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='e7d4c64e-8ab7-99ec-4031-170fd0122ed7',
+                name='node_b',
+                path=(
+                    '__pregel_pull',
+                    'node_b'
+                ),
+                error=None,
+                interrupts=(
+                    Interrupt(
+                        value='hello',
+                        id='b195d3f05c81aac2aab438899fe67823'
+                    ),
+                ),
+                state=None,
+                result={
+                    'node_b_output': '节点B的输出'
+                }
+            ),
+        ),
+        interrupts=(
+            Interrupt(
+                value='hello',
+                id='b195d3f05c81aac2aab438899fe67823'
+            ),
+        )
+    ),
+
+    StateSnapshot(
+        values={
+            'initial_state': '初始状态'
+        },
+        next=(
+            'parallel_node_a_1',
+            'parallel_node_a_2'
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16ec92-fbe9-63f9-8000-bc529e935a70'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-23T06:02:59.369665+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16ec92-fbe6-68b4-bfff-30257767db2f'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='8f4954b8-e096-ed44-fd3b-b5741b66ce14',
+                name='parallel_node_a_1',
+                path=(
+                    '__pregel_pull',
+                    'parallel_node_a_1'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'parallel_node_a_1': '并行节点A-1的输出'
+                }
+            ),
+            PregelTask(
+                id='33b02562-5b8b-c072-3dd4-d939f02f3835',
+                name='parallel_node_a_2',
+                path=(
+                    '__pregel_pull',
+                    'parallel_node_a_2'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'parallel_node_a_2': '并行节点A-2的输出'
+                }
+            )
+        ),
+        interrupts=()
+    ),
+
+    StateSnapshot(
+        values={},
+        next=(
+            '__start__',
+        ),
+        config={
+            'configurable': {
+                'thread_id': '123',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16ec92-fbe6-68b4-bfff-30257767db2f'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-23T06:02:59.368563+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='3a25e32c-3a9a-a6fa-3c77-e958d2cf0021',
+                name='__start__',
+                path=(
+                    '__pregel_pull',
+                    '__start__'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'initial_state': '初始状态'
+                }
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+`debug`** 模式 = **`checkpoints`** + **`tasks`** 的统一封装**，外层增加调试字段：
+
+| 字段 | 含义 |
+| :--- | :--- |
+| `step` | 超步编号 |
+| `timestamp` | chunk 生成时间 |
+| `type` | `checkpoint` / `task` / `task_result` |
+| `payload` | 对应模式下 chunk 的原始内容 |
+
+
+**chunk 输出顺序**：每个超步第一阶段按 `准备任务 → 检查点日志 → 任务日志` 的顺序生成，因此任务 chunk 位于前后两个超步的检查点 chunk 之间。中断恢复时对应超步会重新执行，任务 chunk 会再次生成。
+
+   具体来说，`step=2` 的超步发生了中断，恢复运行时，`step=2` 会重新执行，其第一阶段会再次准备任务，并生成这一阶段的所有任务 `chunk`。
+
+#### `custom`
+`custom` 模式允许**节点或工具**主动写出自定义数据，调用方通过 `stream/astream` 消费这些数据。
+
+它适合输出进度、阶段说明、外部 API 的增量结果等非状态数据。
+
+##### 11.2.2.7.1. 节点中写出内容
+节点中写出内容通过 `Runtime` 实例的 `stream_writer`（也可通过 `get_stream_writer()` 获取，二者等效）。当 `stream_mode` 包含 `custom` 时，底层会定义 `stream_writer` 并注入 `Runtime`，相关源码：
+
+**定义 **`stream_writer`
+
+```python
+if "custom" in stream_modes:
+
+    def stream_writer(c: Any) -> None:
+        stream.put(
+            (
+                tuple(
+                    get_config()[CONF][CONFIG_KEY_CHECKPOINT_NS].split(
+                        NS_SEP
+                    )[:-1]
+                ),
+                "custom",
+                c,
+            )
+        )
+```
+
+创建 `Runtime` 实例
+
+```python
+runtime = Runtime(
+    context=_coerce_context(self.context_schema, context),
+    store=store,
+    stream_writer=stream_writer,
+    previous=None,
+)
+```
+
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.runtime import Runtime
+
+class OverAllState(TypedDict):
+    initial_state: str
+    node_a_output: str
+    node_b_output: str
+
+def node_a(state: OverAllState, runtime: Runtime) -> OverAllState:
+    stream_writer = runtime.stream_writer
+    stream_writer("节点 A 正在执行...")
+
+    return {
+        "node_a_output": "节点A的输出"
+    }
+
+def node_b(state: OverAllState, runtime: Runtime) -> OverAllState:
+    stream_writer = runtime.stream_writer
+    stream_writer("节点 B 正在执行...")
+
+    return {
+        "node_b_output": "节点B的输出"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_b", END)
+
+graph = builder.compile()
+for chunk in graph.stream(
+    {"initial_state": "初始状态"},
+    stream_mode=["custom"],
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```json
+('custom', '节点 A 正在执行...')
+('custom', '节点 B 正在执行...')
+```
+
+##### 11.2.2.7.2. 工具中写出内容
+工具中写出内容通过 `ToolRuntime` 实例的 `stream_writer`，用法与节点中一致。
+
+**示例如下**
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END, MessagesState
+from langgraph.prebuilt.tool_node import ToolNode, ToolRuntime
+from langgraph.runtime import Runtime
+from langchain.tools import tool
+
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+@tool(parse_docstring=True)
+def get_weather(city: str, runtime: ToolRuntime) -> str:
+    """
+    根据城市查询当日天气
+
+    Args:
+        city: 城市名称
+    """
+    stream_writer = runtime.stream_writer
+    stream_writer(f"正在查询 {city} 今天的天气...")
+    return f"{city} 今天天气不错"
+
+tools = [get_weather]
+model_with_tools = model.bind_tools(tools=tools)
+
+def llm_node(state: MessagesState, runtime: Runtime) -> MessagesState:
+    messages = state["messages"]
+    response = model_with_tools.invoke(messages)
+
+    stream_writer = runtime.stream_writer
+    stream_writer("正在执行 llm_node...")
+
+    return {
+        "messages": [response]
+    }
+
+def router(state: MessagesState) -> Literal["tool_node", END]:
+    last_msg = state["messages"][-1]
+    if last_msg.tool_calls:
+        return "tool_node"
+    return END
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_node("tool_node", ToolNode(tools=tools))
+builder.add_edge(START, "llm_node")
+builder.add_conditional_edges("llm_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "llm_node")
+
+graph = builder.compile()
+
+for chunk in graph.stream(
+    {"messages": [HumanMessage("今天北京天气如何？")]},
+    stream_mode=["custom"]
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```json
+('custom', '正在执行 llm_node...')
+('custom', '正在查询 北京 今天的天气...')
+('custom', '正在执行 llm_node...')
+```
+
+### 11.2.3. 底层机制
+以 `LangGraph 1.1.2` 的 `stream()` 为例，流式处理分为三个阶段：
+
+| 阶段 | 说明 |
+| :--- | :--- |
+| **创建队列** | `stream()` 调用 `SyncQueue()` 创建 FIFO 队列，接收运行时写入的 chunk |
+| **生产** | 根据 `stream_mode`，在运行时的不同阶段将原始数据写入队列 |
+| **消费** | 在两处调用 `_output()` 函数，按 FIFO 从队列取出数据 `yield` 给调用者：① `runner.tick()` 交还控制权时；② 超步循环结束后清空收尾 |
+
+
+对 `messages` 和 `custom` 等需及时输出的模式，框架启用**等待器**，队列有新数据时立即交还控制权。
+
+## 11.3. `astream_events`
+`astream_events` 用于异步获取图运行过程中产生的 `Runnable`** 标准事件**。它关注的是可执行组件的生命周期、父子调用关系、输入输出和元数据，而不是单纯返回图状态。
+
+`Runnable`**接口**
+
+`Runnable` 是 `LangChain` 与 `LangGraph` 生态的统一可执行对象协议（`langchain_core.runnables`），统一了模型、工具、Agent、节点和编译图等组件的调用方式。
+
+| 方法 | 说明 |
+| :--- | :--- |
+| `invoke()` / `ainvoke()` | 同步/异步调用 |
+| `stream()` / `astream()` | 同步/异步流式执行 |
+| `astream_events()` | 异步获取标准事件 |
+| `batch()` | 批量执行 |
+
+
+常见 `Runnable` 组件：`CompiledStateGraph`、`PromptTemplate`、`ChatModel`、`Tool`、`Retriever`、`RunnableSequence`。
+
+`Runnable`**事件**
+
+`Runnable` 执行过程会被框架转换为标准化事件，遵循 `on_<type>_<phase>` 命名规则：
+
+| 阶段 | 事件后缀 | 含义 |
+| :--- | :--- | :--- |
+| 开始 | `_start` | 组件开始执行 |
+| 中间 | `_stream` | 产生中间结果 |
+| 结束 | `_end` | 组件执行结束 |
+
+
+类型（`<type>`）可为 `chain`、`chat_model`、`llm`、`tool`、`retriever`、`prompt` 等。并非所有类型都有三种事件——例如工具通常只有 `on_tool_start` 和 `on_tool_end`。
+
+实际运行拿到的 `Runnable`** 事件** 示例如下
+
+```json
+{
+    'event': 'on_chain_start',
+    'data': {
+        'input': {
+            'initial_state': '初始状态'
+        }
+    },
+    'name': 'LangGraph',
+    'tags': [],
+    'run_id': '019eeedd-9dfd-7400-b465-6b95f7292333',
+    'metadata': {},
+    'parent_ids': []
+}
+```
+
+### 11.3.1. `astream_events`的版本
+从 `LangGraph 1.2.0` 开始，`astream_events` 支持三个版本：
+
+| 版本 | 基础 | 特点 | 入口 |
+| :--- | :--- | :--- | :--- |
+| `v1` | `Runnable` 标准事件 | `parent_ids` 始终为空列表 | `astream_events(version="v1")` |
+| `v2`（默认） | `Runnable` 标准事件 | `parent_ids` 可表达完整父级运行链，改进父子调用关系 | `astream_events(version="v2")` |
+| `v3` | `Pregel` 原始流（= `stream/astream` 底层） | 全新协议，通过类型化投影消费（见下表），独立于 v1/v2 | `astream_events(version="v3")` / `stream_events(version="v3")` |
+
+
+`v3` 从底层 `stream/astream` 获取 `Pregel` 原始流数据，经事件路由器与 `StreamTransformer` 生成类型化投影。投影之间可独立/并发消费：
+
+| 投影 | 用法 |
+| :--- | :--- |
+| `stream` | 遍历每个协议事件 |
+| `stream.messages` | 流式传输聊天模型的消息。 |
+| `stream.values` | 流式传输状态快照 |
+| `stream.output` | 等待计算图的最终输出 |
+| `stream.subgraphs` | 观测子图的运行 |
+| `stream.interrupts` | 观测 `HITL` 的中断信息 |
+| `stream.interrupted` | 检查运行是否因人工输入而中断 |
+| `stream.extensions` | 消费自定义流的投影 |
+
+
+不同投影之间可以独立或并发消费，读取 `stream.messages` 不会消耗 `stream.values` 、 `stream.subgraphs` 或 `stream.output` 所需的事件。
+
+`Pregel` 流即 `stream/astream` 的底层支持，上文 7 种 `stream_mode` 分别对应其中的 7 类流式数据。v3 并非 v1/v2 的封装——二者数据协议和内部管线独立，但共享同一组公开 API 入口和底层图运行时。
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260623180949275.png)
+
+当前版本（`LangGraph 1.1.2`）仅支持 `astream_events` 的 `v1/v2`，默认版本为 `v2`。
+
+### 11.3.2. `astream_events`的用法
+事件流不是我们研究的重点，此处仅提供最简示例。
+
+**示例如下**
+
+底层也会调用 `astream` 来真正触发计算图的运行。
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+class OverAllState(TypedDict):
+    initial_state: str
+    node_a_output: str
+    node_b_output: str
+
+def node_a(state: OverAllState) -> OverAllState:
+    return {
+        "node_a_output": "节点A的输出"
+    }
+
+def node_b(state: OverAllState) -> OverAllState:
+    return {
+        "node_b_output": "节点B的输出"
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("node_a", node_a)
+builder.add_node("node_b", node_b)
+builder.add_edge(START, "node_a")
+builder.add_edge("node_a", "node_b")
+builder.add_edge("node_b", END)
+
+graph = builder.compile()
+async for chunk in graph.astream_events(
+    {"initial_state": "初始状态"},
+    version="v2"
+):
+    print(chunk)
+```
+
+**运行结果如下**
+
+```python
+{
+    'event': 'on_chain_start',
+    'data': {
+        'input': {
+            'initial_state': '初始状态'
+        }
+    },
+    'name': 'LangGraph',
+    'tags': [],
+    'run_id': '019ef40f-2522-7212-9ad6-cb83c499652d',
+    'metadata': {},
+    'parent_ids': []
+}
+
+{
+    'event': 'on_chain_start',
+    'data': {
+        'input': {
+            'initial_state': '初始状态'
+        }
+    },
+    'name': 'node_a',
+    'tags': [
+        'graph:step:1'
+    ],
+    'run_id': '019ef40f-2524-7f83-9501-9248f93fd0a4',
+    'metadata': {
+        'langgraph_step': 1,
+        'langgraph_node': 'node_a',
+        'langgraph_triggers': (
+            'branch:to:node_a',
+        ),
+        'langgraph_path': (
+            '__pregel_pull',
+            'node_a'
+        ),
+        'langgraph_checkpoint_ns': 'node_a:9a47e3e1-ccab-85cc-f837-f3c986bafd1f'
+    },
+    'parent_ids': [
+        '019ef40f-2522-7212-9ad6-cb83c499652d'
+    ]
+}
+
+{
+    'event': 'on_chain_stream',
+    'run_id': '019ef40f-2524-7f83-9501-9248f93fd0a4',
+    'name': 'node_a',
+    'tags': [
+        'graph:step:1'
+    ],
+    'metadata': {
+        'langgraph_step': 1,
+        'langgraph_node': 'node_a',
+        'langgraph_triggers': (
+            'branch:to:node_a',
+        ),
+        'langgraph_path': (
+            '__pregel_pull',
+            'node_a'
+        ),
+        'langgraph_checkpoint_ns': 'node_a:9a47e3e1-ccab-85cc-f837-f3c986bafd1f'
+    },
+    'data': {
+        'chunk': {
+            'node_a_output': '节点A的输出'
+        }
+    },
+    'parent_ids': [
+        '019ef40f-2522-7212-9ad6-cb83c499652d'
+    ]
+}
+
+{
+    'event': 'on_chain_end',
+    'data': {
+        'output': {
+            'node_a_output': '节点A的输出'
+        },
+        'input': {
+            'initial_state': '初始状态'
+        }
+    },
+    'run_id': '019ef40f-2524-7f83-9501-9248f93fd0a4',
+    'name': 'node_a',
+    'tags': [
+        'graph:step:1'
+    ],
+    'metadata': {
+        'langgraph_step': 1,
+        'langgraph_node': 'node_a',
+        'langgraph_triggers': (
+            'branch:to:node_a',
+        ),
+        'langgraph_path': (
+            '__pregel_pull',
+            'node_a'
+        ),
+        'langgraph_checkpoint_ns': 'node_a:9a47e3e1-ccab-85cc-f837-f3c986bafd1f'
+    },
+    'parent_ids': [
+        '019ef40f-2522-7212-9ad6-cb83c499652d'
+    ]
+}
+
+{
+    'event': 'on_chain_stream',
+    'run_id': '019ef40f-2522-7212-9ad6-cb83c499652d',
+    'name': 'LangGraph',
+    'tags': [],
+    'metadata': {},
+    'data': {
+        'chunk': {
+            'node_a': {
+                'node_a_output': '节点A的输出'
+            }
+        }
+    },
+    'parent_ids': []
+}
+
+{
+    'event': 'on_chain_start',
+    'data': {
+        'input': {
+            'initial_state': '初始状态',
+            'node_a_output': '节点A的输出'
+        }
+    },
+    'name': 'node_b',
+    'tags': [
+        'graph:step:2'
+    ],
+    'run_id': '019ef40f-2526-70a3-8ad1-04ce18598b65',
+    'metadata': {
+        'langgraph_step': 2,
+        'langgraph_node': 'node_b',
+        'langgraph_triggers': (
+            'branch:to:node_b',
+        ),
+        'langgraph_path': (
+            '__pregel_pull',
+            'node_b'
+        ),
+        'langgraph_checkpoint_ns': 'node_b:1fc56ad3-e5a9-e2a2-4c3e-b8cffec34d9c'
+    },
+    'parent_ids': [
+        '019ef40f-2522-7212-9ad6-cb83c499652d'
+    ]
+}
+
+{
+    'event': 'on_chain_stream',
+    'run_id': '019ef40f-2526-70a3-8ad1-04ce18598b65',
+    'name': 'node_b',
+    'tags': [
+        'graph:step:2'
+    ],
+    'metadata': {
+        'langgraph_step': 2,
+        'langgraph_node': 'node_b',
+        'langgraph_triggers': (
+            'branch:to:node_b',
+        ),
+        'langgraph_path': (
+            '__pregel_pull',
+            'node_b'
+        ),
+        'langgraph_checkpoint_ns': 'node_b:1fc56ad3-e5a9-e2a2-4c3e-b8cffec34d9c'
+    },
+    'data': {
+        'chunk': {
+            'node_b_output': '节点B的输出'
+        }
+    },
+    'parent_ids': [
+        '019ef40f-2522-7212-9ad6-cb83c499652d'
+    ]
+}
+
+{
+    'event': 'on_chain_end',
+    'data': {
+        'output': {
+            'node_b_output': '节点B的输出'
+        },
+        'input': {
+            'initial_state': '初始状态',
+            'node_a_output': '节点A的输出'
+        }
+    },
+    'run_id': '019ef40f-2526-70a3-8ad1-04ce18598b65',
+    'name': 'node_b',
+    'tags': [
+        'graph:step:2'
+    ],
+    'metadata': {
+        'langgraph_step': 2,
+        'langgraph_node': 'node_b',
+        'langgraph_triggers': (
+            'branch:to:node_b',
+        ),
+        'langgraph_path': (
+            '__pregel_pull',
+            'node_b'
+        ),
+        'langgraph_checkpoint_ns': 'node_b:1fc56ad3-e5a9-e2a2-4c3e-b8cffec34d9c'
+    },
+    'parent_ids': [
+        '019ef40f-2522-7212-9ad6-cb83c499652d'
+    ]
+}
+
+{
+    'event': 'on_chain_stream',
+    'run_id': '019ef40f-2522-7212-9ad6-cb83c499652d',
+    'name': 'LangGraph',
+    'tags': [],
+    'metadata': {},
+    'data': {
+        'chunk': {
+            'node_b': {
+                'node_b_output': '节点B的输出'
+            }
+        }
+    },
+    'parent_ids': []
+}
+
+{
+    'event': 'on_chain_end',
+    'data': {
+        'output': {
+            'initial_state': '初始状态',
+            'node_a_output': '节点A的输出',
+            'node_b_output': '节点B的输出'
+        }
+    },
+    'run_id': '019ef40f-2522-7212-9ad6-cb83c499652d',
+    'name': 'LangGraph',
+    'tags': [],
+    'metadata': {},
+    'parent_ids': []
+}
+```
+
+**事件分类**：纵向按生命周期分为 `on_xxx_start`（开始）、`on_xxx_stream`（中间结果）、`on_xxx_end`（结束）；横向按 `Runnable` 类型分为以下事件：
+
+| 组件类型 | 事件前缀 | name 示例 |
+| :--- | :--- | :--- |
+| 模型 | `on_chat_model_*` / `on_llm_*` | `'[model name]'` |
+| 工具 | `on_tool_*`（仅 start/end） | `'some_tool'` |
+| 检索器 | `on_retriever_*` | `'[retriever name]'` |
+| 提示词模板 | `on_prompt_*` | `'[template_name]'` |
+| 通用（含编译图、普通节点） | `on_chain_*` | `'format_docs'` 等 |
+
+
+**关键字段**：
+
+| 字段 | 含义 |
+| :--- | :--- |
+| `event` | 事件类型 |
+| `run_id` | 当前 Runnable 运行实例的唯一 ID |
+| `name` | 运行实例名称 |
+| `metadata` | 运行相关元数据 |
+| `data` | 事件输入/输出/中间结果 |
+| `parent_ids` | 从根运行实例到父运行实例的 ID 链（最外层 LangGraph 为空，子节点包含父 run_id） |
+
+
+# 12. 子图
+状态图节点中调用另外的状态图或直接将另外的状态图作为其节点则后者为子图。
+
+**注意：**
+
+为节点命名时特别注意避开 `Mermaid` 关键字，否则拓扑结构渲染可能失败，常见的 `Mermaid` 关键字如下
+
+```python
+subgraph
+end
+graph
+flowchart
+classDef
+```
+
+## 12.1. 两种子图嵌入方式
+| 方式 | 用法 | 适用场景 | 通信方式 |
+| :--- | :--- | :--- | :--- |
+| **节点函数中调用子图** | 在节点函数内 `subgraph.invoke()` | 父子图状态完全隔离 | 手动做输入输出映射 |
+| **子图直接作为父图节点** | `add_node("name", compiled_subgraph)` | 父子图共享状态字段 | 通过共享字段自动通信 |
+
+
+### 12.1.1. 在节点函数中调用子图
+如果父图和子图状态完全隔离，可以用这种方式。
+
+#### 12.1.1.1. 用法
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+# 构建子图
+class SubgraphState(TypedDict):
+    raw_text: str # 未清洗文本
+    stripped_text: str # 去除收尾空格的文本
+    punctuated_text: str # 句尾添加句号的文本
+
+def subgraph_strip_node(state: SubgraphState) -> SubgraphState:
+    raw_text = state["raw_text"]
+    stripped_text = raw_text.strip()
+
+    return {
+        "stripped_text": stripped_text
+    }
+
+def subgraph_punctuate_node(state: SubgraphState) -> SubgraphState:
+    stripped_text = state["stripped_text"]
+    punctuated_text = stripped_text + "。"
+
+    return {
+        "punctuated_text": punctuated_text
+    }
+
+builder = StateGraph(state_schema=SubgraphState)
+builder.add_node("subgraph_strip_node", subgraph_strip_node)
+builder.add_node("subgraph_punctuate_node", subgraph_punctuate_node)
+
+builder.add_edge(START, "subgraph_strip_node")
+builder.add_edge("subgraph_strip_node", "subgraph_punctuate_node")
+builder.add_edge("subgraph_punctuate_node", END)
+
+subgraph = builder.compile()
+
+# 构建父图
+class ParentState(TypedDict):
+    input_text: str # 输入的未清洗的文本
+    cleaned_text: str # 清洗后的文本
+
+def call_subgraph(state: ParentState) -> ParentState:
+    input_text = state["input_text"]
+
+    res = subgraph.invoke({"raw_text": input_text})
+    cleaned_text = res["punctuated_text"]
+    return {
+        "cleaned_text": cleaned_text
+    }
+
+builder = StateGraph(state_schema=ParentState)
+builder.add_node("call_subgraph", call_subgraph)
+
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+parent_graph = builder.compile()
+
+input_text = "   LangGraph 真有意思        "
+res = parent_graph.invoke({"input_text": input_text})
+cleaned_text = res["cleaned_text"]
+print("=" * 30, "->   原始文本   <-", "=" * 30)
+print(input_text)
+print("=" * 30, "-> 清洗后的文本 <-", "=" * 30)
+print(cleaned_text)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+调用 `get_graph()` 时传递的 `xray=True` 表示自动解析并递归获取子图的拓扑结构。
+
+**运行结果如下**
+
+```json
+============================== ->   原始文本   <- ==============================
+   LangGraph 真有意思        
+============================== -> 清洗后的文本 <- ==============================
+LangGraph 真有意思。
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625084145735.png)
+
+**注意：**
+
+当前方式的子图信息依赖于 `LangGraph` 对于节点函数代码的解析，解析的关键代码如下
+
+```python
+res = subgraph.invoke({"raw_text": input_text})
+```
+
+这是推荐的写法，调用子图时最好不要链式调用，否则解析失败，`LangGraph` 可能无法感知子图，这不仅会导致 `display` 渲染时不包含子图的拓扑结构，还会导致启用检查点存储器时，无法查看子图检查点快照。
+
+**错误写法示例如下**
+
+当前案例看不到效果，下文的 `Multi-turn` 案例能看到差别
+
+```python
+assistant_response = subgraph.invoke(
+    {"messages": messages}
+)["messages"][-1].content
+```
+
+此时，`LangGraph` 无法感知这里的子图 `subgraph`
+
+**正确写法如下**
+
+```python
+subgraph_response = subgraph.invoke(
+    {"messages": messages}
+)
+
+assistant_response = subgraph_response["messages"][-1].content
+```
+
+#### 12.1.1.2. 查看子图
+在上述代码的基础上执行以下代码
+
+```python
+list(parent_graph.get_subgraphs())
+```
+
+**结果如下**
+
+```python
+[('call_subgraph',
+  <langgraph.graph.state.CompiledStateGraph at 0x19bd9e84ec0>)]
+```
+
+### 12.1.2. 子图直接作为父图的节点
+#### 12.1.2.1. 用法
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+# 定义全局共享状态
+class OverAllState(TypedDict):
+    raw_text: str # 未清洗文本
+    cleaned_text: str # 清洗后的文本
+
+# 构建子图
+def subgraph_strip_node(state: OverAllState) -> OverAllState:
+    raw_text = state["raw_text"]
+    stripped_text = raw_text.strip()
+
+    return {
+        "cleaned_text": stripped_text
+    }
+
+def subgraph_punctuate_node(state: OverAllState) -> OverAllState:
+    cleaned_text = state["cleaned_text"]
+    punctuated_text = cleaned_text + "。"
+
+    return {
+        "cleaned_text": punctuated_text
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("subgraph_strip_node", subgraph_strip_node)
+builder.add_node("subgraph_punctuate_node", subgraph_punctuate_node)
+
+builder.add_edge(START, "subgraph_strip_node")
+builder.add_edge("subgraph_strip_node", "subgraph_punctuate_node")
+builder.add_edge("subgraph_punctuate_node", END)
+
+subgraph = builder.compile()
+
+# 构建父图
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("subgraph_node", subgraph)
+
+builder.add_edge(START, "subgraph_node")
+builder.add_edge("subgraph_node", END)
+
+parent_graph = builder.compile()
+
+raw_text = "   LangGraph 真有意思        "
+res = parent_graph.invoke({"raw_text": raw_text})
+cleaned_text = res["cleaned_text"]
+print("=" * 30, "->   原始文本   <-", "=" * 30)
+print(raw_text)
+print("=" * 30, "-> 清洗后的文本 <-", "=" * 30)
+print(cleaned_text)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**运行结果如下**
+
+```json
+============================== ->   原始文本   <- ==============================
+   LangGraph 真有意思        
+============================== -> 清洗后的文本 <- ==============================
+LangGraph 真有意思。
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625085408914.png)
+
+#### 12.1.2.2. 查看子图
+**示例如下**
+
+```python
+list(parent_graph.get_subgraphs())
+```
+
+**运行结果如下**
+
+```python
+[('subgraph_node',
+  <langgraph.graph.state.CompiledStateGraph at 0x297c50a2520>)]
+```
+
+## 12.2. 子图持久化
+### 12.2.1. 查看子图检查点快照
+本节测试都依赖于以下示例
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+# 构建子图
+class SubgraphState(TypedDict):
+    raw_text: str # 未清洗文本
+    stripped_text: str # 去除收尾空格的文本
+    punctuated_text: str # 句尾添加句号的文本
+
+def subgraph_strip_node(state: SubgraphState) -> SubgraphState:
+    raw_text = state["raw_text"]
+    stripped_text = raw_text.strip()
+
+    return {
+        "stripped_text": stripped_text
+    }
+
+def subgraph_punctuate_node(state: SubgraphState) -> SubgraphState:
+    stripped_text = state["stripped_text"]
+    punctuated_text = stripped_text + "。"
+
+    return {
+        "punctuated_text": punctuated_text
+    }
+
+builder = StateGraph(state_schema=SubgraphState)
+builder.add_node("subgraph_strip_node", subgraph_strip_node)
+builder.add_node("subgraph_punctuate_node", subgraph_punctuate_node)
+
+builder.add_edge(START, "subgraph_strip_node")
+builder.add_edge("subgraph_strip_node", "subgraph_punctuate_node")
+builder.add_edge("subgraph_punctuate_node", END)
+
+subgraph = builder.compile()
+
+# 构建父图
+class ParentState(TypedDict):
+    input_text: str # 输入的未清洗的文本
+    cleaned_text: str # 清洗后的文本
+
+def call_subgraph(state: ParentState) -> ParentState:
+    input_text = state["input_text"]
+
+    res = subgraph.invoke({"raw_text": input_text})
+    cleaned_text = res["punctuated_text"]
+    return {
+        "cleaned_text": cleaned_text
+    }
+
+builder = StateGraph(state_schema=ParentState)
+builder.add_node("call_subgraph", call_subgraph)
+
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+checkpointer=InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+input_text = "   LangGraph 真有意思        "
+config={"configurable": {"thread_id": "observe_checkpoint_1"}}
+res = parent_graph.invoke(
+    {"input_text": input_text},
+    config=config
+)
+cleaned_text = res["cleaned_text"]
+print("=" * 30, "->   原始文本   <-", "=" * 30)
+print(input_text)
+print("=" * 30, "-> 清洗后的文本 <-", "=" * 30)
+print(cleaned_text)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**运行结果如下**
+
+```python
+============================== ->   原始文本   <- ==============================
+   LangGraph 真有意思        
+============================== -> 清洗后的文本 <- ==============================
+LangGraph 真有意思。
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625085620495.png)
+
+#### 12.2.1.1. 在父图检查点快照中查看子图信息
+**获取父图历史检查点列表**
+
+```python
+histories = list(parent_graph.get_state_history(config=config))
+histories
+```
+
+**结果如下**
+
+```python
+[
+    StateSnapshot(
+        values={
+            'input_text': '   LangGraph 真有意思        ',
+            'cleaned_text': 'LangGraph 真有意思。'
+        },
+        next=(),
+        config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16fd86-3406-6072-8001-1e8b9691a9cf'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 1,
+            'parents': {}
+        },
+        created_at='2026-06-24T14:24:19.397838+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16fd86-33fb-6847-8000-8914ff1be716'
+            }
+        },
+        tasks=(),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={
+            'input_text': '   LangGraph 真有意思        '
+        },
+        next=(
+            'call_subgraph',
+        ),
+        config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16fd86-33fb-6847-8000-8914ff1be716'
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {}
+        },
+        created_at='2026-06-24T14:24:19.393533+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16fd86-33fa-61a4-bfff-538c9fb00687'
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='9923d4be-9845-576d-785f-5b1d6da9a94f',
+                name='call_subgraph',
+                path=(
+                    '__pregel_pull',
+                    'call_subgraph'
+                ),
+                error=None,
+                interrupts=(),
+                state={
+                    'configurable': {
+                        'thread_id': 'observe_checkpoint_1',
+                        'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f'
+                    }
+                },
+                result={
+                    'cleaned_text': 'LangGraph 真有意思。'
+                }
+            ),
+        ),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={},
+        next=(
+            '__start__',
+        ),
+        config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': '',
+                'checkpoint_id': '1f16fd86-33fa-61a4-bfff-538c9fb00687'
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {}
+        },
+        created_at='2026-06-24T14:24:19.392958+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='1b333b41-1e2d-1770-8dab-a09a47002aef',
+                name='__start__',
+                path=(
+                    '__pregel_pull',
+                    '__start__'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'input_text': '   LangGraph 真有意思        '
+                }
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
+可以看到，超步为 `0` 的快照下的 `tasks` 字段下只有一个任务实例，该任务实例在编号为 `1` 的超步执行，其中的 `state` 字段记录了子图检查点的 `thread_id` 和 `checkpoint_ns`，如下所示：
+
+```python
+state={
+    'configurable': {
+        'thread_id': 'observe_checkpoint_1',
+        'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f'
+    }
+}
+```
+
++ `thread_id`：整个线程的唯一 `ID`，和父图一致
++ `checkpoint_ns`：子图命名空间，格式为
+
+```python
+<子图所属父图节点名称>:<子图所属父图任务ID>
+```
+
+我们在介绍 `LangGraph` 中提到，父图的 `checkpoint_ns` 通常为空字符串，在子图嵌套系统中该字段排上了用场：
+
+当嵌套层级不止一层时，命名空间将会通过 `|` 拼接，具体来说，假设拓扑结构如下：
+
+```python
+父图
+└── call_subgraph          # 调用子图 A
+    └── call_inner_graph   # 子图 A 调用子图 B
+```
+
+那么命名空间为
+
+```python
+父图：
+""
+
+子图 A：
+call_subgraph:<task_id_1>
+
+子图 B：
+call_subgraph:<task_id_1>|call_inner_graph:<task_id_2>
+```
+
+依次类推。
+
+    - 父图的 `checkpoint_ns` 仍未空字符串
+    - 子图的 `checkpoint_ns` 遵循以上格式
+
+#### 12.2.1.2. 在父图检查点快照中展开子图最新快照
+我们可以在父图的 `state` 字段中展开子图快照，也就是将 `state` 字段的值替换为子图的最新检查点快照
+
+##### 12.2.1.2.1. 获取父图检查点配置
+超步为 `0` 的检查点记录了子图的配置，所以我们要获取这个快照的父图配置，观察检查点快照列表可知：快照列表按照超步编号降序排列，且最小超步为 `-1`，取列表的倒数第二个元素即可拿到超步编号为 `0` 的检查点快照。
+
+**代码如下**
+
+```python
+parent_config = histories[-2].config
+parent_config
+```
+
+**结果如下**
+
+```python
+{
+  'configurable': {
+    'thread_id': 'observe_checkpoint_1',
+    'checkpoint_ns': '',
+    'checkpoint_id': '1f16fd86-33fb-6847-8000-8914ff1be716'
+  }
+}
+```
+
+##### 12.2.1.2.2. 展开子图快照
+在调用 `get_state()` 时传递带有 `checkpoint_id` 的父图配置，并传递 `subgraphs=True` 即可展开子图快照。
+
+**示例如下**
+
+```python
+parent_graph.get_state(config=parent_config, subgraphs=True)
+```
+
+**运行结果如下**
+
+```python
+StateSnapshot(
+  values={
+    'input_text': '   LangGraph 真有意思        '
+  },
+  next=(
+    'call_subgraph',
+  ),
+  config={
+    'configurable': {
+      'thread_id': 'observe_checkpoint_1',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f16fd86-33fb-6847-8000-8914ff1be716'
+    }
+  },
+  metadata={
+    'source': 'loop',
+    'step': 0,
+    'parents': {}
+  },
+  created_at='2026-06-24T14:24:19.393533+00:00',
+  parent_config={
+    'configurable': {
+      'thread_id': 'observe_checkpoint_1',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f16fd86-33fa-61a4-bfff-538c9fb00687'
+    }
+  },
+  tasks=(
+    PregelTask(
+      id='9923d4be-9845-576d-785f-5b1d6da9a94f',
+      name='call_subgraph',
+      path=(
+        '__pregel_pull',
+        'call_subgraph'
+      ),
+      error=None,
+      interrupts=(),
+      state=StateSnapshot(
+        values={
+          'raw_text': '   LangGraph 真有意思        ',
+          'stripped_text': 'LangGraph 真有意思',
+          'punctuated_text': 'LangGraph 真有意思。'
+        },
+        next=(),
+        config={
+          'configurable': {
+            'thread_id': 'observe_checkpoint_1',
+            'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+            'checkpoint_id': '1f16fd86-3404-640e-8002-84e2d98a88dc',
+            'checkpoint_map': {
+              '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+              'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-3404-640e-8002-84e2d98a88dc'
+            }
+          }
+        },
+        metadata={
+          'source': 'loop',
+          'step': 2,
+          'parents': {
+            '': '1f16fd86-33fb-6847-8000-8914ff1be716'
+          }
+        },
+        created_at='2026-06-24T14:24:19.397114+00:00',
+        parent_config={
+          'configurable': {
+            'thread_id': 'observe_checkpoint_1',
+            'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+            'checkpoint_id': '1f16fd86-3401-694f-8001-2c6a2666b501',
+            'checkpoint_map': {
+              '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+              'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-3401-694f-8001-2c6a2666b501'
+            }
+          }
+        },
+        tasks=(),
+        interrupts=()
+      ),
+      result={
+        'cleaned_text': 'LangGraph 真有意思。'
+      }
+    ),
+  ),
+  interrupts=()
+)
+```
+
+可以看到，`state` 字段已展开为子图的最新检查点快照。
+
+#### 12.2.1.3. 获取子图配置，查看完整子图检查点列表
+某些场景下，我们希望查看完整的子图检查点快照列表，此时只需要将包含 `thread_id` 和子图命名空间 `checkpoint_ns` 的配置信息传递给 `get_state_history()` 即可实现。
+
+##### 12.2.1.3.1. 获取子图检查点配置
+**示例如下**
+
+```python
+subgraph_config = histories[-2].tasks[0].state
+subgraph_config
+```
+
+**结果如下**
+
+```python
+{
+  'configurable': {
+    'thread_id': 'observe_checkpoint_1',
+    'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f'
+  }
+}
+```
+
+##### 12.2.1.3.2. 查看完整子图检查点快照列表
+**示例如下**
+
+```python
+list(parent_graph.get_state_history(config=subgraph_config))
+```
+
+**结果如下**
+
+```python
+[
+    StateSnapshot(
+        values={
+            'raw_text': '   LangGraph 真有意思        ',
+            'stripped_text': 'LangGraph 真有意思',
+            'punctuated_text': 'LangGraph 真有意思。'
+        },
+        next=(),
+        config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+                'checkpoint_id': '1f16fd86-3404-640e-8002-84e2d98a88dc',
+                'checkpoint_map': {
+                    '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+                    'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-3404-640e-8002-84e2d98a88dc'
+                }
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 2,
+            'parents': {
+                '': '1f16fd86-33fb-6847-8000-8914ff1be716'
+            }
+        },
+        created_at='2026-06-24T14:24:19.397114+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+                'checkpoint_id': '1f16fd86-3401-694f-8001-2c6a2666b501',
+                'checkpoint_map': {
+                    '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+                    'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-3401-694f-8001-2c6a2666b501'
+                }
+            }
+        },
+        tasks=(),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={
+            'raw_text': '   LangGraph 真有意思        ',
+            'stripped_text': 'LangGraph 真有意思'
+        },
+        next=(
+            'subgraph_punctuate_node',
+        ),
+        config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+                'checkpoint_id': '1f16fd86-3401-694f-8001-2c6a2666b501',
+                'checkpoint_map': {
+                    '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+                    'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-3401-694f-8001-2c6a2666b501'
+                }
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 1,
+            'parents': {
+                '': '1f16fd86-33fb-6847-8000-8914ff1be716'
+            }
+        },
+        created_at='2026-06-24T14:24:19.396020+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+                'checkpoint_id': '1f16fd86-33ff-6ad9-8000-0fb11208046d',
+                'checkpoint_map': {
+                    '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+                    'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-33ff-6ad9-8000-0fb11208046d'
+                }
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='d37272d8-d167-4fb9-6e31-466a58bf91cc',
+                name='subgraph_punctuate_node',
+                path=(
+                    '__pregel_pull',
+                    'subgraph_punctuate_node'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'punctuated_text': 'LangGraph 真有意思。'
+                }
+            ),
+        ),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={
+            'raw_text': '   LangGraph 真有意思        '
+        },
+        next=(
+            'subgraph_strip_node',
+        ),
+        config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+                'checkpoint_id': '1f16fd86-33ff-6ad9-8000-0fb11208046d',
+                'checkpoint_map': {
+                    '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+                    'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-33ff-6ad9-8000-0fb11208046d'
+                }
+            }
+        },
+        metadata={
+            'source': 'loop',
+            'step': 0,
+            'parents': {
+                '': '1f16fd86-33fb-6847-8000-8914ff1be716'
+            }
+        },
+        created_at='2026-06-24T14:24:19.395239+00:00',
+        parent_config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+                'checkpoint_id': '1f16fd86-33fe-685b-bfff-d0a73977e807',
+                'checkpoint_map': {
+                    '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+                    'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-33fe-685b-bfff-d0a73977e807'
+                }
+            }
+        },
+        tasks=(
+            PregelTask(
+                id='9d9a1009-3212-b789-f40a-3d8f213ce4fb',
+                name='subgraph_strip_node',
+                path=(
+                    '__pregel_pull',
+                    'subgraph_strip_node'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'stripped_text': 'LangGraph 真有意思'
+                }
+            ),
+        ),
+        interrupts=()
+    ),
+    StateSnapshot(
+        values={},
+        next=(
+            '__start__',
+        ),
+        config={
+            'configurable': {
+                'thread_id': 'observe_checkpoint_1',
+                'checkpoint_ns': 'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f',
+                'checkpoint_id': '1f16fd86-33fe-685b-bfff-d0a73977e807',
+                'checkpoint_map': {
+                    '': '1f16fd86-33fb-6847-8000-8914ff1be716',
+                    'call_subgraph:9923d4be-9845-576d-785f-5b1d6da9a94f': '1f16fd86-33fe-685b-bfff-d0a73977e807'
+                }
+            }
+        },
+        metadata={
+            'source': 'input',
+            'step': -1,
+            'parents': {
+                '': '1f16fd86-33fb-6847-8000-8914ff1be716'
+            }
+        },
+        created_at='2026-06-24T14:24:19.394769+00:00',
+        parent_config=None,
+        tasks=(
+            PregelTask(
+                id='5516615f-62ca-2dc4-d41e-6a8f20a981bb',
+                name='__start__',
+                path=(
+                    '__pregel_pull',
+                    '__start__'
+                ),
+                error=None,
+                interrupts=(),
+                state=None,
+                result={
+                    'raw_text': '   LangGraph 真有意思        '
+                }
+            ),
+        ),
+        interrupts=()
+    )
+]
+```
+
++ 上述快照的命名空间都不是空字符串，且保持一致，全部属于同一个子图
++ `metadata['parents']` 记录了父检查点的信息，格式为`<父检查点命名空间>:<父检查点ID>`
++ `config['configurable']['checkpoint_map']` 记录了父图和当前子图检查点命名空间和 `ID` 的映射关系，包含两个条目，格式如下
+
+```python
+<父图检查点命名空间>:<父图检查点ID>,
+<当前子图检查点命名空间>:<当前子图检查点ID>
+```
+
+### 12.2.2. 持久化策略
+本节讨论的持久化策略以**父图启用检查点存储器**为前提。子图支持三种策略：
+
+| 策略 | 编译参数 | 检查点保存 | 中断恢复 | 多轮记忆 |
+| :--- | :--- | :--- | :--- | :--- |
+| `Per-invocation`（默认） | `checkpointer=None` 或省略 | ✓ | ✓ | ✗（同 thread_id 再次调用不加载历史） |
+| `Per-thread` | `checkpointer=True` | ✓ | ✓ | ✓（同 thread_id 调用加载历史） |
+| `Stateless` | `checkpointer=False` | ✗ | ✗ | ✗ |
+
+
+> **三种策略的唯一区别在于子图编译时的 **`checkpointer`** 参数**，其余代码完全相同。下面按场景组织，每个场景展示一份完整代码，策略切换只需修改一行。
+>
+
+#### 12.2.2.1. 场景一：中断（interrupt）
+子图节点中使用 `interrupt()` 中断执行，等待用户输入后恢复。
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import interrupt, Command
+from langgraph.checkpoint.memory import InMemorySaver
+
+from loguru import logger
+
+# 定义全局共享状态
+class OverAllState(TypedDict):
+    raw_text: str # 未清洗文本
+    cleaned_text: str # 清洗后的文本
+
+# 构建子图
+def subgraph_strip_node(state: OverAllState) -> OverAllState:
+    logger.info("子图 subgraph_strip_node 节点执行了")
+    raw_text = state["raw_text"]
+    stripped_text = raw_text.strip()
+
+    return {
+        "cleaned_text": stripped_text
+    }
+
+def subgraph_punctuate_node(state: OverAllState) -> OverAllState:
+    logger.info("子图 subgraph_punctuate_node 节点执行了")
+    cleaned_text = state["cleaned_text"]
+    punctuation = interrupt("您希望在句尾添加的标点符号是？[。/，/！/？/；]")
+    punctuation1 = interrupt("您希望在句尾添加的标点符号是？[。/，/！/？/；]")
+    punctuated_text = cleaned_text + punctuation + punctuation1
+
+    return {
+        "cleaned_text": punctuated_text
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("subgraph_strip_node", subgraph_strip_node)
+builder.add_node("subgraph_punctuate_node", subgraph_punctuate_node)
+
+builder.add_edge(START, "subgraph_strip_node")
+builder.add_edge("subgraph_strip_node", "subgraph_punctuate_node")
+builder.add_edge("subgraph_punctuate_node", END)
+
+# ==================================================
+# 【策略切换点】只需修改这一行
+# subgraph = builder.compile()  # Per-invocation（默认）
+# subgraph = builder.compile(checkpointer=True)   # Per-thread
+subgraph = builder.compile(checkpointer=False)  # Stateless（中断不可用）
+# ==================================================
+
+# 构建父图
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("subgraph_node", subgraph)
+
+builder.add_edge(START, "subgraph_node")
+builder.add_edge("subgraph_node", END)
+
+checkpointer = InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+raw_text = "   LangGraph 真有意思        "
+config = {"configurable": {"thread_id": "123"}}
+# 首次调用
+interrupted_res = parent_graph.invoke(
+    {"raw_text": raw_text},
+    config=config
+)
+print("=" * 30, "->   中断信息   <-", "=" * 30)
+print(interrupted_res)
+
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+
+# 恢复调用
+parent_graph.invoke(
+    Command(resume="！"),
+    config=config
+)
+res = parent_graph.invoke(
+    Command(resume="！"),
+    config=config
+)
+
+cleaned_text = res["cleaned_text"]
+print("=" * 30, "->   原始文本   <-", "=" * 30)
+print(raw_text)
+print("=" * 30, "-> 清洗后的文本 <-", "=" * 30)
+print(cleaned_text)
+```
+
+**运行结果（Per-invocation / Per-thread 均可）**
+
+```python
+2026-06-25 09:41:40.629 | INFO     | __main__:subgraph_strip_node:15 - 子图 subgraph_strip_node 节点执行了
+2026-06-25 09:41:40.630 | INFO     | __main__:subgraph_punctuate_node:24 - 子图 subgraph_punctuate_node 节点执行了
+============================== ->   中断信息   <- ==============================
+{'raw_text': '   LangGraph 真有意思        ', '__interrupt__': [Interrupt(value='您希望在句尾添加的标点符号是？[。/，/！/？/；]', id='a4c6479870430be1a857af43cc7eff99')]}
+2026-06-25 09:41:40.633 | INFO     | __main__:subgraph_punctuate_node:24 - 子图 subgraph_punctuate_node 节点执行了
+============================== ->   原始文本   <- ==============================
+   LangGraph 真有意思        
+============================== -> 清洗后的文本 <- ==============================
+LangGraph 真有意思！
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625094209973.png)
+
+> **策略差异**：三种策略下中断机制行为一致，`Per-invocation` 和 `Per-thread` 均支持中断恢复，`Stateless` 不支持中断。
+>
+
+| 策略 | 编译参数 | 中断 |
+| :--- | :--- | :--- |
+| Per-invocation（默认） | `subgraph = builder.compile()` | ✅ |
+| Per-thread | `subgraph = builder.compile(checkpointer=True)` | ✅ |
+| Stateless | `subgraph = builder.compile(checkpointer=False)` | ❌ |
+
+
+#### 12.2.2.2. 场景二：多轮对话
+父图多次调用子图进行 LLM 对话，验证子图是否保留历史消息。
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END, MessagesState
+from langgraph.checkpoint.memory import InMemorySaver
+
+from langchain.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_deepseek import ChatDeepSeek
+
+import sys
+from loguru import logger
+# 删除 Loguru 默认的 stderr sink
+logger.remove()
+# 重新添加支持颜色的 sink
+logger.add(sys.stdout, colorize=True)
+
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 构建子图
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    logger.info("=" * 30)
+    logger.info("调用子图的 llm_node 节点，当前的 messages: ")
+    for index, message in enumerate(messages, start=1):
+        logger.opt(colors=True).info(
+            "\n<cyan><bold>[消息 {}]</bold></cyan>\n"
+            "<yellow>类型：</yellow><magenta>{}</magenta>\n"
+            "<yellow>内容：</yellow><green>{}</green>",
+            index,
+            message.type,
+            message.content
+        )
+    logger.info("=" * 30)
+
+    response = model.invoke(input=messages)
+    ai_msg = AIMessage(content=response.content)
+
+    return {
+        "messages": [ai_msg]
+    }
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_edge(START, "llm_node")
+builder.add_edge("llm_node", END)
+
+# ==================================================
+# 【策略切换点】只需修改这一行
+subgraph = builder.compile()  # Per-invocation（默认）：无记忆
+# subgraph = builder.compile(checkpointer=True)   # Per-thread：有记忆
+# ==================================================
+
+# 构建父图
+class OverAllState(TypedDict):
+    user_input: str # 用户提问
+    assistant_response: str # 助手回答
+
+def call_subgraph(state: OverAllState) -> OverAllState:
+    user_input = state["user_input"]
+
+    messages = [
+        SystemMessage("尽可能用简短的语言回答"),
+        HumanMessage(user_input)
+    ]
+    subgraph_response = subgraph.invoke(
+        {"messages": messages}
+    )
+
+    assistant_response = subgraph_response["messages"][-1].content
+
+    return {
+        "assistant_response": assistant_response
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("call_subgraph", call_subgraph)
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+checkpointer = InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "multi-turn-demo"}}
+
+first_invoke = parent_graph.invoke(
+    {"user_input": "我是老王，从现在开始，你是小王"},
+    config = config
+)
+print("=" * 30, "-> 第一次调用 <-", "=" * 30)
+print(first_invoke)
+
+second_invoke = parent_graph.invoke(
+    {"user_input": "我是谁？你是谁？"},
+    config = config
+)
+print("=" * 30, "-> 第二次调用 <-", "=" * 30)
+print(second_invoke)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**Per-invocation 运行结果（无记忆）**
+
+```plain
+2026-06-25 09:43:14.012 | INFO     | __main__:llm_node:31 - ==============================
+2026-06-25 09:43:14.013 | INFO     | __main__:llm_node:32 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-06-25 09:43:14.014 | INFO     | __main__:llm_node:34 - 
+[消息 1]
+类型：system
+内容：尽可能用简短的语言回答
+2026-06-25 09:43:14.014 | INFO     | __main__:llm_node:34 - 
+[消息 2]
+类型：human
+内容：我是老王，从现在开始，你是小王
+2026-06-25 09:43:14.015 | INFO     | __main__:llm_node:42 - ==============================
+============================== -> 第一次调用 <- ==============================
+{'user_input': '我是老王，从现在开始，你是小王', 'assistant_response': '好的，老王。我是小王，您有什么吩咐？'}
+2026-06-25 09:43:14.814 | INFO     | __main__:llm_node:31 - ==============================
+2026-06-25 09:43:14.815 | INFO     | __main__:llm_node:32 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-06-25 09:43:14.815 | INFO     | __main__:llm_node:34 - 
+[消息 1]
+类型：system
+内容：尽可能用简短的语言回答
+2026-06-25 09:43:14.816 | INFO     | __main__:llm_node:34 - 
+[消息 2]
+类型：human
+内容：我是谁？你是谁？
+2026-06-25 09:43:14.816 | INFO     | __main__:llm_node:42 - ==============================
+============================== -> 第二次调用 <- ==============================
+{'user_input': '我是谁？你是谁？', 'assistant_response': '你是用户，我是DeepSeek，一个由深度求索公司开发的AI助手。'}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625094339255.png)
+
+第二次调用时子图 `messages` 被重置，无法获知第一次调用时传递的信息。**Per-invocation 模式无法在子图中进行多轮对话。**
+
+**Per-thread 运行结果（有记忆）**——仅子图编译改为 `builder.compile(checkpointer=True)`：
+
+```plain
+2026-06-25 10:42:37.121 | INFO     | __main__:llm_node:31 - ==============================
+2026-06-25 10:42:37.122 | INFO     | __main__:llm_node:32 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-06-25 10:42:37.123 | INFO     | __main__:llm_node:34 - 
+[消息 1]
+类型：system
+内容：尽可能用简短的语言回答
+2026-06-25 10:42:37.124 | INFO     | __main__:llm_node:34 - 
+[消息 2]
+类型：human
+内容：我是老王，从现在开始，你是小王
+2026-06-25 10:42:37.124 | INFO     | __main__:llm_node:42 - ==============================
+============================== -> 第一次调用 <- ==============================
+{'user_input': '我是老王，从现在开始，你是小王', 'assistant_response': '（严肃点头）好，老王，有啥指示？'}
+2026-06-25 10:42:37.940 | INFO     | __main__:llm_node:31 - ==============================
+2026-06-25 10:42:37.941 | INFO     | __main__:llm_node:32 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-06-25 10:42:37.942 | INFO     | __main__:llm_node:34 - 
+[消息 1]
+类型：system
+内容：尽可能用简短的语言回答
+2026-06-25 10:42:37.943 | INFO     | __main__:llm_node:34 - 
+[消息 2]
+类型：human
+内容：我是老王，从现在开始，你是小王
+2026-06-25 10:42:37.944 | INFO     | __main__:llm_node:34 - 
+[消息 3]
+类型：ai
+内容：（严肃点头）好，老王，有啥指示？
+2026-06-25 10:42:37.945 | INFO     | __main__:llm_node:34 - 
+[消息 4]
+类型：system
+内容：尽可能用简短的语言回答
+2026-06-25 10:42:37.945 | INFO     | __main__:llm_node:34 - 
+[消息 5]
+类型：human
+内容：我是谁？你是谁？
+2026-06-25 10:42:37.946 | INFO     | __main__:llm_node:42 - ==============================
+============================== -> 第二次调用 <- ==============================
+{'user_input': '我是谁？你是谁？', 'assistant_response': '老王。小王。'}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625104256756.png)
+
+历史消息被保留，上下文连续。**Per-thread 模式适用于子图多轮对话场景。**
+
+> **策略差异**
+>
+
+| 策略 | 编译参数 | 多轮记忆 |
+| :--- | :--- | :--- |
+| Per-invocation（默认） | `subgraph = builder.compile()` | ❌ 每次调用状态重置 |
+| Per-thread | `subgraph = builder.compile(checkpointer=True)` | ✅ 跨调用状态连续 |
+
+
+#### 12.2.2.3. 场景三：多次调用同一子图
+父图的一个节点内循环多次调用同一子图。
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END, MessagesState
+from langgraph.checkpoint.memory import InMemorySaver
+
+from langchain.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_deepseek import ChatDeepSeek
+
+import sys
+from loguru import logger
+logger.remove()
+logger.add(sys.stdout, colorize=True)
+
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 构建子图
+def llm_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    logger.info("=" * 30)
+    logger.info("调用子图的 llm_node 节点，当前的 messages: ")
+    for index, message in enumerate(messages, start=1):
+        logger.opt(colors=True).info(
+            "\n<cyan><bold>[消息 {}]</bold></cyan>\n"
+            "<yellow>类型：</yellow><magenta>{}</magenta>\n"
+            "<yellow>内容：</yellow><green>{}</green>",
+            index,
+            message.type,
+            message.content
+        )
+    logger.info("=" * 30)
+    response = model.invoke(input=messages)
+    ai_msg = AIMessage(content=response.content)
+
+    return {
+        "messages": [ai_msg]
+    }
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("llm_node", llm_node)
+builder.add_edge(START, "llm_node")
+builder.add_edge("llm_node", END)
+
+# ==================================================
+# 【策略切换点】只需修改这一行
+subgraph = builder.compile()  # Per-invocation（默认）：每次调用状态隔离
+# subgraph = builder.compile(checkpointer=True)   # Per-thread：历史相互干扰
+# ==================================================
+
+# 构建父图
+class OverAllState(TypedDict):
+    user_inputs: list[str] # 用户提问
+    assistant_responses: str # 助手回答
+
+def call_subgraph(state: OverAllState) -> OverAllState:
+    user_inputs = state["user_inputs"]
+
+    assistant_responses = []
+    for user_input in user_inputs:
+        subgraph_response = subgraph.invoke(
+            {
+                "messages": [
+                    SystemMessage("用最简短的话回答用户的提问"),
+                    HumanMessage(user_input)
+                ]
+            }
+        )
+        assistant_response = subgraph_response["messages"][-1].content
+        assistant_responses.append(assistant_response)
+
+    return {
+        "assistant_responses": assistant_responses
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("call_subgraph", call_subgraph)
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+checkpointer = InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "multi-call-same-demo"}}
+
+first_response = parent_graph.invoke(
+    {
+        "user_inputs": [
+            "5*5等于几",
+            "10*10等于几"
+        ]
+    },
+    config = config
+)
+print("=" * 30, "-> 第一次运行结果 <-", "=" * 30)
+print(first_response)
+
+second_response = parent_graph.invoke(
+    {
+        "user_inputs": [
+            "再+1呢?",
+            "再+10000呢?"
+        ]
+    },
+    config = config
+)
+print("=" * 30, "-> 第二次运行结果 <-", "=" * 30)
+print(second_response)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**Per-thread 运行结果**
+
+```plain
+2026-07-14 11:53:58.056 | INFO     | __main__:llm_node:29 - ==============================
+2026-07-14 11:53:58.056 | INFO     | __main__:llm_node:30 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-07-14 11:53:58.057 | INFO     | __main__:llm_node:32 - 
+[消息 1]
+类型：system
+内容：用最简短的话回答用户的提问
+2026-07-14 11:53:58.057 | INFO     | __main__:llm_node:32 - 
+[消息 2]
+类型：human
+内容：5*5等于几
+2026-07-14 11:53:58.058 | INFO     | __main__:llm_node:40 - ==============================
+2026-07-14 11:53:58.652 | INFO     | __main__:llm_node:29 - ==============================
+2026-07-14 11:53:58.652 | INFO     | __main__:llm_node:30 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-07-14 11:53:58.653 | INFO     | __main__:llm_node:32 - 
+[消息 1]
+类型：system
+内容：用最简短的话回答用户的提问
+2026-07-14 11:53:58.653 | INFO     | __main__:llm_node:32 - 
+[消息 2]
+类型：human
+内容：10*10等于几
+2026-07-14 11:53:58.654 | INFO     | __main__:llm_node:40 - ==============================
+============================== -> 第一次运行结果 <- ==============================
+{'user_inputs': ['5*5等于几', '10*10等于几'], 'assistant_responses': ['5*5等于25。', '10*10等于100。']}
+2026-07-14 11:53:59.230 | INFO     | __main__:llm_node:29 - ==============================
+2026-07-14 11:53:59.231 | INFO     | __main__:llm_node:30 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-07-14 11:53:59.231 | INFO     | __main__:llm_node:32 - 
+[消息 1]
+类型：system
+内容：用最简短的话回答用户的提问
+2026-07-14 11:53:59.232 | INFO     | __main__:llm_node:32 - 
+[消息 2]
+类型：human
+内容：5*5等于几
+2026-07-14 11:53:59.233 | INFO     | __main__:llm_node:32 - 
+[消息 3]
+类型：ai
+内容：5*5等于25。
+2026-07-14 11:53:59.234 | INFO     | __main__:llm_node:32 - 
+[消息 4]
+类型：system
+内容：用最简短的话回答用户的提问
+2026-07-14 11:53:59.234 | INFO     | __main__:llm_node:32 - 
+[消息 5]
+类型：human
+内容：再+1呢?
+2026-07-14 11:53:59.235 | INFO     | __main__:llm_node:40 - ==============================
+2026-07-14 11:53:59.766 | INFO     | __main__:llm_node:29 - ==============================
+2026-07-14 11:53:59.767 | INFO     | __main__:llm_node:30 - 调用子图的 llm_node 节点，当前的 messages: 
+2026-07-14 11:53:59.767 | INFO     | __main__:llm_node:32 - 
+[消息 1]
+类型：system
+内容：用最简短的话回答用户的提问
+2026-07-14 11:53:59.768 | INFO     | __main__:llm_node:32 - 
+[消息 2]
+类型：human
+内容：10*10等于几
+2026-07-14 11:53:59.768 | INFO     | __main__:llm_node:32 - 
+[消息 3]
+类型：ai
+内容：10*10等于100。
+2026-07-14 11:53:59.769 | INFO     | __main__:llm_node:32 - 
+[消息 4]
+类型：system
+内容：用最简短的话回答用户的提问
+2026-07-14 11:53:59.769 | INFO     | __main__:llm_node:32 - 
+[消息 5]
+类型：human
+内容：再+10000呢?
+2026-07-14 11:53:59.769 | INFO     | __main__:llm_node:40 - ==============================
+============================== -> 第二次运行结果 <- ==============================
+{'user_inputs': ['再+1呢?', '再+10000呢?'], 'assistant_responses': ['25+1=26。', '10100']}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625094551009.png)
+
+每次调用子图时 `messages` 状态都是独立的。**Per-invocation 适用于父图中多次调用同一子图的场景，调用间互不干扰。**
+
+**Per-thread 行为**（改为 `builder.compile(checkpointer=True)`）：同一节点内的多次子图调用，历史按调用位置独立——即第一次子图调用的历史是连续的，第二次子图调用的历史也是连续的，但两次之间独立。**如果调用顺序发生变化，检查点历史会相互干扰。**
+
+> **策略差异**
+>
+
+| 策略 | 编译参数 | 多次调用同一子图 |
+| :--- | :--- | :--- |
+| Per-invocation（默认） | `subgraph = builder.compile()` | ✅ 每次调用完全隔离 |
+| Per-thread | `subgraph = builder.compile(checkpointer=True)` | ❌ 历史按位置关联，可能干扰 |
+
+
+#### 12.2.2.4. 场景四：多次调用不同子图
+父图的一个节点内调用两个不同的子图。
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END, MessagesState
+from langgraph.checkpoint.memory import InMemorySaver
+
+from langchain.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_deepseek import ChatDeepSeek
+
+import sys
+from loguru import logger
+logger.remove()
+logger.add(sys.stdout, colorize=True)
+
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# ==================================================
+# 【策略切换点】两个子图的编译参数
+# ==================================================
+
+# 构建水果子图
+def fruit_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    logger.info("=" * 30)
+    logger.info("调用水果子图的 fruit_node 节点，当前的 messages: ")
+    for index, message in enumerate(messages, start=1):
+        logger.opt(colors=True).info(
+            "\n<cyan><bold>[消息 {}]</bold></cyan>\n"
+            "<yellow>类型：</yellow><magenta>{}</magenta>\n"
+            "<yellow>内容：</yellow><green>{}</green>",
+            index,
+            message.type,
+            message.content
+        )
+    logger.info("=" * 30)
+    response = model.invoke(input=messages)
+    ai_msg = AIMessage(content=response.content)
+
+    return {
+        "messages": [ai_msg]
+    }
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("fruit_node", fruit_node)
+builder.add_edge(START, "fruit_node")
+builder.add_edge("fruit_node", END)
+
+fruit_subgraph = builder.compile(checkpointer=True)
+
+# 构建蔬菜子图
+def vegetable_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    logger.info("=" * 30)
+    logger.info("调用蔬菜子图的 vegetable_node 节点，当前的 messages: ")
+    for index, message in enumerate(messages, start=1):
+        logger.opt(colors=True).info(
+            "\n<cyan><bold>[消息 {}]</bold></cyan>\n"
+            "<yellow>类型：</yellow><magenta>{}</magenta>\n"
+            "<yellow>内容：</yellow><green>{}</green>",
+            index,
+            message.type,
+            message.content
+        )
+    logger.info("=" * 30)
+    response = model.invoke(input=messages)
+    ai_msg = AIMessage(content=response.content)
+
+    return {
+        "messages": [ai_msg]
+    }
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("vegetable_node", vegetable_node)
+builder.add_edge(START, "vegetable_node")
+builder.add_edge("vegetable_node", END)
+
+vegetable_subgraph = builder.compile(checkpointer=True)
+
+# 构建父图
+class OverAllState(TypedDict):
+    fruit: str # 水果
+    vegetable: str # 蔬菜
+
+    fruit_introduction: str # 水果介绍
+    vegetable_introduction: str # 蔬菜介绍
+
+def call_subgraph(state: OverAllState) -> OverAllState:
+    fruit = state["fruit"]
+    vegetable = state["vegetable"]
+
+    fruit_messages = [
+        SystemMessage("用最简短的话介绍用户输入的水果"),
+        HumanMessage(fruit)
+    ]
+
+    vegetable_messages = [
+        SystemMessage("用最简短的话介绍用户输入的蔬菜"),
+        HumanMessage(vegetable)
+    ]
+
+    fruit_response = fruit_subgraph.invoke({"messages": fruit_messages})
+    vegetable_response = vegetable_subgraph.invoke({"messages": vegetable_messages})
+
+    fruit_introduction = fruit_response["messages"][-1].content
+    vegetable_introduction = vegetable_response["messages"][-1].content
+
+    return {
+        "fruit_introduction": fruit_introduction,
+        "vegetable_introduction": vegetable_introduction
+    }
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("call_subgraph", call_subgraph)
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+checkpointer = InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "multi-call-diff-demo"}}
+
+first_response = parent_graph.invoke(
+    {
+        "fruit": "桑葚",
+        "vegetable": "西兰苔"
+    },
+    config = config
+)
+print("=" * 30, "-> 第一次运行结果 <-", "=" * 30)
+print(first_response)
+
+second_response = parent_graph.invoke(
+    {
+        "fruit": "香蕉",
+        "vegetable": "西兰花"
+    },
+    config = config
+)
+print("=" * 30, "-> 第二次运行结果 <-", "=" * 30)
+print(second_response)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**运行结果**
+
+```plain
+2026-06-25 11:37:49.176 | INFO     | __main__:fruit_node:32 - ==============================
+2026-06-25 11:37:49.176 | INFO     | __main__:fruit_node:33 - 调用水果子图的 fruit_node 节点，当前的 messages: 
+2026-06-25 11:37:49.177 | INFO     | __main__:fruit_node:35 - 
+[消息 1]
+类型：system
+内容：用最简短的话介绍用户输入的水果
+2026-06-25 11:37:49.178 | INFO     | __main__:fruit_node:35 - 
+[消息 2]
+类型：human
+内容：桑葚
+2026-06-25 11:37:49.178 | INFO     | __main__:fruit_node:43 - ==============================
+2026-06-25 11:37:49.872 | INFO     | __main__:vegetable_node:61 - ==============================
+2026-06-25 11:37:49.873 | INFO     | __main__:vegetable_node:62 - 调用蔬菜子图的 vegetable_node 节点，当前的 messages: 
+2026-06-25 11:37:49.873 | INFO     | __main__:vegetable_node:64 - 
+[消息 1]
+类型：system
+内容：用最简短的话介绍用户输入的蔬菜
+2026-06-25 11:37:49.874 | INFO     | __main__:vegetable_node:64 - 
+[消息 2]
+类型：human
+内容：西兰苔
+2026-06-25 11:37:49.874 | INFO     | __main__:vegetable_node:72 - ==============================
+============================== -> 第一次运行结果 <- ==============================
+{'fruit': '桑葚', 'vegetable': '西兰苔', 'fruit_introduction': '紫黑多汁的浆果，味酸甜。', 'vegetable_introduction': '西兰苔是西兰花与芥蓝杂交的蔬菜，以鲜嫩花茎和球花为食。'}
+...（第二次调用时水果、蔬菜子图各自保留历史消息，按调用位置独立）
+{'fruit': '香蕉', 'vegetable': '西兰花', 'fruit_introduction': '黄色弯月形水果，软糯香甜。', 'vegetable_introduction': '西兰花，绿色花球状蔬菜，营养丰富。'}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625113908367.png)
+
+本例在同一个节点中多次调用不同子图，通过专有状态保证了**水果一定发给 **`fruit_subgraph`、**蔬菜一定发给 **`vegetable_subgraph`，一定程度上可以确保不同子图的检查点历史不相互干扰。
+
+但这种靠调用顺序区分的方式不够稳健——如果调用顺序变化，检查点历史也会错乱。官方推荐的做法见下一节。
+
+#### 12.2.2.5. 场景五：独立节点调用不同子图（推荐）
+为每个子图准备独立的父图节点，这样它们的命名空间是各自的节点名，完全独立。
+
+```python
+from typing import TypedDict, Literal
+from collections.abc import Sequence
+from langgraph.graph import StateGraph, START, END, MessagesState
+from langgraph.checkpoint.memory import InMemorySaver
+
+from langchain.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_deepseek import ChatDeepSeek
+
+import sys
+from loguru import logger
+logger.remove()
+logger.add(sys.stdout, colorize=True)
+
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 构建水果子图
+def fruit_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    logger.info("=" * 30)
+    logger.info("调用水果子图的 fruit_node 节点，当前的 messages: ")
+    for index, message in enumerate(messages, start=1):
+        logger.opt(colors=True).info(
+            "\n<cyan><bold>[消息 {}]</bold></cyan>\n"
+            "<yellow>类型：</yellow><magenta>{}</magenta>\n"
+            "<yellow>内容：</yellow><green>{}</green>",
+            index,
+            message.type,
+            message.content
+        )
+    logger.info("=" * 30)
+    response = model.invoke(input=messages)
+    ai_msg = AIMessage(content=response.content)
+
+    return {
+        "messages": [ai_msg]
+    }
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("fruit_node", fruit_node)
+builder.add_edge(START, "fruit_node")
+builder.add_edge("fruit_node", END)
+
+fruit_subgraph = builder.compile(checkpointer=True)
+
+# 构建蔬菜子图
+def vegetable_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    logger.info("=" * 30)
+    logger.info("调用蔬菜子图的 vegetable_node 节点，当前的 messages: ")
+    for index, message in enumerate(messages, start=1):
+        logger.opt(colors=True).info(
+            "\n<cyan><bold>[消息 {}]</bold></cyan>\n"
+            "<yellow>类型：</yellow><magenta>{}</magenta>\n"
+            "<yellow>内容：</yellow><green>{}</green>",
+            index,
+            message.type,
+            message.content
+        )
+    logger.info("=" * 30)
+    response = model.invoke(input=messages)
+    ai_msg = AIMessage(content=response.content)
+
+    return {
+        "messages": [ai_msg]
+    }
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("vegetable_node", vegetable_node)
+builder.add_edge(START, "vegetable_node")
+builder.add_edge("vegetable_node", END)
+
+vegetable_subgraph = builder.compile(checkpointer=True)
+
+# 构建父图
+class OverAllState(TypedDict):
+    fruit: str # 水果
+    vegetable: str # 蔬菜
+
+    fruit_introduction: str # 水果介绍
+    vegetable_introduction: str # 蔬菜介绍
+
+def call_fruit_subgraph(state: OverAllState) -> OverAllState:
+    fruit = state["fruit"]
+
+    fruit_messages = [
+        SystemMessage("用最简短的话介绍用户输入的水果"),
+        HumanMessage(fruit)
+    ]
+
+    fruit_response = fruit_subgraph.invoke({"messages": fruit_messages})
+    fruit_introduction = fruit_response["messages"][-1].content
+
+    return {
+        "fruit_introduction": fruit_introduction
+    }
+
+def call_vegetable_subgraph(state: OverAllState) -> OverAllState:
+    vegetable = state["vegetable"]
+
+    vegetable_messages = [
+        SystemMessage("用最简短的话介绍用户输入的蔬菜"),
+        HumanMessage(vegetable)
+    ]
+
+    vegetable_response = vegetable_subgraph.invoke({"messages": vegetable_messages})
+    vegetable_introduction = vegetable_response["messages"][-1].content
+
+    return {
+        "vegetable_introduction": vegetable_introduction
+    }
+
+def router(state: OverAllState) -> Sequence[Literal["call_fruit_subgraph", "call_vegetable_subgraph", END]]:
+    next_nodes = []
+    if state.get("fruit"):
+        next_nodes.append("call_fruit_subgraph")
+    if state.get("vegetable"):
+        next_nodes.append("call_vegetable_subgraph")
+    if not next_nodes:
+        next_nodes.append(END)
+    return next_nodes
+
+builder = StateGraph(state_schema=OverAllState)
+builder.add_node("call_fruit_subgraph", call_fruit_subgraph)
+builder.add_node("call_vegetable_subgraph", call_vegetable_subgraph)
+
+builder.add_conditional_edges(START, router, path_map=["call_fruit_subgraph", "call_vegetable_subgraph", END])
+builder.add_edge("call_fruit_subgraph", END)
+builder.add_edge("call_vegetable_subgraph", END)
+
+checkpointer = InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "independent-nodes-demo"}}
+
+first_response = parent_graph.invoke(
+    {
+        "fruit": "桑葚",
+        "vegetable": "西兰苔"
+    },
+    config = config
+)
+print("=" * 30, "-> 第一次运行结果 <-", "=" * 30)
+print(first_response)
+
+second_response = parent_graph.invoke(
+    {
+        "fruit": "香蕉",
+        "vegetable": "西兰花"
+    },
+    config = config
+)
+print("=" * 30, "-> 第二次运行结果 <-", "=" * 30)
+print(second_response)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**运行结果**
+
+```plain
+2026-06-25 11:59:10.331 | INFO     | __main__:fruit_node:33 - ==============================
+2026-06-25 11:59:10.334 | INFO     | __main__:fruit_node:34 - 调用水果子图的 fruit_node 节点，当前的 messages: 
+2026-06-25 11:59:10.335 | INFO     | __main__:fruit_node:36 - 
+[消息 1]
+类型：system
+内容：用最简短的话介绍用户输入的水果
+2026-06-25 11:59:10.334 | INFO     | __main__:vegetable_node:62 - ==============================
+2026-06-25 11:59:10.335 | INFO     | __main__:fruit_node:36 - 
+[消息 2]
+类型：human
+内容：桑葚
+2026-06-25 11:59:10.337 | INFO     | __main__:fruit_node:44 - ==============================
+2026-06-25 11:59:10.337 | INFO     | __main__:vegetable_node:63 - 调用蔬菜子图的 vegetable_node 节点，当前的 messages: 
+2026-06-25 11:59:10.341 | INFO     | __main__:vegetable_node:65 - 
+[消息 1]
+类型：system
+内容：用最简短的话介绍用户输入的蔬菜
+2026-06-25 11:59:10.341 | INFO     | __main__:vegetable_node:65 - 
+[消息 2]
+类型：human
+内容：西兰苔
+2026-06-25 11:59:10.342 | INFO     | __main__:vegetable_node:73 - ==============================
+============================== -> 第一次运行结果 <- ==============================
+{'fruit': '桑葚', 'vegetable': '西兰苔', 'fruit_introduction': '桑葚是桑树的果实，味甜可食，常被用于制酱或入药。', 'vegetable_introduction': '西兰苔是西兰花和芥蓝的杂交品种。'}
+...（第二次调用时，水果子图和蔬菜子图各自保留独立的历史）
+{'fruit': '香蕉', 'vegetable': '西兰花', 'fruit_introduction': '香蕉是软甜水果，富含钾，能缓解便秘。', 'vegetable_introduction': '一种绿色花状蔬菜，营养丰富。'}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625115935316.png)
+
+每个子图有独立的父图节点，命名空间为各自的节点名，完全隔离。**这是 Per-thread 模式下多次调用不同子图的推荐做法。**
+
+#### 12.2.2.6. 场景六：Stateless 模式
+子图完全无状态，不保存检查点，中断和多轮对话均不适用。适用于纯计算、无需追踪历史的场景。
+
+```python
+from typing import TypedDict, Annotated
+from operator import add
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+
+# 构建子图
+class SubgraphState(TypedDict):
+    raw_text: str
+    clean_texts: Annotated[list[str], add]
+
+def strip_node(state: SubgraphState) -> SubgraphState:
+    raw_text = state["raw_text"]
+    clean_text = raw_text.strip()
+
+    return {
+        "clean_texts": [clean_text]
+    }
+
+builder = StateGraph(state_schema=SubgraphState)
+builder.add_node("strip_node", strip_node)
+builder.add_edge(START, "strip_node")
+builder.add_edge("strip_node", END)
+
+# ==================================================
+# 【策略切换点】只需修改这一行
+subgraph = builder.compile(checkpointer=False)  # Stateless：无检查点
+# subgraph = builder.compile(checkpointer=True)   # Per-thread：有状态（对比用）
+# ==================================================
+
+# 构建父图
+class ParentState(TypedDict):
+    input_texts: list[str]
+    output_texts: Annotated[list[str], add]
+
+def call_subgraph(state: ParentState) -> ParentState:
+    input_texts = state["input_texts"]
+
+    output_texts = []
+    for input_text in input_texts:
+        res = subgraph.invoke({"raw_text": input_text})
+        output_texts += res["clean_texts"]
+
+    return {
+        "output_texts": output_texts
+    }
+
+builder = StateGraph(state_schema=ParentState)
+builder.add_node("call_subgraph", call_subgraph)
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+checkpointer = InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "stateless-demo"}}
+
+first_response = parent_graph.invoke(
+    {
+        "input_texts": ["  LangGraph 真有意思 ", "  我喜欢 LangChain "]
+    },
+    config = config
+)
+print("=" * 30, "-> 第一次运行结果 <-", "=" * 30)
+print(first_response)
+
+second_response = parent_graph.invoke(
+    {
+        "input_texts": ["  Hello, LangGraph  ", "  Hello, LangChain "]
+    },
+    config = config
+)
+print("=" * 30, "-> 第二次运行结果 <-", "=" * 30)
+print(second_response)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**Stateless 运行结果**
+
+```plain
+============================== -> 第一次运行结果 <- ==============================
+{'input_texts': ['  LangGraph 真有意思 ', '  我喜欢 LangChain '], 'output_texts': ['LangGraph 真有意思', '我喜欢 LangChain']}
+============================== -> 第二次运行结果 <- ==============================
+{'input_texts': ['  Hello, LangGraph  ', '  Hello, LangChain '], 'output_texts': ['LangGraph 真有意思', '我喜欢 LangChain', 'Hello, LangGraph', 'Hello, LangChain']}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625121810977.png)
+
+渲染的图结构中，子图节点内部没有展开子图拓扑——无状态模式的子图内部状态不可访问。
+
+**Per-thread 对比结果**（仅改为 `builder.compile(checkpointer=True)`）：
+
+```plain
+============================== -> 第一次运行结果 <- ==============================
+{'input_texts': ['  LangGraph 真有意思 ', '  我喜欢 LangChain '], 'output_texts': ['LangGraph 真有意思', '我喜欢 LangChain']}
+============================== -> 第二次运行结果 <- ==============================
+{'input_texts': ['  Hello, LangGraph  ', '  Hello, LangChain '], 'output_texts': ['LangGraph 真有意思', '我喜欢 LangChain', 'LangGraph 真有意思', 'Hello, LangGraph', '我喜欢 LangChain', 'Hello, LangChain']}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625122230644.png)
+
+Per-thread 模式下第二次调用结果出现了重复（子图的历史 `clean_texts` 被累积），拓扑结构中也展开了子图。**Stateless 不会累积历史，每次调用都是干净的。**
+
+#### 12.2.2.7. `Per-invocation`和`Per-thread`的设计哲学
+默认子图检查点命名空间为 `<节点名称>:<任务ID>`。两种模式的核心差异在于对 `<任务ID>` 的处理：
+
+| 维度 | `Per-invocation` | `Per-thread` |
+| :--- | :--- | :--- |
+| 命名空间 | `<节点名称>:<任务ID>` | `<节点名称>`（去掉 `:<任务ID>`） |
+| 设计意图 | `<任务ID>` 每次不同 → 每次调用状态独立 | `<节点名称>` 不变 → 跨多次调用状态连续 |
+| 同节点多次调用 | `:<任务ID>|1`, `:<任务ID>|2` … | `|1`, `|2` … |
+| 注意事项 | — | 调用顺序变化会导致检查点历史相互干扰；`get_state_history()` 存在 Bug，父图检查点仍记录 `:<任务ID>` 格式，需额外处理 |
+
+
+#### 12.2.2.8. 总结
+| 特性 | `Per-invocation (default)` | `Per-thread` | `Stateless` |
+| :--- | :--- | :--- | :--- |
+| `checkpointer=` | `None` | `True` | `False` |
+| 中断 | ✅ | ✅ | ❌ |
+| 多轮对话 | ❌ | ✅ | ❌ |
+| 多次调用不同子图 | ✅ | ⚠️最好通过节点隔离 | ✅ |
+| 多次调用相同子图 | ✅ | ❌子图历史相互干扰 | ✅ |
+| 观测子图检查点快照 | ⚠️可以观测，但每次调用独立 | ✅ | ❌ |
+
+
+## 12.3. 子图流式运行
+只需要在父图调用 `stream` 时传递 `subgraphs=True` 即可，这样父图和子图的流数据都会汇入同一个流队列，再通过命名空间区分来源。
+
+**需要注意的是**：`subgraphs=True` 是在原有父图流数据的基础上，**额外加入子图内部产生的流数据**，并不会用子图数据替代父图数据。它会同时流式返回父图和所有子图的输出。
+
+### 12.3.1. 分析`chunk`格式
+`chunk` 格式为
+
+```python
+(namespace, stream_mode, data)
+```
+
+此处的命名空间不同于检查点命名空间，是流处理内部专门用于区分父图和子图流数据的字段。
+
+我们通过模式为 `updates` 的简单案例查看数据格式
+
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+# 构建子图
+class SubgraphState(TypedDict):
+    raw_text: str # 未清洗文本
+    stripped_text: str # 去除收尾空格的文本
+    punctuated_text: str # 句尾添加句号的文本
+
+def subgraph_strip_node(state: SubgraphState) -> SubgraphState:
+    raw_text = state["raw_text"]
+    stripped_text = raw_text.strip()
+
+    return {
+        "stripped_text": stripped_text
+    }
+
+def subgraph_punctuate_node(state: SubgraphState) -> SubgraphState:
+    stripped_text = state["stripped_text"]
+    punctuated_text = stripped_text + "。"
+
+    return {
+        "punctuated_text": punctuated_text
+    }
+
+builder = StateGraph(state_schema=SubgraphState)
+builder.add_node("subgraph_strip_node", subgraph_strip_node)
+builder.add_node("subgraph_punctuate_node", subgraph_punctuate_node)
+
+builder.add_edge(START, "subgraph_strip_node")
+builder.add_edge("subgraph_strip_node", "subgraph_punctuate_node")
+builder.add_edge("subgraph_punctuate_node", END)
+
+subgraph = builder.compile()
+
+# 构建父图
+class ParentState(TypedDict):
+    input_text: str # 输入的未清洗的文本
+    cleaned_text: str # 清洗后的文本
+
+def call_subgraph(state: ParentState) -> ParentState:
+    input_text = state["input_text"]
+
+    res = subgraph.invoke({"raw_text": input_text})
+    cleaned_text = res["punctuated_text"]
+    return {
+        "cleaned_text": cleaned_text
+    }
+
+builder = StateGraph(state_schema=ParentState)
+builder.add_node("call_subgraph", call_subgraph)
+
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+parent_graph = builder.compile()
+
+input_text = "   LangGraph 真有意思        "
+for chunk in parent_graph.stream(
+    {"input_text": input_text},
+    subgraphs=True,
+    stream_mode=["updates"]
+):
+    print(chunk)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**运行结果如下**
+
+```python
+(
+    (
+        'call_subgraph:4daa7290-d5c9-ae96-849e-d2f1dafadd17',
+    ),
+    'updates',
+    {
+        'subgraph_strip_node': {
+            'stripped_text': 'LangGraph 真有意思'
+        }
+    }
+)
+(
+    (
+        'call_subgraph:4daa7290-d5c9-ae96-849e-d2f1dafadd17',
+    ),
+    'updates',
+    {
+        'subgraph_punctuate_node': {
+            'punctuated_text': 'LangGraph 真有意思。'
+        }
+    }
+)
+(
+    (),
+    'updates',
+    {
+        'call_subgraph': {
+            'cleaned_text': 'LangGraph 真有意思。'
+        }
+    }
+)
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625143710651.png)
+
+**流数据命名空间规则**：
+
+| 来源 | 命名空间 | 备注 |
+| :--- | :--- | :--- |
+| 父图 | `()`（空元组） |  |
+| 子图（常规） | `(<父图节点名>:<父图任务ID>,)` |  |
+| 子图（Per-thread） | `(<父图节点名>,)` | 与检查点命名空间一致 |
+
+
+### 12.3.2. 多轮对话消息流处理
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END, MessagesState
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain.messages import HumanMessage, SystemMessage
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 构建子图
+class SubgraphState(MessagesState):
+    system_prompt: SystemMessage
+
+def llm_mode(state: SubgraphState) -> SubgraphState:
+    system_prompt = state["system_prompt"]
+    messages = state["messages"]
+
+    response = model.invoke([system_prompt] + messages)
+    return {
+        "messages": [response]
+    }
+
+builder = StateGraph(state_schema=SubgraphState)
+builder.add_node("llm_mode", llm_mode)
+builder.add_edge(START, "llm_mode")
+builder.add_edge("llm_mode", END)
+
+subgraph = builder.compile(checkpointer=True)
+
+# 构建父图
+class ParentState(TypedDict):
+    user_input: str
+    assistant_response: str
+
+def call_subgraph(state: ParentState) -> ParentState:
+    user_input = state["user_input"]
+
+    response = subgraph.invoke(
+        {
+            "system_prompt": SystemMessage("你是个善解人意的助手"),
+            "messages": [HumanMessage(user_input)]
+        }
+    )
+
+    assistant_response = response["messages"][-1].content
+
+    return {
+        "assistant_response": assistant_response
+    }
+
+builder = StateGraph(state_schema=ParentState)
+builder.add_node("call_subgraph", call_subgraph)
+builder.add_edge(START, "call_subgraph")
+builder.add_edge("call_subgraph", END)
+
+checkpointer = InMemorySaver()
+parent_graph = builder.compile(checkpointer=checkpointer)
+
+config = {"configurable": {"thread_id": "subgraph_stream_test"}}
+
+print("\n", "=" * 30, "-> 第一次运行结果 <-", "=" * 30)
+# chunk 形如
+# (('call_subgraph',), 'messages', (AIMessageChunk(content='', additional_kwargs={}, response_metadata={'model_provider': 'deepseek'}, id='lc_run--019efd65-c54e-7012-912e-29ff4f84328e', tool_calls=[], invalid_tool_calls=[], tool_call_chunks=[]), {'thread_id': 'subgraph_stream_test', 'langgraph_step': 1, 'langgraph_node': 'llm_mode', 'langgraph_triggers': ('branch:to:llm_mode',), 'langgraph_path': ('__pregel_pull', 'llm_mode'), 'langgraph_checkpoint_ns': 'call_subgraph|llm_mode:55577c3e-22da-877a-c77b-f16bdbcd2c6c', 'checkpoint_ns': 'call_subgraph:9c469391-f094-1c1b-c5d7-6578f1603151', 'ls_provider': 'deepseek', 'ls_model_name': 'deepseek-v4-flash', 'ls_model_type': 'chat', 'ls_temperature': None}))
+for chunk in parent_graph.stream(
+    {
+        "user_input": "花儿为什么这样红？"
+    },
+    config=config,
+    subgraphs=True,
+    stream_mode=["messages"]
+):
+    print(chunk[2][0].content, end="", flush=True)
+
+print("\n", "=" * 30, "-> 第二次运行结果 <-", "=" * 30)
+for chunk in parent_graph.stream(
+    {
+        "user_input": "刚才我们聊了什么？"
+    },
+    config=config,
+    subgraphs=True,
+    stream_mode=["messages"]
+):
+    print(chunk[2][0].content, end="", flush=True)
+
+from IPython.display import display, Image
+display(
+    Image(
+        parent_graph
+        .get_graph(xray=True)
+        .draw_mermaid_png()
+    )
+)
+```
+
+**运行结果如下**
+
+```python
+ ============================== -> 第一次运行结果 <- ==============================
+“花儿为什么这样红”是一个经典的问题，可以从不同角度来理解：
+
+1. **自然科学的视角**：花朵的颜色主要由花瓣中的色素决定，尤其是**花青素**（anthocyanins）。花青素在酸性环境下呈现红色，在碱性环境下偏向蓝色。某些花朵（如玫瑰、山茶花）细胞液偏酸性，因此吸收阳光中的蓝绿光，反射红光，让我们看到鲜艳的红色。此外，红色也能吸引蜂鸟等传粉动物，帮助植物繁殖。
+
+2. **文化艺术的视角**：这是一首传唱已久的中国民歌（《花儿为什么这样红》），由雷振邦作曲，是电影《冰山上的来客》的插曲。歌词用“花儿”比喻纯洁、热烈的情感，红色象征着爱情、勇气或革命的赤诚。
+
+3. **诗意隐喻**：就像“花儿为什么这样红”可以指代生命的热情、青春的绽放，或者经风雨后更加绚烂的坚韧。红色的花朵也常被赋予“美好而短暂”的哲学意味。
+
+如果你指的是特定语境（比如学生物的朋友、教孩子、写赏析），我可以把回答调整得更具体。🌹
+ ============================== -> 第二次运行结果 <- ==============================
+我们刚才聊了“花儿为什么这样红”这个话题。我分别从自然科学（花青素与酸碱性）、文化艺术（经典民歌《花儿为什么这样红》）以及诗意隐喻三个角度做了解答。如果你有更多想深入的方向，随时告诉我～
+```
+
+实际测试可以看到模型返回的消息是 **逐**`token` 返回的。
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625143740875.png)
+
+## 12.4. 子图动态路由
+在子图中可以通过 `Command` 动态路由到父图节点，只要将参数 `graph` 的值设置为 `Command.PARENT` 即可，如下所示
+
+```python
+return Command(
+    update={
+        "fruits": fruits,
+        "vegetables": vegetables
+    },
+    goto="router_node",
+    graph=Command.PARENT
+)
+```
+
+ **示例如下**
+
+```python
+from typing import TypedDict, Literal
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Command
+from loguru import logger
+
+# ==================== 子图 ====================
+class SubState(TypedDict):
+    data: str
+
+def sub_node(state: SubState) -> Command:
+    """子图节点：执行后动态路由回父图的 parent_router"""
+    logger.info("[子图] sub_node 执行")
+    return Command(
+        update={"data": state["data"] + " → 子图"},
+        goto="node_b",       # 路由到父图节点
+        graph=Command.PARENT,       # 指定目标为父图
+    )
+
+sub_builder = StateGraph(state_schema=SubState)
+sub_builder.add_node("sub_node", sub_node)
+sub_builder.add_edge(START, "sub_node")
+sub_graph = sub_builder.compile()
+
+# ==================== 父图 ====================
+class ParentState(TypedDict):
+    data: str
+
+def node_a(state: ParentState) -> ParentState:
+    print("[父图] node_a 执行")
+    return {"visited_a": True}
+
+def node_b(state: ParentState) -> ParentState:
+    print("[父图] node_b 执行")
+    return {"visited_b": True}
+
+parent_builder = StateGraph(state_schema=ParentState)
+parent_builder.add_node(
+    "sub_graph", sub_graph
+)
+
+parent_builder.add_node("node_a", node_a)
+parent_builder.add_node("node_b", node_b)
+parent_builder.add_edge(START, "sub_graph")
+parent_builder.add_edge("node_a", "node_b")
+parent_builder.add_edge("node_b", END)
+
+parent_graph = parent_builder.compile()
+
+result = parent_graph.invoke({"data": "初始"})
+print(f"\n最终结果: {result}")
+
+from IPython.display import display
+display(parent_graph)
+```
+
+**要点**：
+
+1. 子图通过 `Command(goto="parent_router", graph=Command.PARENT)` 将执行流动态路由回父图的指定节点
+2. 子图返回值类型注解不能用 `Command[Literal["parent_router"]]` 的形式，因为子图并不知道父图节点，静态类型校验会报错
+
+```python
+ValueError: Found edge ending at unknown node `parent_router`
+```
+
+3. 添加子图节点时通过 `destinations` 声明下游节点，便于渲染图结构时正确描绘拓扑关系
+
+```python
+builder.add_node(
+    "sub_graph", sub_graph,
+    destinations=("parent_router",)
+)
+```
+
+不加 `destinations` 不会影响动态路由，只是渲染的图结构不能正确描绘拓扑。
+
+# 13. 运行图设计模式
+## 13.1. 概述
+`LangGraph` 官方总结了常用的状态图设计模式，如下
+
+| 模式 | 图结构 | 运行时动态性 | 核心 `LangGraph` 能力 |
+| --- | --- | --- | --- |
+| `Prompt Chaining` | 顺序链 | 低 | 静态边、条件边 |
+| `Parallelization` | 固定 `Fan-out/Fan-in` | 低 | 并行超步、汇聚 |
+| `Routing` | 条件分支 | 中 | 结构化输出、条件边 |
+| `Orchestrator-worker` | 动态 `Fan-out/Fan-in` | 高 | `Send`、`WorkerState`、`Reducer` |
+| `Evaluator-optimizer` | 反馈循环 | 中 | 条件边、循环、反馈状态 |
+| `Agent` | 自主决策循环 | 最高 | `MessagesState`、工具调用、`ToolNode` |
+
+
+## 13.2. 实现
+### 13.2.1. `Prompt Chaining`：提示词链
+#### 13.2.1.1. 核心思想
+将一个复杂任务拆分成若干个顺序执行的小任务：
+
+```latex
+输入
+ ↓
+任务 A
+ ↓
+任务 B
+ ↓
+任务 C
+ ↓
+输出
+```
+
+后一个节点依赖前一个节点的结果。
+
+适合：
+
++ 翻译 → 校对 → 润色
++ 生成内容 → 检查一致性 → 修订
++ 提取信息 → 分类 → 格式化
++ 需求分析 → 生成代码 → 代码解释
+
+官方示例是：
+
+```latex
+生成笑话
+   ↓
+检查是否合格
+  ├─ 合格 → END
+  └─ 不合格 → 改进笑话 → 最终润色 → END
+```
+
+所以 `Prompt Chaining` 不一定只是简单的直线，也可以在中间加入一个 `Gate`**，质量门控节点**。
+
+`Prompt Chaining` 的核心是：
+
+> **将复杂任务拆解为可独立验证的阶段，并把每一阶段的结果记录下来向后传递。**
+>
+
+它的优点是执行过程稳定且易于调试；缺点是流程固定，无法处理未知数量或高度动态的任务。
+
+#### 13.2.1.2. 示例
+**示例如下**
+
+```python
+from typing import TypedDict, Literal
+from langgraph.graph import StateGraph, START, END
+
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 图状态
+class OverAllState(TypedDict):
+    topic: str
+    joke: str
+    improved_joke: str
+    final_joke: str
+
+# 节点
+def generate_joke(state: OverAllState) -> OverAllState:
+    """第一次调用大模型，生成初始笑话"""
+
+    msg = model.invoke(
+        [HumanMessage(content=f"写一个关于“{state['topic']}”的简短笑话")]
+    )
+    return {"joke": msg.content}
+
+def check_punchline(state: OverAllState) -> Literal["pass", "no_pass"]:
+    """判断笑话中是否包含包袱"""
+
+    # 简单判断：笑话中是否包含问号或感叹号
+    if "?" in state["joke"] or "!" in state["joke"]:
+        return "pass"
+    return "no_pass"
+
+def improve_joke(state: OverAllState) -> OverAllState:
+    """第二次调用大模型，通过添加双关语改进笑话"""
+
+    msg = model.invoke(
+        [HumanMessage(content=f"通过添加双关语，让下面这个笑话变得更有趣：\n{state['joke']}")]
+    )
+    return {"improved_joke": msg.content}
+
+def polish_joke(state: OverAllState) -> OverAllState:
+    """第三次调用大模型，对笑话进行最终润色"""
+
+    msg = model.invoke(
+        [HumanMessage(content=f"为下面这个笑话添加一个出人意料的反转：\n{state['improved_joke']}")]
+    )
+    return {"final_joke": msg.content}
+
+# 构建工作流
+builder = StateGraph(state_schema=OverAllState)
+
+# 添加节点
+builder.add_node("generate_joke", generate_joke)
+builder.add_node("improve_joke", improve_joke)
+builder.add_node("polish_joke", polish_joke)
+
+# 添加边，连接各个节点
+builder.add_edge(START, "generate_joke")
+builder.add_conditional_edges(
+    "generate_joke",
+    check_punchline,
+    {
+        "no_pass": "improve_joke",
+        "pass": END,
+    },
+)
+builder.add_edge("improve_joke", "polish_joke")
+builder.add_edge("polish_joke", END)
+
+# 编译工作流
+graph = builder.compile()
+
+# 调用工作流
+response = graph.invoke({"topic": "猫"})
+print(response)
+
+# 绘制拓扑结构
+from IPython.display import display
+display(graph)
+```
+
+**运行结果如下**
+
+```python
+{
+    'topic': '猫',
+    'joke': '一只猫去面试，面试官问：“你有什么特长？”  \n猫淡定地回答：“我能用尾巴画圆。”  \n面试官惊讶：“真的吗？演示一下。”  \n猫转身，尾巴甩了几下，画出一个完美的圆。  \n面试官鼓掌：“太好了！你被录取了！”  \n第二天，猫上班了，发现它被送到了数学实验室——负责画π。',
+    'improved_joke': '加了一点数学梗和双关后，版本如下：\n\n---\n\n一只猫去面试，面试官问：“你有什么特长？”  \n猫淡定地回答：“我能用尾巴画圆。”  \n面试官惊讶：“真的吗？演示一下。”  \n猫转身，尾巴甩了几下，画出一个完美的圆。  \n面试官鼓掌：“太好了！你被录取了！”  \n\n第二天，猫上班了，发现它被送到了数学实验室——**负责画π**。  \n\n猫叹了口气，说：“**原来我的‘圆’满人生，终究逃不过π的‘鼠’命。”**  \n\n（双关解析：  \n1. “π”音同“派”，既指圆周率，也暗示“被派遣”去画圆。  \n2. “鼠命”谐音“宿命”，同时猫抓老鼠，这里暗指猫被困在数学“鼠”洞（无限不循环小数）里，永远画不完。）',
+    'final_joke': '---\n\n**反转版：**  \n第二天，猫上班了，发现它被送到了数学实验室——**负责画π**。  \n\n猫叹了口气，说：“原来我的‘圆’满人生，终究逃不过π的‘鼠’命。”  \n\n话音刚落，实验室主任推门进来，是个戴眼镜的仓鼠。仓鼠拍了拍猫的尾巴，微笑道：“别担心，我们用的是**有理数**——你每天只用画前100位，剩下的**无限循环**，由我们**鼠**类负责演算。”  \n\n猫愣了一下，突然跳起来：“等等！你是说——我画圆，你们算剩下的尾巴？”  \n\n仓鼠点头：“对，这叫……**π的‘分工’合作**。”  \n\n猫沉默三秒，忽然掏出手机：“那我得先给抓老鼠的同行打个电话——告诉他们，**‘有理’走遍天下，无理寸步难行**。”  \n\n（双关补充：  \n1. **“有理数”** 双关：既指数学上有理数（可终止或循环），也暗示“有道理的反转”——猫的“无限宿命”被仓鼠强行打断。  \n2. **“剩下的尾巴”** 双关：猫的尾巴画圆，但仓鼠们负责“补完”无限小数，字面与数学双关。  \n3. **“有理走遍天下”** 化用俗语，暗讽“有理数”才是猫的出路，而“无理”的π已变成职场协作梗。）'
+}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625180419653.png)
+
+---
+
+### 13.2.2. `Parallelization`：并行化
+#### 13.2.2.1. 核心思想
+把相互独立的任务同时执行，最后汇总结果：
+
+```latex
+                 ┌→ 任务 A ─┐
+输入 → Fan-out ──┼→ 任务 B ─┼→ 聚合 → 输出
+                 └→ 任务 C ─┘
+```
+
+官方将并行化分成两种用途：
+
+1. **任务拆分**
+    - 一个节点检查关键词
+    - 一个节点检查格式
+    - 一个节点检查事实准确性
+2. **多次独立判断**
+    - 多个模型或多个提示词分别评分
+    - 最后投票、平均或综合判断
+
+前者主要提升速度，后者主要提升置信度。
+
+#### 13.2.2.2. 示例
+**示例如下**
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 图状态
+class OverAllState(TypedDict):
+    topic: str
+    joke: str
+    story: str
+    poem: str
+    combined_output: str
+
+# 节点
+def call_model_1(state: OverAllState) -> OverAllState:
+    """第一次调用大模型，生成笑话"""
+
+    msg = model.invoke(
+        [HumanMessage(content=f"写一个关于“{state['topic']}”的简短的笑话")]
+    )
+    return {"joke": msg.content}
+
+def call_model_2(state: OverAllState) -> OverAllState:
+    """第二次调用大模型，生成故事"""
+
+    msg = model.invoke(
+        [HumanMessage(content=f"写一个关于“{state['topic']}”的简短的故事")]
+    )
+    return {"story": msg.content}
+
+def call_model_3(state: OverAllState) -> OverAllState:
+    """第三次调用大模型，生成诗歌"""
+
+    msg = model.invoke(
+        [HumanMessage(content=f"写一首关于“{state['topic']}”的简短的诗")]
+    )
+    return {"poem": msg.content}
+
+def aggregator(state: OverAllState) -> OverAllState:
+    """将笑话、故事和诗歌合并为单一输出"""
+
+    combined = f"下面是一个关于“{state['topic']}”的故事、笑话和诗歌！\n\n"
+    combined += f"故事：\n{state['story']}\n\n"
+    combined += f"笑话：\n{state['joke']}\n\n"
+    combined += f"诗歌：\n{state['poem']}"
+    return {"combined_output": combined}
+
+# 构建工作流
+builder = StateGraph(state_schema=OverAllState)
+
+# 添加节点
+builder.add_node("call_model_1", call_model_1)
+builder.add_node("call_model_2", call_model_2)
+builder.add_node("call_model_3", call_model_3)
+builder.add_node("aggregator", aggregator)
+
+# 添加边，连接各个节点
+builder.add_edge(START, "call_model_1")
+builder.add_edge(START, "call_model_2")
+builder.add_edge(START, "call_model_3")
+builder.add_edge(["call_model_1", "call_model_2", "call_model_3"], "aggregator")
+builder.add_edge("aggregator", END)
+
+graph = builder.compile()
+
+# 调用工作流
+response = graph.invoke({"topic": "猫"})
+print(response)
+
+from IPython.display import display
+display(graph)
+```
+
+**运行结果如下**
+
+```python
+{
+    'topic': '猫',
+    'joke': '“为什么猫总是赢不了电脑游戏？”\n“因为鼠标（鼠）一出现，它就光顾着抓屏（屏幕）了……”',
+    'story': '# 猫的故事\n\n老张退休那年，在楼下捡到一只瘦骨嶙峋的橘猫。\n\n他本不爱猫，但看它可怜，便每天在楼道口放一碗剩饭。猫很警惕，非要等他走远了才肯吃。就这样喂了三个月，猫终于允许他靠近一臂的距离。\n\n半年后的一天夜里，老张突发心梗，倒在客厅地板上，手机摔在茶几底下，怎么也够不着。意识模糊间，他感到一团温热的东西贴上了他的胸口——是那只橘猫。它不知怎么钻进了他家门。\n\n猫用头蹭他的手，蹭他的脸，见他没反应，便冲进屋里的每一个房间，歇斯底里地叫。最后它跳上窗台，用爪子疯狂拍打玻璃，叫声惊动了楼下乘凉的邻居。\n\n120赶到时，老张已经在地上躺了将近一个小时。医生说，再晚十分钟，就悬了。\n\n出院后，橘猫正式住进了老张家。老张给它取名“富贵”，逢人就说：“我家富贵啊，有九条命，分了我一条。”\n\n富贵永远听不懂这些话。它只是每天黄昏，准时跳上老张的膝盖，把一团温暖塞进他的怀里，呼噜呼噜地睡去。',
+    'poem': '## 《猫》\n\n黄昏被毛茸茸地踩碎，\n肚皮起伏如钟摆，\n眼睫间，星辰坠落。\n当琥珀瞳孔转动，\n整片夜色都来蜷卧。',
+    'combined_output': '下面是一个关于“猫”的故事、笑话和诗歌！\n\n故事：\n# 猫的故事\n\n老张退休那年，在楼下捡到一只瘦骨嶙峋的橘猫。\n\n他本不爱猫，但看它可怜，便每天在楼道口放一碗剩饭。猫很警惕，非要等他走远了才肯吃。就这样喂了三个月，猫终于允许他靠近一臂的距离。\n\n半年后的一天夜里，老张突发心梗，倒在客厅地板上，手机摔在茶几底下，怎么也够不着。意识模糊间，他感到一团温热的东西贴上了他的胸口——是那只橘猫。它不知怎么钻进了他家门。\n\n猫用头蹭他的手，蹭他的脸，见他没反应，便冲进屋里的每一个房间，歇斯底里地叫。最后它跳上窗台，用爪子疯狂拍打玻璃，叫声惊动了楼下乘凉的邻居。\n\n120赶到时，老张已经在地上躺了将近一个小时。医生说，再晚十分钟，就悬了。\n\n出院后，橘猫正式住进了老张家。老张给它取名“富贵”，逢人就说：“我家富贵啊，有九条命，分了我一条。”\n\n富贵永远听不懂这些话。它只是每天黄昏，准时跳上老张的膝盖，把一团温暖塞进他的怀里，呼噜呼噜地睡去。\n\n笑话：\n“为什么猫总是赢不了电脑游戏？”\n“因为鼠标（鼠）一出现，它就光顾着抓屏（屏幕）了……”\n\n诗歌：\n## 《猫》\n\n黄昏被毛茸茸地踩碎，\n肚皮起伏如钟摆，\n眼睫间，星辰坠落。\n当琥珀瞳孔转动，\n整片夜色都来蜷卧。'
+}
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625180443516.png)
+
+---
+
+### 13.2.3. `Routing`：路由
+#### 13.2.3.1. 核心思想
+先识别输入类型，再把请求送到专门的处理流程：
+
+```latex
+                    ┌→ 退款流程
+输入 → 路由判断节点 ─┼→ 售价咨询流程
+                    └→ 商品推荐流程
+```
+
+它适合不同类型请求需要不同处理逻辑的场景，例如：
+
++ 售前、售后、退款分类
++ 普通问答、代码生成、数据分析
++ 文本、图片、音频请求分类
++ 不同领域知识库的选择
+
+#### 13.2.3.2. 设计原则
+最佳实践：
+
++ `LLM`** 节点**负责语义判断；
++ **路由函数**负责把结构化结果映射到节点；
++ **业务节点**负责真正处理任务。
+
+不要让路由 LLM 直接返回任意节点名，否则模型输出和图结构会过度耦合，也难以进行类型检查和异常兜底。
+
+#### 13.2.3.3. 示例
+**示例如下**
+
+```python
+from pydantic import BaseModel, Field
+from typing import Literal,TypedDict
+from langgraph.graph import StateGraph, START, END
+from langchain.messages import HumanMessage, SystemMessage
+
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 定义用于结构化输出的 Schema，作为路由判断依据
+class Route(BaseModel):
+    step: Literal["poem", "story", "joke"] = Field(
+        None,
+        description="路由流程中的下一执行步骤",
+    )
+
+# 为大模型添加结构化输出能力
+router = model.with_structured_output(Route)
+
+# 图状态
+class OverAllState(TypedDict):
+    input: str
+    decision: str
+    output: str
+
+# 节点
+def model_call_1(state: OverAllState) -> OverAllState:
+    """生成故事"""
+
+    result = model.invoke(
+        [HumanMessage(content=state["input"])]
+    )
+    return {"output": result.content}
+
+
+def model_call_2(state: OverAllState) -> OverAllState:
+    """生成笑话"""
+
+    result = model.invoke(
+        [HumanMessage(content=state["input"])]
+    )
+    return {"output": result.content}
+
+
+def model_call_3(state: OverAllState) -> OverAllState:
+    """生成诗歌"""
+
+    result = model.invoke(
+        [HumanMessage(content=state["input"])]
+    )
+    return {"output": result.content}
+
+
+def model_call_router(state: OverAllState) -> OverAllState:
+    """将用户输入路由到合适的节点"""
+
+    # 调用具有结构化输出能力的大模型，完成路由判断
+    decision = router.invoke(
+        [
+            SystemMessage(
+                content=(
+                    "根据用户的请求，将其路由到 story、joke 或 poem。"
+                    "请求编写故事时返回 story，请求编写笑话时返回 joke，"
+                    "请求编写诗歌时返回 poem。"
+                )
+            ),
+            HumanMessage(content=state["input"]),
+        ]
+    )
+
+    return {"decision": decision.step}
+
+
+# 条件边函数：根据路由决策选择下一个节点
+def route_decision(
+        state: OverAllState
+) -> Literal[
+    "model_call_1",
+    "model_call_2",
+    "model_call_3",
+    END
+]:
+    # 返回接下来要执行的节点名称
+    if state["decision"] == "story":
+        return "model_call_1"
+    elif state["decision"] == "joke":
+        return "model_call_2"
+    elif state["decision"] == "poem":
+        return "model_call_3"
+    return END
+
+
+# 构建工作流
+builder = StateGraph(OverAllState)
+
+# 添加节点
+builder.add_node("model_call_1", model_call_1)
+builder.add_node("model_call_2", model_call_2)
+builder.add_node("model_call_3", model_call_3)
+builder.add_node("model_call_router", model_call_router)
+
+# 添加边，连接各个节点
+builder.add_edge(START, "model_call_router")
+builder.add_conditional_edges(
+    "model_call_router",
+    route_decision,
+    {
+        # route_decision 返回的名称：接下来要执行的节点名称
+        "model_call_1": "model_call_1",
+        "model_call_2": "model_call_2",
+        "model_call_3": "model_call_3",
+    },
+)
+builder.add_edge("model_call_1", END)
+builder.add_edge("model_call_2", END)
+builder.add_edge("model_call_3", END)
+
+# 编译工作流
+graph = builder.compile()
+
+# 调用工作流
+state = graph.invoke({"input": "写一个关于猫的笑话"})
+print(state["output"])
+
+# 显示工作流图
+from IPython.display import display
+display(graph)
+```
+
+**运行结果如下**
+
+```python
+这是一个关于猫的冷笑话，希望你喜欢：
+
+**猫为什么不喜欢洗澡？**
+
+**因为它不想变成“落汤包”（肉包）。**
+
+（笑点解析：谐音梗，把“落汤猫”说成“落汤包”，而猫胖胖的确实有点像包子。）
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625180521496.png)
+
+---
+
+### 13.2.4. `Orchestrator-worker`：编排器—工作节点
+#### 13.2.4.1. 核心思想
+编排器先分析任务，动态生成若干子任务，再创建对应数量的 Worker：
+
+```latex
+                         ┌→ Worker 1 ─┐
+输入 → Orchestrator ─────┼→ Worker 2 ─┼→ Synthesizer → 输出
+                         ├→ Worker 3 ─┤
+                         └→ Worker N ─┘
+```
+
+它通常包含三个组件：
+
+| 组件 | 职责 |
+| :--- | :--- |
+| `Orchestrator`（编排器） | 分析任务、制定计划、生成子任务列表 |
+| `Workers`（工作节点） | 分别处理各子任务，通常并行执行 |
+| `Synthesizer`（聚合节点） | 汇总所有 Worker 结果，生成最终答案 |
+
+
+适合任务数量无法预先确定的场景，例如：
+
++ 根据主题动态生成报告章节
++ 修改未知数量的代码文件
++ 为多个数据源分别执行分析
++ 将长文档动态拆分为若干部分处理
+
+#### 13.2.4.2. 和`Parallelization`的区别
+| 模式 | 任务数量 |
+| :--- | :--- |
+| `Parallelization` | 编译图时已确定（静态） |
+| `Orchestrator-worker` | 运行时动态计算 |
+
+
+#### 13.2.4.3. 本质
+`Orchestrator-worker` 本质上就是 `Map-Reduce`，我们在前面的课程中已经实现过了
+
+```latex
+Orchestrator：生成 Map 任务
+Send：动态分发
+Worker：执行 Map
+Reducer：合并中间结果
+Synthesizer：执行 Reduce
+```
+
+#### 13.2.4.4. 示例
+**示例如下**
+
+```python
+from typing import Annotated, List, TypedDict
+from collections.abc import Sequence
+
+from langchain_core.messages import SystemMessage, HumanMessage
+from langgraph.graph import StateGraph, START, END
+from langgraph.types import Send
+from langchain_deepseek import ChatDeepSeek
+
+from operator import add
+from dotenv import load_dotenv
+from pydantic import BaseModel, Field
+
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 结构化输出的 Schema
+class Section(BaseModel):
+    name: str = Field(
+        description="报告的章节名称",
+    )
+    description: str = Field(
+        description="本节主题和核心思想的概述",
+    )
+
+class Sections(BaseModel):
+    sections: List[Section] = Field(
+        description="报告的章节列表",
+    )
+
+# 编排器
+planner = model.with_structured_output(Sections)
+
+# 图状态
+class OverAllState(TypedDict):
+    topic: str  # 报告主题
+    sections: list[Section]  # 报告章节列表
+    completed_sections: Annotated[
+        list, add
+    ]  # 所有工作节点并行写入该字段
+    final_report: str  # 最终报告
+
+
+# 工作节点状态
+class WorkerState(TypedDict):
+    section: Section
+    completed_sections: Annotated[list, add]
+
+# 节点
+def orchestrator(state: OverAllState) -> OverAllState:
+    """编排器：生成报告编写计划"""
+
+    # 生成报告章节规划
+    report_sections = planner.invoke(
+        [
+            SystemMessage(content="为这份报告生成一个章节规划。"),
+            HumanMessage(content=f"报告主题如下：{state['topic']}"),
+        ]
+    )
+
+    return {"sections": report_sections.sections}
+
+def model_call(state: WorkerState) -> WorkerState:
+    """工作节点：编写报告中的一个章节"""
+
+    # 生成章节内容
+    section = model.invoke(
+        [
+            SystemMessage(
+                content=(
+                    "根据提供的章节名称和章节描述编写报告内容。"
+                    "不要在每个章节前添加额外的开场说明。"
+                    "使用 Markdown 格式。"
+                )
+            ),
+            HumanMessage(
+                content=(
+                    f"章节名称：{state['section'].name}\n"
+                    f"章节描述：{state['section'].description}"
+                )
+            ),
+        ]
+    )
+
+    # 将生成的章节写入已完成章节列表
+    return {"completed_sections": [section.content]}
+
+
+def synthesizer(state: OverAllState) -> OverAllState:
+    """将所有章节合成为完整报告"""
+
+    # 获取所有已完成的章节
+    completed_sections = state["completed_sections"]
+
+    # 将已完成章节拼接为最终报告
+    completed_report_sections = "\n\n---\n\n".join(completed_sections)
+
+    return {"final_report": completed_report_sections}
+
+
+# 条件边函数：为规划中的每个章节创建一个 model_call 工作节点
+def assign_workers(state: OverAllState) -> Sequence[Send]:
+    """为规划中的每个章节分配一个工作节点"""
+
+    # 使用 Send API 并行启动各个章节的编写任务
+    return [Send("model_call", {"section": s}) for s in state["sections"]]
+
+
+# 构建工作流
+builder = StateGraph(state_schema=OverAllState)
+
+# 添加节点
+builder.add_node("orchestrator", orchestrator)
+builder.add_node("model_call", model_call)
+builder.add_node("synthesizer", synthesizer)
+
+# 添加边，连接各个节点
+builder.add_edge(START, "orchestrator")
+builder.add_conditional_edges(
+    "orchestrator",
+    assign_workers,
+    ["model_call"],
+)
+builder.add_edge("model_call", "synthesizer")
+builder.add_edge("synthesizer", END)
+
+# 编译工作流
+graph = builder.compile()
+
+# 调用工作流
+state = graph.invoke(
+    {"topic": "撰写一份关于大语言模型缩放定律的报告"}
+)
+
+from IPython.display import Markdown, display
+
+# 显示工作流图
+display(graph)
+# 渲染报告
+Markdown(state["final_report"])
+```
+
+**运行结果如下**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625180543541.png)
+
+```markdown
+引言
+缩放定律是深度学习与人工智能领域中的核心理论基础之一。它揭示了模型性能与关键资源（如参数量、数据规模、计算算力）之间普遍存在的幂律关系，即当模型规模、训练数据量或计算预算成比例扩大时，模型的表现能力会呈现出可预测性的提升。这一发现最早源自对语言模型的系统性实证研究，随后在计算机视觉、多模态学习等众多任务中被广泛验证，深刻改变了现代AI研究的范式。
+
+缩放定律的重要性体现在多个层面。从学术研究角度看，它不仅为“更大的模型、更多的数据”提供了科学依据，还催生了以GPT、PaLM、LLaMA为代表的大规模预训练模型浪潮。从工程实践角度看，缩放定律为资源分配提供了量化指导——研究人员可以据此预测模型性能对计算预算的依赖关系，从而制定更高效的训练策略。此外，在探索模型能力涌现性的前沿领域，缩放定律更是理解大语言模型行为边界的关键工具。因此，深入剖析缩放定律的理论内涵、实验验证与局限性，对于把握AI发展的底层逻辑具有不可替代的价值。
+
+本报告将系统梳理缩放定律的研究脉络。后续章节首先阐述语言模型缩放的基本原理与核心公式；随后通过经典实验案例展示缩放定律的实证表现，并讨论其在不同任务与架构中的泛化能力；在此基础上，分析缩放定律的物理极限与开放挑战，包括数据效率、规模收益递减等问题；最后总结缩放定律对AI未来发展的战略启示。全文力求在学术严谨性与可读性之间取得平衡，为读者提供一幅关于缩放定律的全局图景。
+
+缩放定律的基本概念
+缩放定律（Scaling Laws）是深度学习中描述模型性能如何随模型规模（参数数量）、数据集规模（训练数据量）以及计算量（训练使用的计算资源，通常以FLOPs表示）变化的经验性规律。这些规律揭示了在大规模训练中，模型性能（例如损失值或下游任务准确率）与上述三个因素之间存在较为平滑且可预测的幂律关系。
+
+具体而言，缩放定律通常由以下关系组成：
+
+模型规模（Model Size）：在给定的数据集和计算预算下，增加模型参数数量（例如从几亿到数千亿）能够显著提升性能，但收益呈现递减趋势。性能提升与模型参数量的幂次方成正比，即 ( L \propto N^{-\alpha} )，其中 ( L ) 为损失， ( N ) 为参数数量， ( \alpha ) 为缩放指数。
+
+数据集规模（Dataset Size）：在固定模型结构和计算资源的情况下，增加训练数据量同样可以降低损失。类似地，损失与数据量的关系可表示为 ( L \propto D^{-\beta} )，其中 ( D ) 为数据集规模， ( \beta ) 为对应的缩放指数。这意味着数据量越大，模型过拟合的风险越小，性能提升越稳定。
+
+计算量（Compute）：将模型规模和数据规模同时考虑，总训练计算量（以FLOPs衡量）与性能的关系可概括为 ( L \propto C^{-\gamma} )，其中 ( C ) 为计算量。研究表明，在最优资源配置下，增加计算量能可靠地提升性能，且存在一个近似固定的计算最优前沿。
+
+这些关系表明，模型性能并非由单一因素决定，而是三者共同作用的结果。缩放定律的核心在于，当预算（计算成本）固定时，存在一组最优的模型规模与数据规模分配，使得性能最大化。例如，若计算预算充足，则应同时扩大模型参数和训练数据；若某一资源受限，则需根据缩放指数的相对大小调整比例。
+
+缩放定律的一个关键结论是：大模型是样本高效的——即随着模型规模增大，同样的数据量能带来更大的性能提升；反过来，大模型也是计算高效的——即同样的计算预算，训练更大的模型（配合适量数据）往往比训练小模型更优。这些规律为现代大规模语言模型的设计，如GPT系列、LLaMA等，提供了理论基础：它们正是遵循“同时扩大模型、数据和计算量”的指导原则。
+
+核心发现：损失函数的幂律关系
+Kaplan等人的研究揭示了大语言模型的损失函数与模型参数规模（(N)）、训练数据规模（(D)）以及计算量（(C)，通常以FLOPs衡量）之间存在明确的幂律（Power-Law）关系。这一发现为大规模模型的扩展提供了可预测的量化基础。
+
+1. 损失与参数规模的幂律关系
+在固定数据规模（(D)）的情况下，模型测试损失（(L)）与参数规模（(N)）呈现出双向的幂律行为：
+
+欠参数化区域：当 (N) 较小时，模型容量不足，损失较高。
+过参数化区域：当 (N) 持续增大，损失开始随参数增长以平滑的幂律形式下降，最终收敛于数据规模所限制的最优损失（即“不可约损失”）。
+该关系可近似描述为： [ L(N) \approx L_{\infty} + \alpha_N \cdot N^{-\gamma_N} ] 其中 (L_{\infty}) 表示数据质量决定的不可约损失，(\gamma_N) 为幂律指数（通常在0.07-0.10之间），(\alpha_N) 为缩放常数。
+
+2. 损失与数据规模的幂律关系
+相似地，在固定参数规模（(N)）时，损失函数与训练数据规模（(D)）也呈现幂律趋势。当数据量增加，模型通过摄取更多示例改进泛化能力，损失按如下形式降低： [ L(D) \approx L_{\infty} + \alpha_D \cdot D^{-\gamma_D} ] 实验表明，(\gamma_D) 的典型值在0.07-0.10范围内，与 (\gamma_N) 接近，暗示参数和数据对损失的贡献在结构上是对称的。
+
+3. 损失与计算量的幂律关系
+计算量（(C)）被视为参数规模与数据规模的复合函数：(C \approx 6N \cdot D)（基于Transformer的前向与后向传播成本）。通过等比例扩展参数和数据，损失与计算量之间也遵循幂律规律： [ L(C) \approx L_{\infty} + \alpha_C \cdot C^{-\gamma_C} ] 其中 (\gamma_C) 通常在0.05-0.08左右，略低于前两个指数，反映了优化效率随规模增大而递减的边际效应。
+
+4. 幂律关系的核心含义
+可预测的扩展：只要维持参数和数据规模的平衡增长，损失减少的速率可被幂律精确预测，从而指导资源分配。
+收益递减法则：幂律指数越小（绝对值），意味着每增加一单位计算量所获得的损失改善越慢，最终接近不可约损失。
+Compute-Optimal极限：结合各项幂律曲线，存在一个最优的参数-数据配比，使得在给定总计算预算下损失最小化，这也是后续Chinchilla法则的理论基础。
+综上所述，损失函数的幂律关系构成了大模型性能超越的关键先验知识，它强调了在扩展过程中参数、数据和计算量必须协同增长，否则因资源浪费（如只增加参数而不增加数据）导致幂律提升停滞。
+
+数据与计算效率
+在深度学习中，模型性能的提升往往依赖于增加参数数量与数据规模，但现实中的计算预算（如GPU时长、电力或成本）通常是有限的。如何在给定的计算预算下，最优地分配参数规模与数据规模，以实现最佳的模型性能，是数据与计算效率研究的核心问题。这涉及到缩放定律的深入理解以及训练策略的优化。
+
+1. 缩放定律回顾与计算预算视角
+根据经典的神经语言模型缩放定律（如Kaplan等人于2020年提出的研究，以及DeepMind的Chinchilla研究），模型性能（通常用验证损失衡量）受三个主要因素影响：模型参数数量（N）、训练数据Token数量（D）和计算预算（C）。缩放定律通常可以近似为幂律关系：损失 L(N,D) ≈ A/N^α + B/D^β + E，其中α和β是缩放指数，E是数据不可压缩的熵。计算预算与N和D并非独立，在大规模训练中，计算量主要来自前向和反向传播，通常近似为 C ≈ 6 * N * D（对于Transformer结构，忽略通信和嵌入层开销）。
+
+给定固定的计算预算C，如果分配过少参数而使用过多数据（N过小，D过大），参数容量不足以捕捉数据中的模式，导致欠拟合；反之，如果参数过多而数据不足（N过大，D过小），模型会过拟合，无法通过足够的样本来泛化。最优分配的目标是找到N和D，使得在C固定的条件下，验证损失L最小化。
+
+2. 计算最优训练：参数与数据的平衡点
+Chinchilla缩放定律的研究指出，对于许多计算预算，最优的参数与数据规模满足近似关系：N_opt ∝ C^a 且 D_opt ∝ C^b，其中 a 和 b 之和接近1，且 a 通常小于 b。具体地，Chinchilla研究发现，对于使用Adam优化器的Transformer语言模型，当预算增加时，最优的参数和数据分配比例大致保持恒定，即 对于每个参数，约应分配20个训练Token（这一比例因模型架构和任务有所不同，但提供了一个直观的指导）。
+
+例如，在计算预算为1e20 FLOPs的情况下，最优配置可能是约70B参数配合1.4T训练Token；而预算增加到2e20 FLOPs时，最优可能变为100B参数配合2T Token。这一发现反驳了早期“仅扩大参数而忽视数据”的做法，强调在固定预算下，同时按比例放大数据和参数比单独放大其中一个更有效。
+
+3. 计算资源有限时的策略
+当计算预算远小于现代主流规模（如单个GPU或小型集群）时，最优分配的策略需要更细致的考量：
+
+预算极小的情况（如单GPU、几天训练）：参数规模和数据规模可能都受到硬件限制。此时，优先考虑模型容量，但需避免参数量超出能有效训练的最小数据量。通常，使用预训练模型微调比从头训练更高效，因为预训练模型已经在大规模数据上获得了通用表征，少量下游数据即可适配，从而将计算预算集中用于微调步骤。
+
+中等预算（如多GPU、数周训练）：可参考缩放定律的比例关系。假设预算为C，根据N_opt ∝ C^0.5和D_opt ∝ C^0.5（此比例来自某些缩放研究，具体指数需要实验校准），推算合适的参数和Token数。实践中，可从公开的缩放曲线（如LLaMA、Chinchilla等）中提取经验公式，例如对于Transformer-LM，每增加一倍计算预算，同时将参数和Token增加约1.4倍（即C^0.5增长）。
+
+预算极度受限且追求低成本：在边缘设备或快速原型开发中，计算效率意味着最小的参数规模实现足够好的性能。此时，推荐使用知识蒸馏、模型压缩或稀疏训练等方法。但这些方法本身需消耗计算资源，需权衡是否优于直接缩放
+
+4. 数据效率的多重维度
+除了参数与数据总量的分配，数据本身的特性也影响计算效率：
+
+数据质量 vs. 数量：在有限计算预算下，使用高质量、代表性强的数据（例如经过筛选、去重、平衡类别的数据）往往比盲目增加数据量更有效。数据质量提升可降低所需的数据量，从而减少训练所需的计算量。
+
+数据复用与课程学习：对数据进行多次训练（epoch）会引入过拟合风险，但在数据量不足时，适当的重复训练（如使用数据增强）可以增加有效样本数。课程学习（先易后难的数据顺序）可加速收敛，减少达到特定损失所需的计算步数。
+
+主动学习与数据选择：在训练期间动态选择最具有信息性的数据子集进行训练，避免在容易或冗余样本上浪费计算资源。例如，基于损失值或不确定性采样，仅使用部分数据即可达到接近全量数据的性能。
+
+5. 实际分配建议与工具使用
+在工程实践中，最优分配可通过以下步骤实现：
+
+建立小规模缩放曲线：使用计算预算的1%或更少进行小规模实验，训练不同（N,D）组合的模型，拟合幂律关系，推断出当前预算下的最优比例。
+利用搜索或公式：参考已发表的缩放定律常数（如Chinchilla的20 Token/参数法则），但需注意这基于特定架构和数据集，应在目标数据上进行验证。
+考虑数据生成成本：若数据获取比计算更昂贵（如需要人工标注），则应优先增大参数并使用预训练模型微调；反之，若计算昂贵而数据丰富（如互联网文本），则倾向于更多数据。
+分阶段训练：若预算允许，可先训练一个大模型，再用其蒸馏小模型，是一种“先扩大参数，再缩小”的策略，但需要额外计算用于蒸馏。
+总之，在有限计算预算下，最优地分配参数与数据规模的核心在于打破“越大越好”的直觉，理解缩放定律的隐含平衡，并通过质量控制和数据效率提升来最大化计算投入的回报。通过系统性实验和理论指导，可在固定成本下获得显著的性能提升。
+
+超越损失：缩放定律对下游任务的影响
+缩放定律最初源于对预训练损失随模型规模、数据量和计算量变化的观察，但其意义远不止于优化训练曲线。随着模型规模的增长，许多下游任务展现出超越简单损失改善的质性变化，呈现出涌现能力、上下文学习能力增强等非连续现象。本章将深入分析缩放定律如何预测并影响这些下游任务的表现，揭示规模提升带来的能力跃迁及其内在机制。
+
+涌现能力：缩放定律的阶跃性预测
+缩放定律通常描绘损失随规模平滑下降，但在下游任务上，模型能力并非线性提升，而是在达到特定规模后突然显现。例如，在算术推理、多步逻辑链、代码生成等任务中，小模型几乎无法完成，而大模型在参数跨过某个阈值时，准确率从接近零跃升至显著水平。这种涌现现象与实际任务性能的S形增长曲线相对应，而缩放定律通过预测模型不同区域的表示质量，揭示了涌现的触发条件：当模型参数量、数据量和训练步数满足特定组合时，隐层表征的容量与任务复杂度首次匹配。具体而言，缩放定律提供的幂律关系可以粗略估计模型在给定计算预算下的最优规模，当最优规模超过任务所需的最小表示容量时，涌现现象开始出现。因此，缩放定律并非保证所有任务同时涌现，而是定义了不同任务的能力门槛，预期在更大规模下能解锁更多高阶能力。
+
+上下文学习能力的缩放效应
+上下文学习——即模型无需梯度更新，仅通过在提示中提供少量示例即可执行新任务——是大规模语言模型最突出的特性之一。研究发现，上下文学习的性能与模型规模存在强正相关：小模型几乎不具备有效的上下文学习能力，随着参数规模扩大，模型能从示例中提取的模式更加准确，泛化偏差降低。缩放定律在此表现为：模型在上下文学习任务上的准确率通常符合对数或幂律增长，与预训练损失下降趋势并行。其背后的原因在于，随着规模增大，模型的前馈层和注意力头数增加，使得它能在前向传播中并行模拟更多的“推理步骤”，实现了内隐的梯度下降模拟。缩放定律预测，在固定计算预算下，规模更大的模型在上下文学习上的收益将超过同等效率的微调方法，从而引导研究者在提示工程和大规模预训练之间做出资源分配决策。
+
+任务泛化与分布外表现
+缩放定律对下游任务的影响不仅限于在分布内示例上的表现，更关键的是对分布外泛化能力的提升。实验表明，随着模型规模增长，模型在不同任务类别、不同领域、甚至不同语言之间的迁移性能稳定提升。这源于缩放定律中“数据多样性”的维度——更大的模型能更充分地利用多源数据中的结构共性，从而在未明确训练的领域形成鲁棒的假设。例如，在数学推理任务上，缩放定律使得模型能将从自然语言中学到的逻辑模式迁移至符号推理，表现出更强的类比和抽象能力。然而，这种迁移并非均匀：某些依赖低频知识或特殊模式的任务，可能仍需要接近边界规模才能突破泛化瓶颈。缩放定律因此为任务选择提供了依据——优先将计算资源分配给那些对规模敏感、且具有明确泛化回报的任务。
+
+任务特定缩放曲线与优化经济性
+不同下游任务对模型规模、数据量和计算量的响应曲线各异。有些任务（如简单分类或QA）在中小规模模型上即饱和，进一步扩展规模带来的收益递减很快；而另一些任务（如复杂推理、多语言理解）则持续受益于规模扩大。通过构建任务特定的缩放曲线（通常为幂律或指数饱和形式），研究者可以预测在给定计算预算下，投入资源以提升模型规模、增加训练数据或优化数据质量三者中的最优选择。例如，对于认知密集型任务，在模型规模上的投入回报率往往高于数据增量；而对于知识密集型任务，数据多样性可能更重要。这种缩放定律的延伸应用，使得模型部署决策更加数据驱动，避免了盲目扩大规模导致的经济浪费。
+
+涌现能力背后的机制：表示压缩与结构对齐
+进一步分析，缩放定律对涌现能力的积极影响可以理解为：大规模模型通过高维表示实现了对任务本质结构的压缩与对齐。在小规模模型中，隐层表示空间难以同时编码多个复杂模式，导致任务相关信号被噪声淹没。而当模型规模超过临界点，表示空间的各个维度开始分离出可解释的语义轴（如因果关系、时态关系、空间关系等）。缩放定律预测这些表示维度的“分化临界点”，在该点之后，模型能够以更少的冲突编码多个任务的隐含规则。此外，注意力模式的稳定化——即多头注意力在大型模型中形成更聚焦的依赖关系——进一步支撑了长程逻辑和上下文结构的捕捉，从而直接提升了下游任务的逻辑一致性和准确性。
+
+缩放极限与下游任务瓶颈
+尽管缩放定律整体上乐观地预测了规模带来的收益，但对下游任务的影响并非无限。随着模型参数进一步增大，部分任务（特别是需要外部知识更新或实时推理的任务）会遇到内存带宽瓶颈、指令遵循退化或幻觉加剧等问题。缩放定律在此提示，当模型规模超过数据质量所能支撑的有效容量时，损失的下行趋势放缓，而下游任务的性能可能进入“平台期”甚至出现波动。例如，极端大的模型可能对上下文中的干扰信息更敏感，导致在简单任务上的表现反常。因此，未来在追求更优下游任务表现时，不仅需要继续扩展规模，还必须结合数据治理、对齐训练和检索增强等手段，以跨越缩放定律在应用层面的新瓶颈。
+
+3.3 Chinchilla缩放定律与最优计算分配
+在深度学习的规模探索中，DeepMind提出的Chinchilla研究引入了关于模型与数据规模分配的新视角。以往的研究，如Kaplan等人提出的缩放定律，倾向于认为在增加模型参数时，数据规模可以相对缓慢地增长，即模型越大，性能随计算量提升的边际收益越显著。然而，Chinchilla研究对此提出了挑战。
+
+核心观点：对于给定的计算预算（即总计算量，通常以FLOPs衡量），模型参数数量与训练数据规模（Token数量）应当等比例缩放。换言之，当计算预算增加时，为了达到最优性能，必须同时增加模型的参数和训练数据量，且两者间存在一个最优的比例关系。
+
+研究方法。Chinchilla团队通过系统地变化模型大小（参数数量）和训练数据量（Token数量），在固定计算预算下评估模型性能。他们发现，在以往的研究中，许多大型模型（如GPT-3）实际上是在“计算欠调度”状态下训练的——即模型过大而数据不足。这意味着，在同样的计算预算下，如果一个模型较小但训练在更多的数据上，它可能会取得更好的性能。
+
+关键结论。Chinchilla揭示了最优计算分配的法则：
+
+最优模型参数与训练Token数应遵循大致相等的缩放率。
+具体而言，对于主流Transformer模型，最优的模型参数数量（N）与训练Token数量（D）之间满足：N ∝ D。这意味着，当计算预算翻倍时，应同时将模型大小和数据量分别增加约1.4倍（即N ∝ C^0.5, D ∝ C^0.5，其中C为计算量）。
+实际影响。基于这一发现，DeepMind训练了Chinchilla模型：一个拥有70亿参数的模型，但使用1.4万亿个Token进行训练。与当时更大规模的模型（如Gopher，2800亿参数，仅3000亿Token训练）相比，在相同的计算预算下，Chinchilla在多种自然语言处理任务中表现更优或相当。这证明了“小而精”的缩放策略的潜力：与其盲目增大模型，不如在模型和数据间取得更平衡的分配。
+
+理论意义。Chinchilla缩放定律重新定义了“缩放”的内涵——它不再是单纯的参数扩展，而是计算资源在模型复杂度（参数空间）和数据复杂度（经验分布覆盖度）之间的优化分配。这一观点为后续的模型训练（如LLaMA系列）提供了重要指导，强调了数据质量与规模的重要性不亚于模型架构的复杂性。
+
+缩放定律的局限性与挑战
+缩放定律的边界
+
+缩放定律（Scaling Laws）揭示了模型性能与模型参数、数据量、计算量之间的幂律关系，但这一规律并非无限制成立。随着模型规模的持续增长，性能提升呈现边际递减趋势，最终趋近于一个理论或实际的上限。该边界的出现源于多重因素：首先，现有训练数据的质量与多样性存在天花板，即使增加数据量，新数据提供的信息增益也会下降；其次，模型容量受限于硬件架构（如内存带宽、计算单元效率），极端规模的模型可能触发通信瓶颈或能耗约束；再者，缩放定律本身假设了理想化的训练条件，未考虑实际训练中的噪声、分布偏移等扰动。因此，简单地堆叠参数和计算资源已难以突破性能瓶颈，研究者需重新审视缩放定律的适用范围。
+
+数据稀缺的困境
+
+高质量训练数据的稀缺性是当前缩放定律面临的核心挑战之一。自然语言、图像等领域中，人工标注或精选数据的增长速率远落后于模型参数规模的扩展。无监督数据虽可大规模获取，但其噪声、冗余和不平衡分布可能导致模型学习到虚假相关性，而非真正有意义的模式。例如，在罕见语言任务或专业领域（如医学、法律）中，数据稀疏性直接限制了模型泛化能力。此外，基于互联网爬取的粗筛数据包含偏见、脏标签和版权问题，进一步加剧了数据质量与规模之间的张力。解决这一困境需要探索数据增强、半监督学习或合成数据生成等替代方案，但现有方法仍难以完全弥补真实数据的缺失。
+
+训练不稳定性问题
+
+大规模模型训练固有的不稳定性是缩放定律实际应用的又一障碍。当模型参数增至数百亿甚至万亿级别时，优化过程中的梯度爆炸、损失振荡、模式坍塌等问题显著增加。这主要由以下原因引起：深度网络中的梯度传播路径过长导致信号衰减；批量规模（batch size）与学习率之间的协变关系难以维护；分布式训练中的异步通信引入延迟和参数不一致。训练不稳定性不仅延长了收敛时间，还可能使模型陷入局部最优或产生灾难性遗忘。现有缓解手段（如梯度裁剪、混合精度训练、优化器调参）虽能部分缓解问题，但缺乏理论保证，尤其是当模型规模跨越特定临界点后，传统训练策略可能完全失效。
+
+超越简单缩放的模型架构创新
+
+面对缩放定律的局限性，研究者正转向非简单缩放的架构创新，以绕过参数扩张的性能瓶颈。例如，混合专家模型（MoE）通过稀疏激活机制，在增加总参数量的同时保持计算成本接近线性增长；维度扩展策略（如线性注意力、长序列建模）尝试替代传统transformer中的二次复杂度注意力机制；此外，结构化权重矩阵（如低秩分解、张量分解）能在不显著增加模型尺寸的前提下提升表达能力。这些创新揭示了更高效的缩放方向：而非盲目提升参数量，优化模型内部的信息流动效率、参数复用率以及计算资源分布。未来，结合神经架构搜索（NAS）或自演化设计的方法，可能进一步打破缩放定律的线性束缚，开辟新的性能增长路径。
+
+结论与展望
+本文围绕缩放定律（Scaling Laws）展开了系统性分析，揭示了大规模模型性能与计算资源、数据规模及参数数量之间存在的幂律关系。核心结论包括：模型性能在相当广泛的范围内随计算预算、数据集大小和参数数量的增加而稳定提升，这一规律为现代深度学习模型的规模化设计提供了理论依据与工程指导。然而，缩放并非无代价，边际收益递减、训练成本激增以及数据质量瓶颈成为进一步扩展的主要制约因素。
+
+在未来研究方向上，稀疏模型（Sparse Models）展现出突破现有缩放瓶颈的潜力。通过引入混合专家系统（MoE）、参数高效微调及动态结构剪枝等机制，稀疏模型可在不显著增加计算开销的前提下，实现参数规模的有效放大。该方向有望打破密集模型中的线性缩放约束，推动模型容量与效率的协同增长。
+
+多模态缩放（Multimodal Scaling）是另一个值得关注的前沿领域。当前缩放定律多聚焦于单一模态（如文本或图像），而跨模态联合训练下性能与资源间的映射关系尚不明确。未来亟需建立针对多模态输入的统一缩放框架，探索视觉、语言、音频等异构数据在共同训练过程中的交互效应与计算效率优化策略。
+
+此外，训练数据质量与来源的多样性、模型泛化边界、以及缩放定律在非自监督学习范式（如强化学习、在线学习）中的适用性，构成后续研究需要深入探讨的关键议题。随着实际部署对能耗、推理速度和环境可持续性提出更高要求，缩放定律的应用亦需与资源约束感知模型设计及低碳训练方法相结合。总之，未来研究需在理解缩放基本规律的基础上，拓展其边界，提升其可控性，并为其在更广泛人工智能系统中的部署提供理论支持与实践路径。
+```
+
+---
+
+### 13.2.5. `Evaluator-optimizer`：评估器—优化器
+#### 13.2.5.1. 核心思想
+一个节点生成结果，另一个节点评估结果；不合格就携带反馈重新生成：
+
+```latex
+          ┌──────────────────────┐
+          ↓                      │
+输入 → Generator → Evaluator ────┤
+                      ├─ 不合格 ─┘
+                      └─ 合格 → END
+```
+
+适合：
+
++ 翻译质量迭代
++ 代码生成与代码审查
++ 文案生成与合规检查
++ `SQL` 生成与语法验证
++ 报告生成与事实检查
++ 人工审批后修改
+
+这种模式适用于存在明确质量标准，但通常需要多轮修改才能满足标准的任务。评估者既可以是 `LLM`，也可以是规则、测试程序或人类。
+
+#### 13.2.5.2. 必要的控制
+为了避免无限循环，必须引入递归限制，可以是
+
++ 优雅退出的主动方法
++ 异常中断的被动方法
+
+我们在介绍循环结构时已经系统讲解过了。
+
+#### 13.2.5.3. 示例
+**示例如下**
+
+```python
+from typing import TypedDict, Literal
+from langgraph.graph import StateGraph, START, END
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+
+from dotenv import load_dotenv
+from pydantic import BaseModel, Field
+
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+# 图状态
+class OverAllState(TypedDict):
+    joke: str
+    topic: str
+    feedback: str
+    funny_or_not: str
+
+# 定义用于结构化输出的 Schema，作为笑话评估依据
+class Feedback(BaseModel):
+    grade: Literal["好笑", "不好笑"] = Field(
+        description="判断这个笑话是否好笑。",
+    )
+    feedback: str = Field(
+        description="如果笑话不好笑，请给出具体的改进建议。",
+    )
+
+# 为大模型添加结构化输出能力，定义评估器
+evaluator = model.with_structured_output(Feedback)
+
+# 节点
+def model_call_generator(state: OverAllState) -> OverAllState:
+    """大模型生成笑话"""
+
+    if state.get("feedback"):
+        msg = model.invoke(
+            f"""
+            写一个关于“{state['topic']}”的笑话。
+
+            请参考下面的改进建议：
+            {state['feedback']}
+            """
+        )
+    else:
+        msg = model.invoke(f"写一个关于“{state['topic']}”的笑话")
+
+    return {"joke": msg.content}
+
+
+def model_call_evaluator(state: OverAllState) -> OverAllState:
+    """大模型评估笑话"""
+
+    grade = evaluator.invoke(
+        f"""
+        请评估下面这个笑话是否好笑：
+
+        {state['joke']}
+        """
+    )
+
+    return {
+        "funny_or_not": grade.grade,
+        "feedback": grade.feedback,
+    }
+
+
+# 条件边函数：根据评估结果决定结束流程，或者返回笑话生成节点
+def route_joke(state: OverAllState) -> Literal["accept", "reject_and_feedback", END]:
+    """根据评估结果决定接受笑话或根据反馈重新生成"""
+
+    if state["funny_or_not"] == "好笑":
+        return "accept"
+    elif state["funny_or_not"] == "不好笑":
+        return "reject_and_feedback"
+    return END
+
+# 构建工作流
+builder = StateGraph(state_schema=OverAllState)
+
+# 添加节点
+builder.add_node("model_call_generator", model_call_generator)
+builder.add_node("model_call_evaluator", model_call_evaluator)
+
+# 添加边，连接各个节点
+builder.add_edge(START, "model_call_generator")
+builder.add_edge("model_call_generator", "model_call_evaluator")
+builder.add_conditional_edges(
+    "model_call_evaluator",
+    route_joke,
+    {
+        # route_joke 返回的名称：接下来要执行的节点
+        "accept": END,
+        "reject_and_feedback": "model_call_generator",
+    },
+)
+
+# 编译工作流
+graph = builder.compile()
+
+# 调用工作流
+state = graph.invoke({"topic": "猫"})
+print(state["joke"])
+
+# 显示工作流图
+from IPython.display import display
+display(graph)
+```
+
+**运行结果如下**
+
+```python
+# 关于猫的笑话
+
+一只猫去应聘当保安。
+
+面试官问：“你有什么特长？”
+
+猫说：“我精通‘猫步’，走路悄无声息，可以抓到任何小偷。”
+
+面试官点头：“不错。那面对危险情况，你会怎么处理？”
+
+猫淡定地说：“我会用‘九条命’精神，即使失败一次，还有八次机会总结经验。”
+
+面试官很满意：“那我们决定录用你。不过，我们有个夜班岗位，你介意夜间工作吗？”
+
+猫“喵”了一声：“正合我意，白天我要晒着太阳睡觉的。”
+
+然后面试官又问：“最后一个问题——你如果发现仓库里有老鼠，会怎么处置？”
+
+猫瞪大了眼睛：“老鼠？那是我请来的线人！没有老鼠，我怎么假装抓到战绩，让你们给我加罐头？”
+
+面试官：“……你被开除了。”
+
+猫耸耸肩：“无所谓，反正我还有八条命去找下一份工作。”
+```
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](assets/image-20260625180812793.png)
+
+---
+
+### 13.2.6. `Agent`：智能体循环
+#### 13.2.6.1. 核心思想
+前面的运行图设计模式都属于 `Workflow`，`Agent` 与 `Workflow` 最大的不同是：
+
+> 开发者不再预先确定每一步具体执行什么，而是让 `LLM` 根据当前消息和工具结果决定下一步行为。
+>
+
+基本拓扑是：
+
+```latex
+          ┌─────────────────┐
+          ↓                 │
+输入 → LLM 决策 → 是否调用工具
+                ├─ 是 → Tool ┘
+                └─ 否 → END
+```
+
+即最基础的 `ReAct` 架构，我们已经不止一次介绍并实现过 `ReAct` 架构的 `Agent`
+
+`Agent` 适合问题求解步骤和工具调用顺序无法预先确定的场景。开发者仍然负责提供工具集合、系统提示词、权限和边界，但具体执行过程由模型动态决定。
+
+#### 13.2.6.2. 示例
+**示例如下**
+
+```python
+from typing import Literal
+from langgraph.graph import StateGraph, START, END, MessagesState
+from langgraph.prebuilt.tool_node import ToolNode
+
+from langchain.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
+from langchain.tools import tool
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+model = ChatDeepSeek(
+    model="deepseek-v4-flash",
+    extra_body={
+        "thinking": {
+            "type": "disabled"
+        }
+    }
+)
+
+@tool(parse_docstring=True)
+def get_weather(city: str) -> str:
+    """
+    根据城市查询当日天气
+
+    Args:
+        city: 城市名称
+    """
+    return f"{city} 今天天气不错"
+
+tools = [get_weather]
+model_with_tools = model.bind_tools(tools=tools)
+
+def model_node(state: MessagesState) -> MessagesState:
+    messages = state["messages"]
+    response = model_with_tools.invoke(input=messages)
+
+    return {
+        "messages": [response]
+    }
+
+def router(state: MessagesState) -> Literal["tool_node", END]:
+    last_msg = state["messages"][-1]
+
+    if last_msg.tool_calls:
+        return "tool_node"
+    return END
+
+builder = StateGraph(state_schema=MessagesState)
+builder.add_node("model_node", model_node)
+builder.add_node("tool_node", ToolNode(tools=tools))
+
+builder.add_edge(START, "model_node")
+builder.add_conditional_edges("model_node", router, path_map=["tool_node", END])
+builder.add_edge("tool_node", "model_node")
+
+graph = builder.compile()
+
+response = graph.invoke({"messages": [HumanMessage(content="今天北京天气怎么样？")]})
+for msg in response["messages"]:
+    msg.pretty_print()
+
+from IPython.display import display
+display(graph)
+```
+
+**运行结果如下**
+
+```python
+================================ Human Message =================================
+
+今天北京天气怎么样？
+================================== Ai Message ==================================
+
+好的，我来帮你查询一下今天北京的天气情况。
+Tool Calls:
+  get_weather (call_00_3kFtzQHjGl7VJkfBi5280445)
+ Call ID: call_00_3kFtzQHjGl7VJkfBi5280445
+  Args:
+    city: 北京
+================================= Tool Message =================================
+Name: get_weather
+
+北京 今天天气不错
+================================== Ai Message ==================================
+
+今天北京的**天气不错**哦！☀️
+
+看起来是个适合出门活动的好天气，不用太担心下雨或恶劣天气的问题。如果你有具体的户外活动计划，应该会比较顺利。
+
+请问还有其他需要帮忙的吗？😊
+```
+
+
+
+
+
+
 
