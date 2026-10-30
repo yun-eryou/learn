@@ -12944,7 +12944,7 @@ Kimi 新模型发布
 
 这种实现适合帮助我们理解工具调用的基本流程，但它只覆盖了最简单的场景。实际项目还需要处理无效工具名、参数校验、异常处理、运行时参数注入、`Command` 传播以及多个工具调用的并行执行等问题。
 
-`LangGraph` 提供了预构建的 `ToolNode`。只需传入工具列表，它便可以完成上述所有操作。
+`**<font style="color:#DF2A3F;background-color:#FBDE28;">LangGraph</font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;"> 提供了预构建的 </font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;">ToolNode</font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;">。只需传入工具列表，它便可以完成上述所有操作。</font>**
 
 
 
@@ -13071,6 +13071,8 @@ Kimi 新模型发布
 ```
 
 ## <font style="color:rgb(51, 51, 51);">进阶用法</font>
+
+
 ### `ToolRuntime`介绍
 `ToolRuntime` 是专门面向工具调用的运行时对象。
 
@@ -13112,7 +13114,7 @@ class ToolRuntime(_DirectlyInjectedToolArg, Generic[ContextT, StateT]):
 
 
 ### 在工具中更新状态
-+ 工具不仅可以返回普通结果，还可以返回 `Command(update=...)`，将业务结果写入图状态。
++ 工具不仅可以返回普通结果，**<font style="color:#DF2A3F;">还可以返回 </font>**`**<font style="color:#DF2A3F;">Command(update=...)</font>**`**<font style="color:#DF2A3F;">，将业务结果写入图状态。</font>**
 + 当工具由模型发起调用时，消息历史中的 `AIMessage.tool_calls` 必须紧跟与之匹配的 `ToolMessage`。
 + 当工具返回普通结果时，`ToolNode` 会帮我们完成运行结果到 `ToolMessage` 的转换，并追加到消息列表。
 + 但工具返回 `Command` 时，上述操作需要开发者完成，此时还应在 `Command.update` 的消息字段中写入对应的 `ToolMessage`。
@@ -13281,7 +13283,7 @@ Kimi 新模型发布
 
 ### 工具节点执行与容错机制
 + `ToolNode` 提供同步工具调用包装器 `**<font style="color:#DF2A3F;background-color:#FBDE28;">wrap_tool_call</font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;">，用于在工具执行前后插入自定义逻辑</font>**。
-+ 它与 `LangChain Agent` 中间件 `wrap_tool_call` 的核心机制相同：接收当前工具调用请求 `request` 和真正执行工具的回调 `execute`，可以选择不调用、调用一次或多次 `execute(request)`，并最终返回 `ToolMessage` 或 `Command`。
++ 它与 `LangChain Agent` 中间件 `**<font style="color:#DF2A3F;">wrap_tool_call</font>**`**<font style="color:#DF2A3F;"> 的核心机制相同：接收当前工具调用请求 </font>**`**<font style="color:#DF2A3F;">request</font>**`**<font style="color:#DF2A3F;"> 和真正执行工具的回调 </font>**`**<font style="color:#DF2A3F;">execute</font>**`**<font style="color:#DF2A3F;">，可以选择不调用、调用一次或多次 </font>**`**<font style="color:#DF2A3F;">execute(request)</font>**`**<font style="color:#DF2A3F;">，并最终返回 </font>**`**<font style="color:#DF2A3F;">ToolMessage</font>**`**<font style="color:#DF2A3F;"> 或 </font>**`**<font style="color:#DF2A3F;">Command</font>**`**<font style="color:#DF2A3F;">。</font>**
 + 因此，`wrap_tool_call` 可以用于重试、缓存、请求改写、短路返回和自定义控制流等场景。异步工具链路还可以使用对应的 `awrap_tool_call`。
 
 此处通过重试和缓存机制的实现，介绍 `wrap_tool_call` 的用法。
@@ -13647,18 +13649,28 @@ Name: get_weather
 >
 
 ### 什么是`LangGraph`的流式执行
-`LangGraph` 的流式执行是指，状态图计算过程中，将节点输出、状态更新、消息增量、自定义事件或调试信息等写入流式队列，并在特定的时机将流式队列中的信息返还给调用者。
+> 就是把中间结果写入状态
+>
+
+`LangGraph` 的流式执行是指，**<font style="color:#DF2A3F;">状态图计算过程中，将节点输出、状态更新、消息增量、自定义事件或调试信息等写入流式队列，并在特定的时机将流式队列中的信息返还给调用者。</font>**
 
 在同步执行中，这些数据最终进入内部的**同步流式队列**；在异步执行中，则进入对应的**异步队列**。调用方通过**迭代器**逐条消费这些数据，因此不必等到整张图执行完毕后再获得反馈。
 
+
+
+
+
 ### `LangGraph`的流式执行`API`
-`LangGraph` 提供了两套流式执行 `API`
+> `LangGraph` 提供了两套流式执行 `API`
+>
+
+
 
 #### `stream/astream`
 获取 `LangGraph` 执行过程中的业务数据或运行时数据
 
-+ `stream`：同步 `API`
-+ `astream`：异步 `API`
++ `**<font style="color:#DF2A3F;">stream</font>**`**<font style="color:#DF2A3F;">：同步 </font>**`**<font style="color:#DF2A3F;">API</font>**`
++ `**<font style="color:#DF2A3F;">astream</font>**`**<font style="color:#DF2A3F;">：异步 </font>**`**<font style="color:#DF2A3F;">API</font>**`
 
 调用方通过 `stream_mode` 选择需要消费的内容，例如状态、节点更新、模型消息、自定义数据、检查点或任务事件。这是本章的重点。
 
@@ -13675,21 +13687,35 @@ Name: get_weather
 #### `astream_events`
 获取图运行过程中产生的 `Runnable` 标准事件（组件生命周期、父子调用关系、输入输出等）。详见 [11.3. ](#113-astream_events)`astream_events`。
 
+
+
+
+
+
+
 ##  `stream/astream`
 `astream` 是 `stream` 的异步版本。二者使用相同的流模式，且在参数一致时，输出数据的语义和封装格式一致；区别主要在于调用方分别使用同步迭代和异步迭代进行消费。
 
-前面的章节我们都是通过 `invoke` 调用状态图。实际上，`invoke` 会在内部消费 `stream`，并把流式执行结果汇总为最终返回值；`ainvoke` 与 `astream` 的关系同理。
+前面的章节我们都是通过 `invoke` 调用状态图。实际上，`**<font style="color:#DF2A3F;">invoke</font>**`**<font style="color:#DF2A3F;"> 会在内部消费 </font>**`**<font style="color:#DF2A3F;">stream</font>**`**<font style="color:#DF2A3F;">，并把流式执行结果汇总为最终返回值；</font>**`**<font style="color:#DF2A3F;">ainvoke</font>**`**<font style="color:#DF2A3F;"> 与 </font>**`**<font style="color:#DF2A3F;">astream</font>**`**<font style="color:#DF2A3F;"> 的关系同理。</font>**
+
+
+
+
 
 ### 输出格式版本说明
 从 `LangGraph 1.1` 开始，`stream/astream` 支持两种输出格式版本：
 
-+ `v1`：当前默认格式。输出形态会随参数变化：
-    - 单个流模式通常直接返回该模式的数据；
++ `**<font style="color:#DF2A3F;">v1</font>**`**<font style="color:#DF2A3F;">：当前默认格式。输出形态会随参数变化：</font>**
+    - **<font style="color:#DF2A3F;">单个流模式通常直接返回该模式的数据；</font>**
     - 多个流模式返回 `(mode, data)`；
     - 启用子图流式输出后，还会增加命名空间信息。
 + `v2`：在 `v1` 基础上做了封装，统一返回 `StreamPart` 字典，固定包含 `type`、`ns` 和 `data` 三个字段，增强了输出的可读性，简化了解析难度、并补充了校验机制。
 
 本节基于 `v1` 展开。示例刻意把 `stream_mode` 写成列表，即使每次只指定一种模式，也会得到 `(mode, data)` 二元组，便于观测模式名称，并且可以无缝扩展到指定多种模式的情况。
+
+
+
+
 
 ### `stream_mode`
 流式输出支持不同的输出模式 `stream_mode`，这规定了流式输出的内容（在 `LangGraph` 中称为 `chunk`）。`stream_mode` 可传入单个字符串或模式列表。
@@ -15160,11 +15186,15 @@ list(graph.get_state_history(config=config))
    具体来说，`step=2` 的超步发生了中断，恢复运行时，`step=2` 会重新执行，其第一阶段会再次准备任务，并生成这一阶段的所有任务 `chunk`。
 
 #### `custom`
-`custom` 模式允许**节点或工具**主动写出自定义数据，调用方通过 `stream/astream` 消费这些数据。
+`**<font style="color:#DF2A3F;">custom</font>**`**<font style="color:#DF2A3F;"> 模式允许节点或工具主动写出自定义数据，调用方通过 </font>**`**<font style="color:#DF2A3F;">stream/astream</font>**`**<font style="color:#DF2A3F;"> 消费这些数据。</font>**
+
+**<font style="color:#DF2A3F;">一定要在我们graph.stream中添加</font>**`**<font style="color:#DF2A3F;"> stream_mode=["custom"]</font>**`**<font style="color:#DF2A3F;"> 这样才可以使用custom</font>**
+
+**<font style="color:#DF2A3F;"></font>**
 
 它适合输出进度、阶段说明、外部 API 的增量结果等非状态数据。
 
-##### 11.2.2.7.1. 节点中写出内容
+##### 节点中写出内容
 节点中写出内容通过 `Runtime` 实例的 `stream_writer`（也可通过 `get_stream_writer()` 获取，二者等效）。当 `stream_mode` 包含 `custom` 时，底层会定义 `stream_writer` 并注入 `Runtime`，相关源码：
 
 **定义 **`stream_writer`
@@ -15247,7 +15277,13 @@ for chunk in graph.stream(
 ('custom', '节点 B 正在执行...')
 ```
 
-##### 11.2.2.7.2. 工具中写出内容
+
+
+
+
+
+
+##### 工具中写出内容
 工具中写出内容通过 `ToolRuntime` 实例的 `stream_writer`，用法与节点中一致。
 
 **示例如下**
@@ -15329,7 +15365,7 @@ for chunk in graph.stream(
 ('custom', '正在执行 llm_node...')
 ```
 
-### 11.2.3. 底层机制
+### 底层机制
 以 `LangGraph 1.1.2` 的 `stream()` 为例，流式处理分为三个阶段：
 
 | 阶段 | 说明 |
@@ -15341,8 +15377,23 @@ for chunk in graph.stream(
 
 对 `messages` 和 `custom` 等需及时输出的模式，框架启用**等待器**，队列有新数据时立即交还控制权。
 
-## 11.3. `astream_events`
-`astream_events` 用于异步获取图运行过程中产生的 `Runnable`** 标准事件**。它关注的是可执行组件的生命周期、父子调用关系、输入输出和元数据，而不是单纯返回图状态。
+
+
+
+
+
+
+
+
+
+
+## `astream_events`
+> `astream_events` 用于异步获取图运行过程**<font style="color:#DF2A3F;">中产生的 </font>**`**<font style="color:#DF2A3F;">Runnable</font>**`**<font style="color:#DF2A3F;"> 标准事件。</font>**它关注的是可执行组件的生命周期、父子调用关系、输入输出和元数据，而不是单纯返回图状态。
+>
+
+
+
+
 
 `Runnable`**接口**
 
@@ -15357,6 +15408,10 @@ for chunk in graph.stream(
 
 
 常见 `Runnable` 组件：`CompiledStateGraph`、`PromptTemplate`、`ChatModel`、`Tool`、`Retriever`、`RunnableSequence`。
+
+
+
+
 
 `Runnable`**事件**
 
@@ -15389,7 +15444,7 @@ for chunk in graph.stream(
 }
 ```
 
-### 11.3.1. `astream_events`的版本
+### `astream_events`的版本
 从 `LangGraph 1.2.0` 开始，`astream_events` 支持三个版本：
 
 | 版本 | 基础 | 特点 | 入口 |
@@ -15397,6 +15452,10 @@ for chunk in graph.stream(
 | `v1` | `Runnable` 标准事件 | `parent_ids` 始终为空列表 | `astream_events(version="v1")` |
 | `v2`（默认） | `Runnable` 标准事件 | `parent_ids` 可表达完整父级运行链，改进父子调用关系 | `astream_events(version="v2")` |
 | `v3` | `Pregel` 原始流（= `stream/astream` 底层） | 全新协议，通过类型化投影消费（见下表），独立于 v1/v2 | `astream_events(version="v3")` / `stream_events(version="v3")` |
+
+
+
+
 
 
 `v3` 从底层 `stream/astream` 获取 `Pregel` 原始流数据，经事件路由器与 `StreamTransformer` 生成类型化投影。投影之间可独立/并发消费：
@@ -15418,11 +15477,17 @@ for chunk in graph.stream(
 `Pregel` 流即 `stream/astream` 的底层支持，上文 7 种 `stream_mode` 分别对应其中的 7 类流式数据。v3 并非 v1/v2 的封装——二者数据协议和内部管线独立，但共享同一组公开 API 入口和底层图运行时。
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](assets/image-20260623180949275.png)
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793071363534-107c068e-8473-47ec-b996-cf8e09bcb284.png)
 
 当前版本（`LangGraph 1.1.2`）仅支持 `astream_events` 的 `v1/v2`，默认版本为 `v2`。
 
-### 11.3.2. `astream_events`的用法
+
+
+
+
+
+
+###  `astream_events`的用法
 事件流不是我们研究的重点，此处仅提供最简示例。
 
 **示例如下**
@@ -15734,8 +15799,23 @@ async for chunk in graph.astream_events(
 | `parent_ids` | 从根运行实例到父运行实例的 ID 链（最外层 LangGraph 为空，子节点包含父 run_id） |
 
 
-# 12. 子图
-状态图节点中调用另外的状态图或直接将另外的状态图作为其节点则后者为子图。
+
+
+
+
+
+
+
+
+# 子图
+> 状态图节点中**<font style="color:#DF2A3F;">调用另外的状态图或直接将另外的状态图作为其节点则后者为子图。</font>**
+>
+> **<font style="color:#DF2A3F;">A图里面调用B图，B就是子图</font>**
+>
+
+
+
+
 
 **注意：**
 
@@ -15749,17 +15829,25 @@ flowchart
 classDef
 ```
 
-## 12.1. 两种子图嵌入方式
+
+
+## 两种子图嵌入方式
 | 方式 | 用法 | 适用场景 | 通信方式 |
 | :--- | :--- | :--- | :--- |
-| **节点函数中调用子图** | 在节点函数内 `subgraph.invoke()` | 父子图状态完全隔离 | 手动做输入输出映射 |
-| **子图直接作为父图节点** | `add_node("name", compiled_subgraph)` | 父子图共享状态字段 | 通过共享字段自动通信 |
+| **节点函数中调用子图** | **<font style="color:#DF2A3F;">在节点函数内 </font>**`**<font style="color:#DF2A3F;">subgraph.invoke()</font>**` | **<font style="color:#DF2A3F;">父子图状态完全隔离</font>** | **<font style="color:#DF2A3F;">手动做输入输出映射</font>** |
+| **子图直接作为父图节点** | `**<font style="color:#DF2A3F;">add_node("name", compiled_subgraph)</font>**` | **<font style="color:#DF2A3F;">父子图共享状态字段</font>** | **<font style="color:#DF2A3F;">通过共享字段自动通信</font>** |
 
 
-### 12.1.1. 在节点函数中调用子图
-如果父图和子图状态完全隔离，可以用这种方式。
 
-#### 12.1.1.1. 用法
+
+
+
+
+
+### 在节点函数中调用子图
+**<font style="color:#DF2A3F;">如果父图和子图状态完全隔离，可以用这种方式</font>**。
+
+#### 用法
 **示例如下**
 
 ```python
@@ -15838,9 +15926,12 @@ display(
 )
 ```
 
-调用 `get_graph()` 时传递的 `xray=True` 表示自动解析并递归获取子图的拓扑结构。
+调用 `get_graph()`**<font style="color:#DF2A3F;"> 时传递的 </font>**`**<font style="color:#DF2A3F;">xray=True</font>**`**<font style="color:#DF2A3F;"> 表示自动解析并递归获取子图的拓扑结构</font>**。
 
 **运行结果如下**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793072426766-33be8202-4ea2-47ea-96ec-1278585a949e.png)
 
 ```json
 ============================== ->   原始文本   <- ==============================
@@ -15860,7 +15951,11 @@ LangGraph 真有意思。
 res = subgraph.invoke({"raw_text": input_text})
 ```
 
-这是推荐的写法，调用子图时最好不要链式调用，否则解析失败，`LangGraph` 可能无法感知子图，这不仅会导致 `display` 渲染时不包含子图的拓扑结构，还会导致启用检查点存储器时，无法查看子图检查点快照。
+这是推荐的写法，**<font style="color:#DF2A3F;">调用子图时最好不要链式调用</font>**，否则解析失败，`LangGraph` 可能无法感知子图，这不仅会导致 `display` 渲染时不包含子图的拓扑结构，还会导致启用检查点存储器时，无法查看子图检查点快照。
+
+
+
+
 
 **错误写法示例如下**
 
@@ -15874,6 +15969,8 @@ assistant_response = subgraph.invoke(
 
 此时，`LangGraph` 无法感知这里的子图 `subgraph`
 
+****
+
 **正确写法如下**
 
 ```python
@@ -15884,12 +15981,20 @@ subgraph_response = subgraph.invoke(
 assistant_response = subgraph_response["messages"][-1].content
 ```
 
-#### 12.1.1.2. 查看子图
+
+
+
+
+#### 查看子图
 在上述代码的基础上执行以下代码
 
 ```python
 list(parent_graph.get_subgraphs())
 ```
+
+****
+
+****
 
 **结果如下**
 
@@ -15898,8 +16003,16 @@ list(parent_graph.get_subgraphs())
   <langgraph.graph.state.CompiledStateGraph at 0x19bd9e84ec0>)]
 ```
 
-### 12.1.2. 子图直接作为父图的节点
-#### 12.1.2.1. 用法
+
+
+
+
+
+
+
+
+### 子图直接作为父图的节点
+#### 用法
 **示例如下**
 
 ```python
@@ -15967,6 +16080,9 @@ display(
 
 **运行结果如下**
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793079885438-cd010f61-8474-41db-b17a-358937fe5995.png)
+
 ```json
 ============================== ->   原始文本   <- ==============================
    LangGraph 真有意思        
@@ -15977,7 +16093,7 @@ LangGraph 真有意思。
 <!-- 这是一张图片，ocr 内容为： -->
 ![](assets/image-20260625085408914.png)
 
-#### 12.1.2.2. 查看子图
+#### 查看子图
 **示例如下**
 
 ```python
@@ -15991,8 +16107,8 @@ list(parent_graph.get_subgraphs())
   <langgraph.graph.state.CompiledStateGraph at 0x297c50a2520>)]
 ```
 
-## 12.2. 子图持久化
-### 12.2.1. 查看子图检查点快照
+## 子图持久化
+### 查看子图检查点快照
 本节测试都依赖于以下示例
 
 ```python
@@ -16079,6 +16195,9 @@ display(
 
 **运行结果如下**
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793080104221-83856453-38a1-45a7-9a51-85def8392047.png)
+
 ```python
 ============================== ->   原始文本   <- ==============================
    LangGraph 真有意思        
@@ -16089,7 +16208,7 @@ LangGraph 真有意思。
 <!-- 这是一张图片，ocr 内容为： -->
 ![](assets/image-20260625085620495.png)
 
-#### 12.2.1.1. 在父图检查点快照中查看子图信息
+#### 在父图检查点快照中查看子图信息
 **获取父图历史检查点列表**
 
 ```python
@@ -16266,10 +16385,14 @@ call_subgraph:<task_id_1>|call_inner_graph:<task_id_2>
     - 父图的 `checkpoint_ns` 仍未空字符串
     - 子图的 `checkpoint_ns` 遵循以上格式
 
-#### 12.2.1.2. 在父图检查点快照中展开子图最新快照
+
+
+#### 在父图检查点快照中展开子图最新快照
 我们可以在父图的 `state` 字段中展开子图快照，也就是将 `state` 字段的值替换为子图的最新检查点快照
 
-##### 12.2.1.2.1. 获取父图检查点配置
+
+
+#####  获取父图检查点配置
 超步为 `0` 的检查点记录了子图的配置，所以我们要获取这个快照的父图配置，观察检查点快照列表可知：快照列表按照超步编号降序排列，且最小超步为 `-1`，取列表的倒数第二个元素即可拿到超步编号为 `0` 的检查点快照。
 
 **代码如下**
@@ -16291,7 +16414,11 @@ parent_config
 }
 ```
 
-##### 12.2.1.2.2. 展开子图快照
+
+
+
+
+#####  展开子图快照
 在调用 `get_state()` 时传递带有 `checkpoint_id` 的父图配置，并传递 `subgraphs=True` 即可展开子图快照。
 
 **示例如下**
@@ -16391,10 +16518,14 @@ StateSnapshot(
 
 可以看到，`state` 字段已展开为子图的最新检查点快照。
 
-#### 12.2.1.3. 获取子图配置，查看完整子图检查点列表
-某些场景下，我们希望查看完整的子图检查点快照列表，此时只需要将包含 `thread_id` 和子图命名空间 `checkpoint_ns` 的配置信息传递给 `get_state_history()` 即可实现。
 
-##### 12.2.1.3.1. 获取子图检查点配置
+
+
+
+####  获取子图配置，查看完整子图检查点列表
+某些场景下，**<font style="color:#DF2A3F;">我们希望查看完整的子图检查点快照列表</font>**<font style="color:#DF2A3F;">，</font>此时只需要将包含 `thread_id` 和子图命名空间 `checkpoint_ns` 的配置信息传递给 `get_state_history()` 即可实现。
+
+##### 获取子图检查点配置
 **示例如下**
 
 ```python
@@ -16413,7 +16544,7 @@ subgraph_config
 }
 ```
 
-##### 12.2.1.3.2. 查看完整子图检查点快照列表
+##### 查看完整子图检查点快照列表
 **示例如下**
 
 ```python
@@ -16630,7 +16761,9 @@ list(parent_graph.get_state_history(config=subgraph_config))
 <当前子图检查点命名空间>:<当前子图检查点ID>
 ```
 
-### 12.2.2. 持久化策略
+
+
+### 持久化策略
 本节讨论的持久化策略以**父图启用检查点存储器**为前提。子图支持三种策略：
 
 | 策略 | 编译参数 | 检查点保存 | 中断恢复 | 多轮记忆 |
@@ -16643,7 +16776,7 @@ list(parent_graph.get_state_history(config=subgraph_config))
 > **三种策略的唯一区别在于子图编译时的 **`checkpointer`** 参数**，其余代码完全相同。下面按场景组织，每个场景展示一份完整代码，策略切换只需修改一行。
 >
 
-#### 12.2.2.1. 场景一：中断（interrupt）
+#### 场景一：中断（interrupt）
 子图节点中使用 `interrupt()` 中断执行，等待用户输入后恢复。
 
 ```python
@@ -16769,7 +16902,7 @@ LangGraph 真有意思！
 | Stateless | `subgraph = builder.compile(checkpointer=False)` | ❌ |
 
 
-#### 12.2.2.2. 场景二：多轮对话
+#### 场景二：多轮对话
 父图多次调用子图进行 LLM 对话，验证子图是否保留历史消息。
 
 ```python
@@ -16892,6 +17025,9 @@ display(
 
 **Per-invocation 运行结果（无记忆）**
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793081462538-6012e679-900d-4d4a-adc8-1380e26c2a0d.png)
+
 ```plain
 2026-06-25 09:43:14.012 | INFO     | __main__:llm_node:31 - ==============================
 2026-06-25 09:43:14.013 | INFO     | __main__:llm_node:32 - 调用子图的 llm_node 节点，当前的 messages: 
@@ -16923,6 +17059,8 @@ display(
 
 <!-- 这是一张图片，ocr 内容为： -->
 ![](assets/image-20260625094339255.png)
+
+
 
 第二次调用时子图 `messages` 被重置，无法获知第一次调用时传递的信息。**Per-invocation 模式无法在子图中进行多轮对话。**
 
@@ -16983,7 +17121,13 @@ display(
 | Per-thread | `subgraph = builder.compile(checkpointer=True)` | ✅ 跨调用状态连续 |
 
 
-#### 12.2.2.3. 场景三：多次调用同一子图
+
+
+
+
+
+
+#### 场景三：多次调用同一子图
 父图的一个节点内循环多次调用同一子图。
 
 ```python
@@ -17114,7 +17258,12 @@ display(
 )
 ```
 
+****
+
 **Per-thread 运行结果**
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793081756716-0a23a73b-1053-4ef4-b872-612bef0f9fbb.png)
 
 ```plain
 2026-07-14 11:53:58.056 | INFO     | __main__:llm_node:29 - ==============================
@@ -17194,9 +17343,9 @@ display(
 <!-- 这是一张图片，ocr 内容为： -->
 ![](assets/image-20260625094551009.png)
 
-每次调用子图时 `messages` 状态都是独立的。**Per-invocation 适用于父图中多次调用同一子图的场景，调用间互不干扰。**
+每次调用子图时 `<font style="color:#DF2A3F;">messages</font>`<font style="color:#DF2A3F;"> 状态都是独立的。</font>**<font style="color:#DF2A3F;">Per-invocation 适用于父图中多次调用同一子图的场景，调用间互不干扰。</font>**
 
-**Per-thread 行为**（改为 `builder.compile(checkpointer=True)`）：同一节点内的多次子图调用，历史按调用位置独立——即第一次子图调用的历史是连续的，第二次子图调用的历史也是连续的，但两次之间独立。**如果调用顺序发生变化，检查点历史会相互干扰。**
+**Per-thread 行为**（改为 `builder.compile(checkpointer=True)`）：同一节点内的多次子图调用，**<font style="color:#DF2A3F;background-color:#FBDE28;">历史按调用位置独立——即第一次子图调用的历史是连续的，第二次子图调用的历史也是连续的，但两次之间独立</font>**<font style="color:#DF2A3F;">。</font>**<font style="color:#DF2A3F;">如果调用顺序发生变化，检查点历史会相互干扰</font>****。**
 
 > **策略差异**
 >
@@ -17207,7 +17356,13 @@ display(
 | Per-thread | `subgraph = builder.compile(checkpointer=True)` | ❌ 历史按位置关联，可能干扰 |
 
 
-#### 12.2.2.4. 场景四：多次调用不同子图
+
+
+
+
+
+
+#### 场景四：多次调用不同子图
 父图的一个节点内调用两个不同的子图。
 
 ```python
@@ -17373,6 +17528,9 @@ display(
 
 **运行结果**
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793082177145-6f9242b0-c791-4ade-856d-f0c60d278d72.png)
+
 ```plain
 2026-06-25 11:37:49.176 | INFO     | __main__:fruit_node:32 - ==============================
 2026-06-25 11:37:49.176 | INFO     | __main__:fruit_node:33 - 调用水果子图的 fruit_node 节点，当前的 messages: 
@@ -17405,11 +17563,19 @@ display(
 <!-- 这是一张图片，ocr 内容为： -->
 ![](assets/image-20260625113908367.png)
 
-本例在同一个节点中多次调用不同子图，通过专有状态保证了**水果一定发给 **`fruit_subgraph`、**蔬菜一定发给 **`vegetable_subgraph`，一定程度上可以确保不同子图的检查点历史不相互干扰。
+本例在同一个节点中多次调用不同子图，**<font style="color:#DF2A3F;">通过专有状态保证了水果一定发给 </font>**`**<font style="color:#DF2A3F;">fruit_subgraph</font>**`**<font style="color:#DF2A3F;">、蔬菜一定发给 </font>**`**<font style="color:#DF2A3F;">vegetable_subgraph</font>**`**<font style="color:#DF2A3F;">，一定程度上可以确保不同子图的检查点历史不相互干扰。</font>**
 
 但这种靠调用顺序区分的方式不够稳健——如果调用顺序变化，检查点历史也会错乱。官方推荐的做法见下一节。
 
-#### 12.2.2.5. 场景五：独立节点调用不同子图（推荐）
+
+
+
+
+
+
+
+
+#### 场景五：独立节点调用不同子图（推荐）
 为每个子图准备独立的父图节点，这样它们的命名空间是各自的节点名，完全独立。
 
 ```python
@@ -17590,6 +17756,9 @@ display(
 
 **运行结果**
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793082525742-7fcd8be8-c2b2-4cc2-9bcf-1808c42d8cf0.png)
+
 ```plain
 2026-06-25 11:59:10.331 | INFO     | __main__:fruit_node:33 - ==============================
 2026-06-25 11:59:10.334 | INFO     | __main__:fruit_node:34 - 调用水果子图的 fruit_node 节点，当前的 messages: 
@@ -17624,7 +17793,13 @@ display(
 
 每个子图有独立的父图节点，命名空间为各自的节点名，完全隔离。**这是 Per-thread 模式下多次调用不同子图的推荐做法。**
 
-#### 12.2.2.6. 场景六：Stateless 模式
+****
+
+****
+
+****
+
+#### 场景六：Stateless 模式
 子图完全无状态，不保存检查点，中断和多轮对话均不适用。适用于纯计算、无需追踪历史的场景。
 
 ```python
@@ -17714,6 +17889,9 @@ display(
 
 **Stateless 运行结果**
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793085503237-672e0bdb-fc8e-4921-b58e-6cbffee98dfe.png)
+
 ```plain
 ============================== -> 第一次运行结果 <- ==============================
 {'input_texts': ['  LangGraph 真有意思 ', '  我喜欢 LangChain '], 'output_texts': ['LangGraph 真有意思', '我喜欢 LangChain']}
@@ -17728,6 +17906,9 @@ display(
 
 **Per-thread 对比结果**（仅改为 `builder.compile(checkpointer=True)`）：
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793085523766-1298c1b7-b8c9-4c33-93fa-7f9052469cb5.png)
+
 ```plain
 ============================== -> 第一次运行结果 <- ==============================
 {'input_texts': ['  LangGraph 真有意思 ', '  我喜欢 LangChain '], 'output_texts': ['LangGraph 真有意思', '我喜欢 LangChain']}
@@ -17740,7 +17921,13 @@ display(
 
 Per-thread 模式下第二次调用结果出现了重复（子图的历史 `clean_texts` 被累积），拓扑结构中也展开了子图。**Stateless 不会累积历史，每次调用都是干净的。**
 
-#### 12.2.2.7. `Per-invocation`和`Per-thread`的设计哲学
+****
+
+****
+
+****
+
+#### `Per-invocation`和`Per-thread`的设计哲学
 默认子图检查点命名空间为 `<节点名称>:<任务ID>`。两种模式的核心差异在于对 `<任务ID>` 的处理：
 
 | 维度 | `Per-invocation` | `Per-thread` |
@@ -17751,7 +17938,11 @@ Per-thread 模式下第二次调用结果出现了重复（子图的历史 `clea
 | 注意事项 | — | 调用顺序变化会导致检查点历史相互干扰；`get_state_history()` 存在 Bug，父图检查点仍记录 `:<任务ID>` 格式，需额外处理 |
 
 
-#### 12.2.2.8. 总结
+
+
+
+
+#### 总结
 | 特性 | `Per-invocation (default)` | `Per-thread` | `Stateless` |
 | :--- | :--- | :--- | :--- |
 | `checkpointer=` | `None` | `True` | `False` |
@@ -17762,12 +17953,22 @@ Per-thread 模式下第二次调用结果出现了重复（子图的历史 `clea
 | 观测子图检查点快照 | ⚠️可以观测，但每次调用独立 | ✅ | ❌ |
 
 
-## 12.3. 子图流式运行
-只需要在父图调用 `stream` 时传递 `subgraphs=True` 即可，这样父图和子图的流数据都会汇入同一个流队列，再通过命名空间区分来源。
+
+
+
+
+
+
+## 子图流式运行
+只需要在父图调用 `**<font style="color:#DF2A3F;">stream</font>**`**<font style="color:#DF2A3F;"> 时传递 </font>**`**<font style="color:#DF2A3F;">subgraphs=True</font>**`**<font style="color:#DF2A3F;"> 即可</font>**，这样父图和子图的流数据都会汇入同一个流队列，**<font style="color:#DF2A3F;">再通过命名空间区分来源。</font>**
 
 **需要注意的是**：`subgraphs=True` 是在原有父图流数据的基础上，**额外加入子图内部产生的流数据**，并不会用子图数据替代父图数据。它会同时流式返回父图和所有子图的输出。
 
-### 12.3.1. 分析`chunk`格式
+
+
+
+
+### 分析`chunk`格式
 `chunk` 格式为
 
 ```python
@@ -17904,7 +18105,7 @@ display(
 | 子图（Per-thread） | `(<父图节点名>,)` | 与检查点命名空间一致 |
 
 
-### 12.3.2. 多轮对话消息流处理
+### 多轮对话消息流处理
 **示例如下**
 
 ```python
@@ -18013,6 +18214,9 @@ display(
 
 **运行结果如下**
 
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/51057965/1793086556633-2204ed73-b71c-471b-a807-a32b91b92e36.png)
+
 ```python
  ============================== -> 第一次运行结果 <- ==============================
 “花儿为什么这样红”是一个经典的问题，可以从不同角度来理解：
@@ -18033,8 +18237,12 @@ display(
 <!-- 这是一张图片，ocr 内容为： -->
 ![](assets/image-20260625143740875.png)
 
-## 12.4. 子图动态路由
-在子图中可以通过 `Command` 动态路由到父图节点，只要将参数 `graph` 的值设置为 `Command.PARENT` 即可，如下所示
+
+
+
+
+## 子图动态路由
+在**<font style="color:#DF2A3F;">子图中可以通过 </font>**`**<font style="color:#DF2A3F;">Command</font>**`**<font style="color:#DF2A3F;"> 动态路由到父图节点</font>**，只要将参数 `graph` 的值设置为 `Command.PARENT` 即可，如下所示
 
 ```python
 return Command(
@@ -18125,8 +18333,12 @@ builder.add_node(
 
 不加 `destinations` 不会影响动态路由，只是渲染的图结构不能正确描绘拓扑。
 
-# 13. 运行图设计模式
-## 13.1. 概述
+
+
+
+
+# 运行图设计模式
+## 概述
 `LangGraph` 官方总结了常用的状态图设计模式，如下
 
 | 模式 | 图结构 | 运行时动态性 | 核心 `LangGraph` 能力 |
@@ -18139,9 +18351,13 @@ builder.add_node(
 | `Agent` | 自主决策循环 | 最高 | `MessagesState`、工具调用、`ToolNode` |
 
 
-## 13.2. 实现
-### 13.2.1. `Prompt Chaining`：提示词链
-#### 13.2.1.1. 核心思想
+
+
+
+
+## 实现
+### `Prompt Chaining`：提示词链
+#### 核心思想
 将一个复杂任务拆分成若干个顺序执行的小任务：
 
 ```latex
@@ -18184,7 +18400,9 @@ builder.add_node(
 
 它的优点是执行过程稳定且易于调试；缺点是流程固定，无法处理未知数量或高度动态的任务。
 
-#### 13.2.1.2. 示例
+
+
+#### 示例
 **示例如下**
 
 ```python
@@ -18294,9 +18512,9 @@ display(graph)
 
 ---
 
-### 13.2.2. `Parallelization`：并行化
-#### 13.2.2.1. 核心思想
-把相互独立的任务同时执行，最后汇总结果：
+### `Parallelization`：并行化
+#### 核心思想
+**<font style="color:#DF2A3F;">把相互独立的任务同时执行</font>**，最后汇总结果：
 
 ```latex
                  ┌→ 任务 A ─┐
@@ -18316,7 +18534,7 @@ display(graph)
 
 前者主要提升速度，后者主要提升置信度。
 
-#### 13.2.2.2. 示例
+#### 示例
 **示例如下**
 
 ```python
@@ -18423,9 +18641,9 @@ display(graph)
 
 ---
 
-### 13.2.3. `Routing`：路由
-#### 13.2.3.1. 核心思想
-先识别输入类型，再把请求送到专门的处理流程：
+### `Routing`：路由
+#### 核心思想
+**<font style="color:#DF2A3F;">先识别输入类型，再把请求送到专门的处理流程：</font>**
 
 ```latex
                     ┌→ 退款流程
@@ -18440,16 +18658,18 @@ display(graph)
 + 文本、图片、音频请求分类
 + 不同领域知识库的选择
 
-#### 13.2.3.2. 设计原则
+
+
+#### 设计原则
 最佳实践：
 
-+ `LLM`** 节点**负责语义判断；
-+ **路由函数**负责把结构化结果映射到节点；
-+ **业务节点**负责真正处理任务。
++ `**<font style="color:#DF2A3F;background-color:#FBDE28;">LLM</font>**`**<font style="color:#DF2A3F;background-color:#FBDE28;"> 节点负责语义判断；</font>**
++ **<font style="color:#DF2A3F;">路由函数</font>****<font style="color:#DF2A3F;">负责把结构化结果映射到节点；</font>**
++ **<font style="color:#DF2A3F;">业务节点负责真正处理任务。</font>**
 
-不要让路由 LLM 直接返回任意节点名，否则模型输出和图结构会过度耦合，也难以进行类型检查和异常兜底。
+不要让**<font style="color:#DF2A3F;background-color:#FBDE28;">路由 LLM 直接返回任意节点名，否则模型输出和图结构会过度耦合</font>**，也难以进行类型检查和异常兜底。
 
-#### 13.2.3.3. 示例
+#### 示例
 **示例如下**
 
 ```python
@@ -18609,9 +18829,9 @@ display(graph)
 
 ---
 
-### 13.2.4. `Orchestrator-worker`：编排器—工作节点
-#### 13.2.4.1. 核心思想
-编排器先分析任务，动态生成若干子任务，再创建对应数量的 Worker：
+### `Orchestrator-worker`：编排器—工作节点
+#### 核心思想
+**<font style="color:#DF2A3F;">编排器先分析任务，</font>****<font style="color:#DF2A3F;background-color:#FBDE28;">动态生成若干子任务，再创建对应数量的 Worker：</font>**
 
 ```latex
                          ┌→ Worker 1 ─┐
@@ -18624,9 +18844,9 @@ display(graph)
 
 | 组件 | 职责 |
 | :--- | :--- |
-| `Orchestrator`（编排器） | 分析任务、制定计划、生成子任务列表 |
-| `Workers`（工作节点） | 分别处理各子任务，通常并行执行 |
-| `Synthesizer`（聚合节点） | 汇总所有 Worker 结果，生成最终答案 |
+| `**<font style="color:#DF2A3F;">Orchestrator</font>**`**<font style="color:#DF2A3F;">（编排器）</font>** | **<font style="color:#DF2A3F;">分析任务、制定计划、生成子任务列表</font>** |
+| `**<font style="color:#DF2A3F;">Workers</font>**`**<font style="color:#DF2A3F;">（工作节点）</font>** | **<font style="color:#DF2A3F;">分别处理各子任务，通常并行执行</font>** |
+| `**<font style="color:#DF2A3F;">Synthesizer</font>**`**<font style="color:#DF2A3F;">（聚合节点）</font>** | **<font style="color:#DF2A3F;">汇总所有 Worker 结果，生成最终答案</font>** |
 
 
 适合任务数量无法预先确定的场景，例如：
@@ -18636,14 +18856,14 @@ display(graph)
 + 为多个数据源分别执行分析
 + 将长文档动态拆分为若干部分处理
 
-#### 13.2.4.2. 和`Parallelization`的区别
+####  和`Parallelization`的区别
 | 模式 | 任务数量 |
 | :--- | :--- |
 | `Parallelization` | 编译图时已确定（静态） |
 | `Orchestrator-worker` | 运行时动态计算 |
 
 
-#### 13.2.4.3. 本质
+#### 本质
 `Orchestrator-worker` 本质上就是 `Map-Reduce`，我们在前面的课程中已经实现过了
 
 ```latex
@@ -18654,7 +18874,7 @@ Reducer：合并中间结果
 Synthesizer：执行 Reduce
 ```
 
-#### 13.2.4.4. 示例
+#### 示例
 **示例如下**
 
 ```python
@@ -18809,9 +19029,6 @@ Markdown(state["final_report"])
 
 **运行结果如下**
 
-<!-- 这是一张图片，ocr 内容为： -->
-![](assets/image-20260625180543541.png)
-
 ```markdown
 引言
 缩放定律是深度学习与人工智能领域中的核心理论基础之一。它揭示了模型性能与关键资源（如参数量、数据规模、计算算力）之间普遍存在的幂律关系，即当模型规模、训练数据量或计算预算成比例扩大时，模型的表现能力会呈现出可预测性的提升。这一发现最早源自对语言模型的系统性实证研究，随后在计算机视觉、多模态学习等众多任务中被广泛验证，深刻改变了现代AI研究的范式。
@@ -18962,9 +19179,11 @@ Chinchilla缩放定律的研究指出，对于许多计算预算，最优的参�
 
 ---
 
-### 13.2.5. `Evaluator-optimizer`：评估器—优化器
-#### 13.2.5.1. 核心思想
-一个节点生成结果，另一个节点评估结果；不合格就携带反馈重新生成：
+### `Evaluator-optimizer`：评估器—优化器
+#### 核心思想
+**<font style="color:#DF2A3F;">一个节点生成结果，另一个节点评估结果；不合格就携带反馈重新生成：</font>**
+
+**<font style="color:#DF2A3F;background-color:#FBDE28;">就是类似循环的思想</font>**
 
 ```latex
           ┌──────────────────────┐
@@ -18985,7 +19204,7 @@ Chinchilla缩放定律的研究指出，对于许多计算预算，最优的参�
 
 这种模式适用于存在明确质量标准，但通常需要多轮修改才能满足标准的任务。评估者既可以是 `LLM`，也可以是规则、测试程序或人类。
 
-#### 13.2.5.2. 必要的控制
+####  必要的控制
 为了避免无限循环，必须引入递归限制，可以是
 
 + 优雅退出的主动方法
@@ -18993,7 +19212,7 @@ Chinchilla缩放定律的研究指出，对于许多计算预算，最优的参�
 
 我们在介绍循环结构时已经系统讲解过了。
 
-#### 13.2.5.3. 示例
+#### 示例
 **示例如下**
 
 ```python
@@ -19146,8 +19365,8 @@ display(graph)
 
 ---
 
-### 13.2.6. `Agent`：智能体循环
-#### 13.2.6.1. 核心思想
+### `Agent`：智能体循环
+#### 核心思想
 前面的运行图设计模式都属于 `Workflow`，`Agent` 与 `Workflow` 最大的不同是：
 
 > 开发者不再预先确定每一步具体执行什么，而是让 `LLM` 根据当前消息和工具结果决定下一步行为。
@@ -19163,11 +19382,13 @@ display(graph)
                 └─ 否 → END
 ```
 
-即最基础的 `ReAct` 架构，我们已经不止一次介绍并实现过 `ReAct` 架构的 `Agent`
+**<font style="color:#DF2A3F;">即最基础的 </font>**`**<font style="color:#DF2A3F;">ReAct</font>**`**<font style="color:#DF2A3F;"> 架构，我们已经不止一次介绍并实现过 </font>**`**<font style="color:#DF2A3F;">ReAct</font>**`**<font style="color:#DF2A3F;"> 架构的 </font>**`**<font style="color:#DF2A3F;">Agent</font>**`
 
-`Agent` 适合问题求解步骤和工具调用顺序无法预先确定的场景。开发者仍然负责提供工具集合、系统提示词、权限和边界，但具体执行过程由模型动态决定。
+`Agent` 适合问题求解步骤和工具调用顺序无法预先确定的场景。**<font style="color:#DF2A3F;">开发者仍然负责提供工具集合、系统提示词、权限和边界，但具体执行过程由模型动态决定。</font>**
 
-#### 13.2.6.2. 示例
+
+
+#### 示例
 **示例如下**
 
 ```python
